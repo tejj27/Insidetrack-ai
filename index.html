@@ -222,8 +222,8 @@ select:focus{border-color:var(--green)}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
-      <button class="btn btn-ghost btn-sm" onclick="openAuth()">Sign in</button>
-      <button class="btn btn-primary btn-sm" onclick="openApp('ats')">Try free →</button>
+      <button class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
+      <button class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
     </div>
   </nav>
 
@@ -233,7 +233,7 @@ select:focus{border-color:var(--green)}
     <p class="hero-sub">Four AI tools that scan your CV, find low-competition jobs, rank your best opportunities, and decode every rejection — so every application counts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
-      <button class="btn btn-ghost btn-lg" onclick="openAuth()">Sign in</button>
+      <button class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">3×</div><div class="stat-lbl">More interviews with<br>tailored CVs</div></div>
@@ -2845,7 +2845,10 @@ function updateUserMenuDisplay(p){
   if(sc)sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+'/'+FREE_SCAN_LIMIT+' scans used');
 }
 function toggleUserDropdown(){var d=document.getElementById('user-dropdown');if(d)d.style.display=d.style.display==='none'?'block':'none';}
-function openAuth(){document.getElementById('auth-overlay').style.display='flex';}
+function openAuth(tab){
+  document.getElementById('auth-overlay').style.display='flex';
+  if(tab) switchAuthTab(tab);
+}
 function closeAuth(){
   document.getElementById('auth-overlay').style.display='none';
   document.getElementById('auth-error').style.display='none';
@@ -2905,5 +2908,52 @@ async function incrementScanCount(){
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- AUTH MODAL -->
+  <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;justify-content:center;align-items:center;padding:20px" onclick="if(event.target===this)closeAuth()">
+    <div style="background:white;border-radius:20px;max-width:400px;width:100%;padding:36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+      <button onclick="closeAuth()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1">✕</button>
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-family:'Instrument Serif',serif;font-size:24px;font-weight:700;color:#1a1814;margin-bottom:6px">Welcome to InsideTrack.ai</div>
+        <div style="font-size:13px;color:#6a6560">Sign in to save your progress</div>
+      </div>
+      <div style="display:flex;background:#f5f0eb;border-radius:10px;padding:4px;margin-bottom:22px">
+        <button id="tab-signin" onclick="switchAuthTab('signin')" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#1a1814;box-shadow:0 1px 4px rgba(0,0,0,0.1);transition:all 0.15s">Sign In</button>
+        <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#6a6560;transition:all 0.15s">Sign Up</button>
+      </div>
+      <div id="auth-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:12px;color:#dc2626;margin-bottom:14px"></div>
+      <div id="auth-success" style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 14px;font-size:12px;color:#16a34a;margin-bottom:14px"></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div id="auth-name-field" style="display:none">
+          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Full Name</label>
+          <input id="auth-name" type="text" placeholder="e.g. Tejal Sathe" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Email</label>
+          <input id="auth-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Password</label>
+          <input id="auth-password" type="password" placeholder="Min 6 characters" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box" onkeydown="if(event.key==='Enter')handleAuth()">
+        </div>
+        <button id="auth-submit-btn" onclick="handleAuth()" style="background:#1a6b3c;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:background 0.15s" onmouseover="this.style.background='#145a32'" onmouseout="this.style.background='#1a6b3c'">Sign In</button>
+      </div>
+      <div style="text-align:center;margin-top:14px;font-size:12px;color:#9a9590">
+        By continuing you agree to our <span onclick="showModal('terms')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Privacy Policy</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER AVATAR MENU -->
+  <div id="user-menu" style="display:none;position:fixed;top:12px;right:16px;z-index:1000;align-items:center;gap:8px">
+    <div id="user-avatar" onclick="toggleUserDropdown()" style="width:34px;height:34px;background:#1a6b3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>
+    <div id="user-dropdown" style="display:none;position:absolute;top:42px;right:0;background:white;border:1.5px solid #e8e3dd;border-radius:12px;padding:8px;min-width:200px;box-shadow:0 8px 24px rgba(0,0,0,0.12)">
+      <div id="user-email-display" style="padding:8px 12px;font-size:12px;color:#6a6560;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
+      <div id="user-plan-display" style="padding:6px 12px;font-size:12px;font-weight:700;color:#1a6b3c"></div>
+      <div id="user-scans-display" style="padding:2px 12px 10px;font-size:12px;color:#9a9590;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
+      <button onclick="signOut()" style="width:100%;text-align:left;padding:8px 12px;background:none;border:none;font-family:'Geist',sans-serif;font-size:13px;color:#dc2626;cursor:pointer;border-radius:6px">Sign out</button>
+    </div>
+  </div>
+
 </body>
 </html>
