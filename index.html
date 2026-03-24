@@ -2880,7 +2880,15 @@ async function handleAuth(){
     if(isSignup){
       var r=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
       if(r.error)throw r.error;
-      sucEl.textContent='Account created! Check your email to confirm.'; sucEl.style.display='block';
+      sucEl.textContent='Account created! Welcome to InsideTrack.ai 🎉'; sucEl.style.display='block';
+      // Send welcome email via Resend
+      try {
+        await fetch('/api/send-email', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({to:email, name:name})
+        });
+      } catch(emailErr) { console.log('Email error:', emailErr); }
     } else {
       var r2=await supabase.auth.signInWithPassword({email,password});
       if(r2.error)throw r2.error;
