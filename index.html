@@ -223,8 +223,8 @@ select:focus{border-color:var(--green)}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
-      <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="typeof openAuth!=='undefined'?openAuth('signin'):setTimeout(function(){openAuth('signin')},500)">Sign in</button>
-      <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="typeof openAuth!=='undefined'?openAuth('signup'):setTimeout(function(){openAuth('signup')},500)">Sign up</button>
+      <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
+      <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
     </div>
   </nav>
 
@@ -234,7 +234,7 @@ select:focus{border-color:var(--green)}
     <p class="hero-sub">Four AI tools that scan your CV, find low-competition jobs, rank your best opportunities, and decode every rejection — so every application counts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
-      <button class="btn btn-ghost btn-lg" onclick="typeof openAuth!=='undefined'?openAuth('signin'):setTimeout(function(){openAuth('signin')},500)">Sign in</button>
+      <button class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">3×</div><div class="stat-lbl">More interviews with<br>tailored CVs</div></div>
