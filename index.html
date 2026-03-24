@@ -2863,9 +2863,14 @@ function switchAuthTab(tab){
   document.getElementById('tab-signup').style.background=s?'white':'transparent';
   document.getElementById('tab-signup').style.color=s?'#1a1814':'#6a6560';
   document.getElementById('auth-name-field').style.display=s?'block':'none';
-  document.getElementById('auth-submit-btn').textContent=s?'Create Account':'Sign In';
+  var btn=document.getElementById('auth-submit-btn');
+  btn.textContent=s?'Create Account':'Sign In';
+  btn.disabled=false;
+  btn.style.background='#1a6b3c';
   document.getElementById('auth-error').style.display='none';
   document.getElementById('auth-success').style.display='none';
+  document.getElementById('auth-email').value='';
+  document.getElementById('auth-password').value='';
 }
 async function handleAuth(){
   var email=document.getElementById('auth-email').value.trim();
