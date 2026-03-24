@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root {
   --cream:#faf8f4; --cream2:#f2efe8; --cream3:#e4dfd4; --ink:#1a1814; --ink2:#2d2a24;
@@ -222,8 +223,8 @@ select:focus{border-color:var(--green)}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
-      <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
-      <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
+      <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="typeof openAuth!=='undefined'?openAuth('signin'):setTimeout(function(){openAuth('signin')},500)">Sign in</button>
+      <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="typeof openAuth!=='undefined'?openAuth('signup'):setTimeout(function(){openAuth('signup')},500)">Sign up</button>
     </div>
   </nav>
 
@@ -233,7 +234,7 @@ select:focus{border-color:var(--green)}
     <p class="hero-sub">Four AI tools that scan your CV, find low-competition jobs, rank your best opportunities, and decode every rejection — so every application counts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
-      <button class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
+      <button class="btn btn-ghost btn-lg" onclick="typeof openAuth!=='undefined'?openAuth('signin'):setTimeout(function(){openAuth('signin')},500)">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">3×</div><div class="stat-lbl">More interviews with<br>tailored CVs</div></div>
@@ -2914,30 +2915,42 @@ async function handleAuth(){
 
   try{
     if(isSignup){
-      // Try to sign up
+      // Sign up
       var r=await supabase.auth.signUp({email:email,password:password,options:{data:{full_name:name}}});
       if(r.error) throw r.error;
 
       // Send welcome email (fire and forget)
       fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:email,name:name})}).catch(function(){});
 
-      // Now sign in immediately
+      // Switch to sign in tab and ask them to sign in
+      btn.disabled=false;
+      btn.textContent='Create Account';
+      switchAuthTab('signin');
+      document.getElementById('auth-email').value=email;
+      document.getElementById('auth-password').value=password;
+      var sucEl2=document.getElementById('auth-success');
+      sucEl2.textContent='Account created! Signing you in...';
+      sucEl2.style.display='block';
+
+      // Auto sign in
       var r2=await supabase.auth.signInWithPassword({email:email,password:password});
       if(r2.error) throw r2.error;
-
-      _currentUser = (r2.data && r2.data.user) ? r2.data.user : r2.user || null;
-      if(!_currentUser) throw new Error('Sign in failed. Please try signing in manually.');
+      var user = r2.data ? r2.data.user : null;
+      if(!user) throw new Error('Please sign in manually.');
+      _currentUser=user;
       closeAuth();
       showUserMenu();
       await loadUserProfile();
       showDlToast('Welcome to InsideTrack.ai! 🎉');
+      return;
 
     } else {
       // Sign in
       var r3=await supabase.auth.signInWithPassword({email:email,password:password});
+      console.log('Sign in response:', JSON.stringify({error:r3.error, hasData:!!r3.data, hasUser:!!(r3.data&&r3.data.user)}));
       if(r3.error) throw r3.error;
 
-      _currentUser = (r3.data && r3.data.user) ? r3.data.user : r3.user || null;
+      _currentUser = (r3.data && r3.data.user) ? r3.data.user : (r3.data || null);
       if(!_currentUser) throw new Error('Sign in failed. Please try again.');
       closeAuth();
       showUserMenu();
@@ -3002,7 +3015,6 @@ function showUpgradeModal(){
   setTimeout(function(){ openAuth('signup'); }, 1500);
 }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- AUTH MODAL -->
   <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;justify-content:center;align-items:center;padding:20px" onclick="if(event.target===this)closeAuth()">
