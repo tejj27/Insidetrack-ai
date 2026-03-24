@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'InsideTrack.ai <onboarding@resend.dev>',
+        from: 'onboarding@resend.dev',
         to: [to],
         subject: 'Welcome to InsideTrack.ai 🎉',
         html: `
