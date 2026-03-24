@@ -1097,9 +1097,7 @@ function checkAuthReady() {
   btn.style.cursor = ready ? 'pointer' : 'not-allowed';
 }
 
-function signOut() {
-  if (typeof _signOut === 'function') _signOut();
-}
+
 function toggleUserDropdown() {
   var d = document.getElementById('user-dropdown');
   if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
@@ -2938,19 +2936,30 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (stored && token) {
     try {
       _currentUser = JSON.parse(stored);
-      await loadUserProfile();
       showUserMenu();
+      await loadUserProfile();
     } catch(e) {
       localStorage.removeItem('it_user');
       localStorage.removeItem('it_token');
+      _currentUser = null;
     }
   }
 });
 
 async function loadUserProfile() {
   if (!_currentUser) return;
-  var profile = await supaGetProfile(_currentUser.id);
-  if (profile) { _userScans = profile.scans_used||0; updateUserMenuDisplay(profile); }
+  try {
+    var profile = await supaGetProfile(_currentUser.id);
+    if (profile) {
+      _userScans = profile.scans_used||0;
+      updateUserMenuDisplay(profile);
+    } else {
+      // Profile doesn't exist yet - show defaults
+      updateUserMenuDisplay({plan:'free', scans_used:0});
+    }
+  } catch(e) {
+    updateUserMenuDisplay({plan:'free', scans_used:0});
+  }
 }
 function showUserMenu() {
   if (!_currentUser) return;
@@ -3036,7 +3045,7 @@ async function handleAuth(){
     btn.textContent=isSignup?'Create Account':'Sign In';
   }
 }
-async function _signOut(){
+async function signOut(){
   await _supa.auth.signOut();
   _currentUser=null;
   var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
