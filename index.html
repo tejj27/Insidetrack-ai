@@ -3095,7 +3095,7 @@ function showUpgradeModal(){
 
   <!-- AUTH MODAL -->
   <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;justify-content:center;align-items:center;padding:20px" onclick="if(event.target===this)closeAuth()">
-    <div style="background:white;border-radius:20px;max-width:400px;width:100%;padding:36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+    <div onclick="event.stopPropagation()" style="background:white;border-radius:20px;max-width:400px;width:100%;padding:36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
       <button onclick="closeAuth()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1">✕</button>
       <div style="text-align:center;margin-bottom:24px">
         <div style="font-family:'Instrument Serif',serif;font-size:24px;font-weight:700;color:#1a1814;margin-bottom:6px">Welcome to InsideTrack.ai</div>
