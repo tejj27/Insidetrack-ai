@@ -2897,60 +2897,57 @@ async function handleAuth(){
   var password=document.getElementById('auth-password').value;
   var name=document.getElementById('auth-name').value.trim();
   var isSignup=document.getElementById('auth-submit-btn').textContent==='Create Account';
-  var errEl=document.getElementById('auth-error'),sucEl=document.getElementById('auth-success');
-  errEl.style.display='none'; sucEl.style.display='none';
-  if(!email||!password){errEl.textContent='Please enter email and password.';errEl.style.display='block';return;}
-  var btn=document.getElementById('auth-submit-btn'); btn.disabled=true; btn.textContent='Please wait...';
+  var errEl=document.getElementById('auth-error');
+  var sucEl=document.getElementById('auth-success');
+  var btn=document.getElementById('auth-submit-btn');
+  errEl.style.display='none';
+  sucEl.style.display='none';
+
+  if(!email||!password){
+    errEl.textContent='Please enter your email and password.';
+    errEl.style.display='block';
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='Please wait...';
+
   try{
     if(isSignup){
-      var r=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
-      if(r.error)throw r.error;
-      // Send welcome email in background — don't await it
-      fetch('/api/send-email', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({to:email, name:name})
-      }).catch(function(e){ console.log('Email error:', e); });
-      btn.disabled=false; btn.textContent='Create Account';
-      sucEl.textContent='Account created! Signing you in...'; sucEl.style.display='block';
-      // Auto sign in after signup
-      setTimeout(async function(){
-        var r2=await supabase.auth.signInWithPassword({email,password});
-        if(!r2.error){
-          _currentUser=r2.data.user;
-          closeAuth();
-          showUserMenu();
-          await loadUserProfile();
-          showDlToast('Welcome to InsideTrack.ai!');
-        } else {
-          switchAuthTab('signin');
-        }
-      }, 1000);
-      return;
-    } else {
-      var r2=await supabase.auth.signInWithPassword({email,password});
-      if(r2.error){
-        if(r2.error.message.toLowerCase().includes('confirm')||r2.error.message.toLowerCase().includes('not confirmed')){
-          errEl.textContent='Please confirm your email first — check your inbox.';
-        } else {
-          errEl.textContent=r2.error.message;
-        }
-        errEl.style.display='block';
-        btn.disabled=false; btn.textContent='Sign In';
-        return;
-      }
-      // Sign in successful — update UI immediately
-      _currentUser = r2.data.user;
+      // Try to sign up
+      var r=await supabase.auth.signUp({email:email,password:password,options:{data:{full_name:name}}});
+      if(r.error) throw r.error;
+
+      // Send welcome email (fire and forget)
+      fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:email,name:name})}).catch(function(){});
+
+      // Now sign in immediately
+      var r2=await supabase.auth.signInWithPassword({email:email,password:password});
+      if(r2.error) throw r2.error;
+
+      _currentUser=r2.data.user;
       closeAuth();
       showUserMenu();
       await loadUserProfile();
-      showDlToast('Welcome back! You are signed in.');
+      showDlToast('Welcome to InsideTrack.ai! 🎉');
+
+    } else {
+      // Sign in
+      var r3=await supabase.auth.signInWithPassword({email:email,password:password});
+      if(r3.error) throw r3.error;
+
+      _currentUser=r3.data.user;
+      closeAuth();
+      showUserMenu();
+      await loadUserProfile();
+      showDlToast('Welcome back! ✓');
     }
-  }catch(e){
+  } catch(e){
     errEl.textContent=e.message;
     errEl.style.display='block';
+    btn.disabled=false;
+    btn.textContent=isSignup?'Create Account':'Sign In';
   }
-  btn.disabled=false; btn.textContent=isSignup?'Create Account':'Sign In';
 }
 async function signOut(){
   await supabase.auth.signOut();
