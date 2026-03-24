@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InsideTrack.ai — AI Job Search Copilot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1135,7 +1136,7 @@ async function matcherFileSelect(e) {
 
 // ── callClaude ──
 async function callClaude(system, user, maxTokens) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/chat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||2000,system,messages:[{role:'user',content:user}]})
@@ -1188,6 +1189,8 @@ async function runATS() {
   if (!resumeText) { showError('ats-error','Please upload your CV first.'); return; }
   const jd = document.getElementById('ats-jd').value.trim();
   if (!jd) { showError('ats-error','Please paste a job description.'); return; }
+  const allowed = await checkScanLimit();
+  if (!allowed) return;
   hideError('ats-error'); setLoading('ats-btn',true);
   document.getElementById('ats-result').classList.remove('visible');
   document.getElementById('tailor-banner').style.display = 'none';
@@ -1199,6 +1202,7 @@ async function runATS() {
       `CV:\n${resumeText.slice(0,3000)}\n\nJOB DESCRIPTION:\n${jd.slice(0,1800)}`,1500
     );
     _atsResult = data;
+    await incrementScanCount();
     // Store company and role from AI extraction only — reliable
     if(data.company && data.company !== 'Unknown') _lastATSCompany = data.company;
     if(data.role && data.role !== 'Unknown') _lastATSRole = data.role;
@@ -2798,5 +2802,153 @@ function clDownload() {
 }
 
 </script>
+
+  <!-- ── AUTH MODAL ── -->
+  <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2000;justify-content:center;align-items:center;padding:20px">
+    <div style="background:white;border-radius:20px;max-width:420px;width:100%;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-family:'Instrument Serif',serif;font-size:26px;font-weight:700;color:#1a1814;margin-bottom:6px">Welcome to InsideTrack.ai</div>
+        <div style="font-size:13px;color:#6a6560">Sign in to save your progress and access all tools</div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;background:#f5f0eb;border-radius:10px;padding:4px;margin-bottom:24px">
+        <button id="tab-signin" onclick="switchAuthTab('signin')" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#1a1814;box-shadow:0 1px 4px rgba(0,0,0,0.1)">Sign In</button>
+        <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#6a6560">Sign Up</button>
+      </div>
+
+      <div id="auth-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:12px;color:#dc2626;margin-bottom:16px"></div>
+      <div id="auth-success" style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 14px;font-size:12px;color:#16a34a;margin-bottom:16px"></div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div id="auth-name-field" style="display:none">
+          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Full Name</label>
+          <input id="auth-name" type="text" placeholder="e.g. Tejal Sathe" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Email</label>
+          <input id="auth-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Password</label>
+          <input id="auth-password" type="password" placeholder="Min 6 characters" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+        </div>
+        <button id="auth-submit-btn" onclick="handleAuth()" style="background:#1a6b3c;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px">Sign In</button>
+      </div>
+
+      <div style="text-align:center;margin-top:16px;font-size:12px;color:#9a9590">
+        By continuing you agree to our <span onclick="showModal('terms')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Privacy Policy</span>
+      </div>
+
+      <button onclick="closeAuth()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#9a9590;line-height:1">✕</button>
+    </div>
+  </div>
+
+  <!-- ── USER MENU (top right when logged in) ── -->
+  <div id="user-menu" style="display:none;position:fixed;top:12px;right:16px;z-index:500;display:none;align-items:center;gap:8px">
+    <div id="user-avatar" style="width:32px;height:32px;background:#1a6b3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer" onclick="toggleUserDropdown()"></div>
+    <div id="user-dropdown" style="display:none;position:absolute;top:40px;right:0;background:white;border:1.5px solid #e8e3dd;border-radius:12px;padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">
+      <div id="user-email-display" style="padding:8px 12px;font-size:12px;color:#6a6560;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
+      <div id="user-plan-display" style="padding:6px 12px;font-size:12px;font-weight:600;color:#1a6b3c"></div>
+      <div id="user-scans-display" style="padding:4px 12px 8px;font-size:12px;color:#9a9590;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
+      <button onclick="signOut()" style="width:100%;text-align:left;padding:8px 12px;background:none;border:none;font-family:'Geist',sans-serif;font-size:13px;color:#dc2626;cursor:pointer;border-radius:6px">Sign out</button>
+    </div>
+  </div>
+
 </body>
-</html>
+</html
+// ── Supabase Auth ──
+const SUPA_URL = 'https://kknzvaayyihfzkaezhft.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrbnp2YWF5eWloZnprYWV6aGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA0NDgsImV4cCI6MjA4OTg0NjQ0OH0.-cR0wDnV0rZ27eQGOkFRkPGEb532NjEHWI6mW9YwgHc';
+const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+let _currentUser = null;
+let _userScans = 0;
+const FREE_SCAN_LIMIT = 3;
+supabase.auth.onAuthStateChange(async function(event, session) {
+  if (session) {
+    _currentUser = session.user;
+    await loadUserProfile();
+    showUserMenu();
+    if (event === 'SIGNED_IN') closeAuth();
+  } else {
+    _currentUser = null;
+    hideUserMenu();
+  }
+});
+async function loadUserProfile() {
+  if (!_currentUser) return;
+  var r = await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
+  if (r.data) { _userScans = r.data.scans_used||0; updateUserMenuDisplay(r.data); }
+}
+function showUserMenu() {
+  var m=document.getElementById('user-menu'); if(!m) return; m.style.display='flex';
+  var a=document.getElementById('user-avatar'); if(a&&_currentUser&&_currentUser.email) a.textContent=_currentUser.email[0].toUpperCase();
+}
+function hideUserMenu(){var m=document.getElementById('user-menu');if(m)m.style.display='none';}
+function updateUserMenuDisplay(p){
+  var e=document.getElementById('user-email-display'),pl=document.getElementById('user-plan-display'),sc=document.getElementById('user-scans-display');
+  if(e)e.textContent=(_currentUser&&_currentUser.email)||'';
+  if(pl)pl.textContent=p.plan==='pro'?'Pro Plan':'Free Plan';
+  if(sc)sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+'/'+FREE_SCAN_LIMIT+' scans used');
+}
+function toggleUserDropdown(){var d=document.getElementById('user-dropdown');if(d)d.style.display=d.style.display==='none'?'block':'none';}
+function openAuth(){document.getElementById('auth-overlay').style.display='flex';}
+function closeAuth(){
+  document.getElementById('auth-overlay').style.display='none';
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-success').style.display='none';
+}
+function switchAuthTab(tab){
+  var s=tab==='signup';
+  document.getElementById('tab-signin').style.background=s?'transparent':'white';
+  document.getElementById('tab-signin').style.color=s?'#6a6560':'#1a1814';
+  document.getElementById('tab-signup').style.background=s?'white':'transparent';
+  document.getElementById('tab-signup').style.color=s?'#1a1814':'#6a6560';
+  document.getElementById('auth-name-field').style.display=s?'block':'none';
+  document.getElementById('auth-submit-btn').textContent=s?'Create Account':'Sign In';
+  document.getElementById('auth-error').style.display='none';
+  document.getElementById('auth-success').style.display='none';
+}
+async function handleAuth(){
+  var email=document.getElementById('auth-email').value.trim();
+  var password=document.getElementById('auth-password').value;
+  var name=document.getElementById('auth-name').value.trim();
+  var isSignup=document.getElementById('auth-submit-btn').textContent==='Create Account';
+  var errEl=document.getElementById('auth-error'),sucEl=document.getElementById('auth-success');
+  errEl.style.display='none'; sucEl.style.display='none';
+  if(!email||!password){errEl.textContent='Please enter email and password.';errEl.style.display='block';return;}
+  var btn=document.getElementById('auth-submit-btn'); btn.disabled=true; btn.textContent='Please wait...';
+  try{
+    if(isSignup){
+      var r=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
+      if(r.error)throw r.error;
+      sucEl.textContent='Account created! Check your email to confirm.'; sucEl.style.display='block';
+    } else {
+      var r2=await supabase.auth.signInWithPassword({email,password});
+      if(r2.error)throw r2.error;
+    }
+  }catch(e){errEl.textContent=e.message;errEl.style.display='block';}
+  btn.disabled=false; btn.textContent=isSignup?'Create Account':'Sign In';
+}
+async function signOut(){
+  await supabase.auth.signOut(); _currentUser=null;
+  var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
+  showDlToast('Signed out successfully');
+}
+async function checkScanLimit(){
+  if(!_currentUser){openAuth();return false;}
+  var r=await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
+  if(!r.data)return true;
+  if(r.data.plan==='pro')return true;
+  if((r.data.scans_used||0)>=FREE_SCAN_LIMIT){showDlToast('You have used all 3 free scans. Upgrade to Pro for unlimited!');return false;}
+  return true;
+}
+async function incrementScanCount(){
+  if(!_currentUser)return;
+  var r=await supabase.from('profiles').select('scans_used').eq('id',_currentUser.id).single();
+  var c=(r.data&&r.data.scans_used)||0;
+  await supabase.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
+  _userScans=c+1;
+}
+
+>
