@@ -2887,10 +2887,16 @@ async function supaSignIn(email, password) {
   });
   var d = await r.json();
   if (d.error || d.error_description) return {error:{message:d.error_description||d.error}};
-  // Store session
   if (d.access_token) {
+    // Fetch full user with metadata
+    var ur = await fetch(SUPA_URL + '/auth/v1/user', {
+      headers: {'apikey':SUPA_KEY,'Authorization':'Bearer '+d.access_token}
+    });
+    var fullUser = await ur.json();
+    var user = fullUser.id ? fullUser : d.user;
     localStorage.setItem('it_token', d.access_token);
-    localStorage.setItem('it_user', JSON.stringify(d.user));
+    localStorage.setItem('it_user', JSON.stringify(user));
+    return {data:{user:user, session:d}};
   }
   return {data:{user:d.user, session:d}};
 }
@@ -2927,21 +2933,10 @@ async function supaUpdateProfile(userId, data) {
 }
 
 // Check for existing session on load
-document.addEventListener('DOMContentLoaded', async function() {
-  var stored = localStorage.getItem('it_user');
-  var token = localStorage.getItem('it_token');
-  if (stored && token) {
-    try {
-      _currentUser = JSON.parse(stored);
-      showUserMenu();
-      await loadUserProfile();
-    } catch(e) {
-      localStorage.removeItem('it_user');
-      localStorage.removeItem('it_token');
-      _currentUser = null;
-    }
-  }
-});
+// Clear any old session on page load - user must sign in each visit
+localStorage.removeItem('it_user');
+localStorage.removeItem('it_token');
+_currentUser = null;
 
 async function loadUserProfile() {
   if (!_currentUser) return;
