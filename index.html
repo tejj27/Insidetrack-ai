@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>InsideTrack.ai — AI Job Search Copilot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -223,17 +222,18 @@ select:focus{border-color:var(--green)}
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
+      <button class="btn btn-ghost btn-sm" onclick="openAuth()">Sign in</button>
       <button class="btn btn-primary btn-sm" onclick="openApp('ats')">Try free →</button>
     </div>
   </nav>
 
   <div class="hero">
-    <div class="hero-badge">✦ AI-powered · No signup needed</div>
+    <div class="hero-badge">✦ AI-powered · Free to start</div>
     <h1 class="hero-title">Your unfair advantage<br>in every <span>job application</span></h1>
     <p class="hero-sub">Four AI tools that scan your CV, find low-competition jobs, rank your best opportunities, and decode every rejection — so every application counts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free — no signup</button>
-
+      <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
+      <button class="btn btn-ghost btn-lg" onclick="openAuth()">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">3×</div><div class="stat-lbl">More interviews with<br>tailored CVs</div></div>
@@ -2218,7 +2218,13 @@ async function runVisa(){
       ,3000);
 
     renderVisa(data, country === 'United Kingdom');
-  }catch(e){showError('visa-error',e.message);}
+  }catch(e){
+    if(e.message && e.message.includes('JSON')) {
+      showError('visa-error','Response error — please try again.');
+    } else {
+      showError('visa-error',e.message);
+    }
+  }
   setLoading('visa-btn',false);
 }
 function renderVisa(data, isUK){
@@ -2801,79 +2807,26 @@ function clDownload() {
   showDlToast('✓ Downloaded — open in Microsoft Word or Google Docs');
 }
 
-</script>
 
-  <!-- ── AUTH MODAL ── -->
-  <div id="auth-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2000;justify-content:center;align-items:center;padding:20px">
-    <div style="background:white;border-radius:20px;max-width:420px;width:100%;padding:36px;box-shadow:0 20px 60px rgba(0,0,0,0.2)">
-      <div style="text-align:center;margin-bottom:24px">
-        <div style="font-family:'Instrument Serif',serif;font-size:26px;font-weight:700;color:#1a1814;margin-bottom:6px">Welcome to InsideTrack.ai</div>
-        <div style="font-size:13px;color:#6a6560">Sign in to save your progress and access all tools</div>
-      </div>
-
-      <!-- Tabs -->
-      <div style="display:flex;background:#f5f0eb;border-radius:10px;padding:4px;margin-bottom:24px">
-        <button id="tab-signin" onclick="switchAuthTab('signin')" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:#1a1814;box-shadow:0 1px 4px rgba(0,0,0,0.1)">Sign In</button>
-        <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:8px;border:none;border-radius:8px;font-family:'Geist',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#6a6560">Sign Up</button>
-      </div>
-
-      <div id="auth-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:12px;color:#dc2626;margin-bottom:16px"></div>
-      <div id="auth-success" style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 14px;font-size:12px;color:#16a34a;margin-bottom:16px"></div>
-
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <div id="auth-name-field" style="display:none">
-          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Full Name</label>
-          <input id="auth-name" type="text" placeholder="e.g. Tejal Sathe" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
-        </div>
-        <div>
-          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Email</label>
-          <input id="auth-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
-        </div>
-        <div>
-          <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Password</label>
-          <input id="auth-password" type="password" placeholder="Min 6 characters" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
-        </div>
-        <button id="auth-submit-btn" onclick="handleAuth()" style="background:#1a6b3c;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px">Sign In</button>
-      </div>
-
-      <div style="text-align:center;margin-top:16px;font-size:12px;color:#9a9590">
-        By continuing you agree to our <span onclick="showModal('terms')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Privacy Policy</span>
-      </div>
-
-      <button onclick="closeAuth()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:#9a9590;line-height:1">✕</button>
-    </div>
-  </div>
-
-  <!-- ── USER MENU (top right when logged in) ── -->
-  <div id="user-menu" style="display:none;position:fixed;top:12px;right:16px;z-index:500;display:none;align-items:center;gap:8px">
-    <div id="user-avatar" style="width:32px;height:32px;background:#1a6b3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer" onclick="toggleUserDropdown()"></div>
-    <div id="user-dropdown" style="display:none;position:absolute;top:40px;right:0;background:white;border:1.5px solid #e8e3dd;border-radius:12px;padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">
-      <div id="user-email-display" style="padding:8px 12px;font-size:12px;color:#6a6560;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
-      <div id="user-plan-display" style="padding:6px 12px;font-size:12px;font-weight:600;color:#1a6b3c"></div>
-      <div id="user-scans-display" style="padding:4px 12px 8px;font-size:12px;color:#9a9590;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
-      <button onclick="signOut()" style="width:100%;text-align:left;padding:8px 12px;background:none;border:none;font-family:'Geist',sans-serif;font-size:13px;color:#dc2626;cursor:pointer;border-radius:6px">Sign out</button>
-    </div>
-  </div>
-
-</body>
-</html
 // ── Supabase Auth ──
 const SUPA_URL = 'https://kknzvaayyihfzkaezhft.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrbnp2YWF5eWloZnprYWV6aGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA0NDgsImV4cCI6MjA4OTg0NjQ0OH0.-cR0wDnV0rZ27eQGOkFRkPGEb532NjEHWI6mW9YwgHc';
-const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+const supabase = (window.supabase || {createClient:()=>({auth:{onAuthStateChange:()=>{},signUp:async()=>({}),signInWithPassword:async()=>({}),signOut:async()=>({})},from:()=>({select:()=>({eq:()=>({single:async()=>({data:null})})})})})}).createClient(SUPA_URL, SUPA_KEY);
 let _currentUser = null;
 let _userScans = 0;
 const FREE_SCAN_LIMIT = 3;
-supabase.auth.onAuthStateChange(async function(event, session) {
-  if (session) {
-    _currentUser = session.user;
-    await loadUserProfile();
-    showUserMenu();
-    if (event === 'SIGNED_IN') closeAuth();
-  } else {
-    _currentUser = null;
-    hideUserMenu();
-  }
+document.addEventListener('DOMContentLoaded', function() {
+  supabase.auth.onAuthStateChange(async function(event, session) {
+    if (session) {
+      _currentUser = session.user;
+      await loadUserProfile();
+      showUserMenu();
+      if (event === 'SIGNED_IN') closeAuth();
+    } else {
+      _currentUser = null;
+      hideUserMenu();
+    }
+  });
 });
 async function loadUserProfile() {
   if (!_currentUser) return;
@@ -2950,5 +2903,7 @@ async function incrementScanCount(){
   await supabase.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
   _userScans=c+1;
 }
-
->
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>
