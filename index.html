@@ -2916,23 +2916,35 @@ async function handleAuth(){
       // Auto sign in after signup
       setTimeout(async function(){
         var r2=await supabase.auth.signInWithPassword({email,password});
-        if(!r2.error) closeAuth();
-        else { switchAuthTab('signin'); }
+        if(!r2.error){
+          _currentUser=r2.data.user;
+          closeAuth();
+          showUserMenu();
+          await loadUserProfile();
+          showDlToast('Welcome to InsideTrack.ai!');
+        } else {
+          switchAuthTab('signin');
+        }
       }, 1000);
       return;
     } else {
       var r2=await supabase.auth.signInWithPassword({email,password});
       if(r2.error){
-        // Give a helpful message for email not confirmed
-        if(r2.error.message.toLowerCase().includes('confirm') || r2.error.message.toLowerCase().includes('not confirmed')){
-          errEl.textContent='Please confirm your email first — check your inbox for a confirmation link from Supabase, or contact us to manually verify your account.';
+        if(r2.error.message.toLowerCase().includes('confirm')||r2.error.message.toLowerCase().includes('not confirmed')){
+          errEl.textContent='Please confirm your email first — check your inbox.';
         } else {
-          errEl.textContent = r2.error.message;
+          errEl.textContent=r2.error.message;
         }
         errEl.style.display='block';
         btn.disabled=false; btn.textContent='Sign In';
         return;
       }
+      // Sign in successful — update UI immediately
+      _currentUser = r2.data.user;
+      closeAuth();
+      showUserMenu();
+      await loadUserProfile();
+      showDlToast('Welcome back! You are signed in.');
     }
   }catch(e){
     errEl.textContent=e.message;
