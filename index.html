@@ -2217,7 +2217,7 @@ async function runVisa(){
       `Country: ${country}\nSector: ${sector||'open'}\nCandidate:\n${cv.slice(0,2500)}`
       ,3000);
 
-    renderVisa(data, country === 'United Kingdom');
+    renderVisa(data, country === 'United Kingdom', country, sector);
   }catch(e){
     if(e.message && e.message.includes('JSON')) {
       showError('visa-error','Response error — please try again.');
@@ -2227,7 +2227,9 @@ async function runVisa(){
   }
   setLoading('visa-btn',false);
 }
-function renderVisa(data, isUK){
+function renderVisa(data, isUK, country, sector){
+  country = country || 'United Kingdom';
+  sector = sector || '';
   const companies=data.companies||[];
   const list=document.getElementById('visa-strategy');
   const lColors={High:'#1a6b3c',Medium:'#9a6200'};
