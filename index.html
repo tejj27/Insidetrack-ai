@@ -1104,8 +1104,7 @@ function toggleUserDropdown() {
   var d = document.getElementById('user-dropdown');
   if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
 }
-</script>
-<script>
+
 if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
@@ -2975,7 +2974,6 @@ function hideUserMenu() {
   var su = document.getElementById('nav-signup-btn'); if (su) su.style.display = '';
   var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = '';
   var sc = document.getElementById('nav-scan-label'); if (sc) sc.textContent = 'Free · 3 scans';
-}
 }
 
 function updateUserMenuDisplay(p){
