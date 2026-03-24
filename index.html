@@ -2925,7 +2925,8 @@ async function handleAuth(){
       var r2=await supabase.auth.signInWithPassword({email:email,password:password});
       if(r2.error) throw r2.error;
 
-      _currentUser=r2.data.user;
+      _currentUser = (r2.data && r2.data.user) ? r2.data.user : r2.user || null;
+      if(!_currentUser) throw new Error('Sign in failed. Please try signing in manually.');
       closeAuth();
       showUserMenu();
       await loadUserProfile();
@@ -2936,7 +2937,8 @@ async function handleAuth(){
       var r3=await supabase.auth.signInWithPassword({email:email,password:password});
       if(r3.error) throw r3.error;
 
-      _currentUser=r3.data.user;
+      _currentUser = (r3.data && r3.data.user) ? r3.data.user : r3.user || null;
+      if(!_currentUser) throw new Error('Sign in failed. Please try again.');
       closeAuth();
       showUserMenu();
       await loadUserProfile();
