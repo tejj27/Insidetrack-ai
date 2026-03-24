@@ -233,7 +233,7 @@ select:focus{border-color:var(--green)}
     <p class="hero-sub">Four AI tools that scan your CV, find low-competition jobs, rank your best opportunities, and decode every rejection — so every application counts.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
-      <button class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
+      <button id="hero-signin-btn" class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">3×</div><div class="stat-lbl">More interviews with<br>tailored CVs</div></div>
@@ -2960,35 +2960,43 @@ async function loadUserProfile() {
   if (profile) { _userScans = profile.scans_used||0; updateUserMenuDisplay(profile); }
 }
 function showUserMenu() {
-  var m=document.getElementById('user-menu'); if(!m) return; m.style.display='flex';
-  var a=document.getElementById('user-avatar');
-  if(a&&_currentUser&&_currentUser.email) a.textContent=_currentUser.email[0].toUpperCase();
-  // Hide sign in/sign up buttons from nav
-  var signinBtn=document.getElementById('nav-signin-btn');
-  var signupBtn=document.getElementById('nav-signup-btn');
-  if(signinBtn) signinBtn.style.display='none';
-  if(signupBtn) signupBtn.style.display='none';
-  // Update scan counter in nav
-  var scanLabel=document.getElementById('nav-scan-label');
-  if(scanLabel) scanLabel.textContent='Signed in';
+  if (!_currentUser) return;
+  var m = document.getElementById('user-menu');
+  if (m) m.style.display = 'flex';
+  var a = document.getElementById('user-avatar');
+  if (a) a.textContent = (_currentUser.email || 'U')[0].toUpperCase();
+  var si = document.getElementById('nav-signin-btn'); if (si) si.style.display = 'none';
+  var su = document.getElementById('nav-signup-btn'); if (su) su.style.display = 'none';
+  var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = 'none';
+  var sc = document.getElementById('nav-scan-label');
+  var name = (_currentUser.user_metadata && _currentUser.user_metadata.full_name) || _currentUser.email || '';
+  if (sc) sc.textContent = name.split(' ')[0] || 'Hi!';
+  var emailEl = document.getElementById('user-email-display');
+  if (emailEl) emailEl.textContent = _currentUser.email || '';
 }
 
 function hideUserMenu() {
-  var m=document.getElementById('user-menu'); if(m) m.style.display='none';
-  // Show sign in/sign up buttons again
-  var signinBtn=document.getElementById('nav-signin-btn');
-  var signupBtn=document.getElementById('nav-signup-btn');
-  if(signinBtn) signinBtn.style.display='';
-  if(signupBtn) signupBtn.style.display='';
-  var scanLabel=document.getElementById('nav-scan-label');
-  if(scanLabel) scanLabel.textContent='Free · 3 scans';
+  var m = document.getElementById('user-menu'); if (m) m.style.display = 'none';
+  var si = document.getElementById('nav-signin-btn'); if (si) si.style.display = '';
+  var su = document.getElementById('nav-signup-btn'); if (su) su.style.display = '';
+  var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = '';
+  var sc = document.getElementById('nav-scan-label'); if (sc) sc.textContent = 'Free · 3 scans';
+}
 }
 
 function updateUserMenuDisplay(p){
-  var e=document.getElementById('user-email-display'),pl=document.getElementById('user-plan-display'),sc=document.getElementById('user-scans-display');
-  if(e)e.textContent=(_currentUser&&_currentUser.email)||'';
-  if(pl)pl.textContent=p.plan==='pro'?'Pro Plan':'Free Plan';
-  if(sc)sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+'/'+FREE_SCAN_LIMIT+' scans used');
+  var e=document.getElementById('user-email-display');
+  var pl=document.getElementById('user-plan-display');
+  var sc=document.getElementById('user-scans-display');
+  if(e) e.textContent=(_currentUser&&_currentUser.email)||'';
+  if(pl) pl.textContent=p.plan==='pro'?'⭐ Pro Plan':'🆓 Free Plan';
+  if(sc) sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+' / '+FREE_SCAN_LIMIT+' scans used');
+  // Update nav label too
+  var navSc=document.getElementById('nav-scan-count');
+  if(navSc&&_currentUser) {
+    var name=(_currentUser.user_metadata&&_currentUser.user_metadata.full_name)||_currentUser.email||'';
+    navSc.textContent=name.split(' ')[0]||'Hi!';
+  }
 }
 function toggleUserDropdown(){var d=document.getElementById('user-dropdown');if(d)d.style.display=d.style.display==='none'?'block':'none';}
 // closeAuth defined in early script
