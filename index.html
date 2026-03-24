@@ -221,9 +221,9 @@ select:focus{border-color:var(--green)}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
-      <button class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
-      <button class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
+      <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
+      <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
+      <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
     </div>
   </nav>
 
@@ -2837,9 +2837,29 @@ async function loadUserProfile() {
 }
 function showUserMenu() {
   var m=document.getElementById('user-menu'); if(!m) return; m.style.display='flex';
-  var a=document.getElementById('user-avatar'); if(a&&_currentUser&&_currentUser.email) a.textContent=_currentUser.email[0].toUpperCase();
+  var a=document.getElementById('user-avatar');
+  if(a&&_currentUser&&_currentUser.email) a.textContent=_currentUser.email[0].toUpperCase();
+  // Hide sign in/sign up buttons from nav
+  var signinBtn=document.getElementById('nav-signin-btn');
+  var signupBtn=document.getElementById('nav-signup-btn');
+  if(signinBtn) signinBtn.style.display='none';
+  if(signupBtn) signupBtn.style.display='none';
+  // Update scan counter in nav
+  var scanLabel=document.getElementById('nav-scan-label');
+  if(scanLabel) scanLabel.textContent='Signed in';
 }
-function hideUserMenu(){var m=document.getElementById('user-menu');if(m)m.style.display='none';}
+
+function hideUserMenu() {
+  var m=document.getElementById('user-menu'); if(m) m.style.display='none';
+  // Show sign in/sign up buttons again
+  var signinBtn=document.getElementById('nav-signin-btn');
+  var signupBtn=document.getElementById('nav-signup-btn');
+  if(signinBtn) signinBtn.style.display='';
+  if(signupBtn) signupBtn.style.display='';
+  var scanLabel=document.getElementById('nav-scan-label');
+  if(scanLabel) scanLabel.textContent='Free · 3 scans';
+}
+
 function updateUserMenuDisplay(p){
   var e=document.getElementById('user-email-display'),pl=document.getElementById('user-plan-display'),sc=document.getElementById('user-scans-display');
   if(e)e.textContent=(_currentUser&&_currentUser.email)||'';
@@ -2885,15 +2905,21 @@ async function handleAuth(){
     if(isSignup){
       var r=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});
       if(r.error)throw r.error;
-      sucEl.textContent='Account created! Welcome to InsideTrack.ai 🎉'; sucEl.style.display='block';
-      // Send welcome email via Resend
-      try {
-        await fetch('/api/send-email', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({to:email, name:name})
-        });
-      } catch(emailErr) { console.log('Email error:', emailErr); }
+      // Send welcome email in background — don't await it
+      fetch('/api/send-email', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({to:email, name:name})
+      }).catch(function(e){ console.log('Email error:', e); });
+      btn.disabled=false; btn.textContent='Create Account';
+      sucEl.textContent='Account created! Signing you in...'; sucEl.style.display='block';
+      // Auto sign in after signup
+      setTimeout(async function(){
+        var r2=await supabase.auth.signInWithPassword({email,password});
+        if(!r2.error) closeAuth();
+        else { switchAuthTab('signin'); }
+      }, 1000);
+      return;
     } else {
       var r2=await supabase.auth.signInWithPassword({email,password});
       if(r2.error)throw r2.error;
