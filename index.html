@@ -1090,10 +1090,7 @@ function checkAuthReady() {
   var password = document.getElementById('auth-password');
   var btn = document.getElementById('auth-submit-btn');
   if (!email || !password || !btn) return;
-  var isSignup = btn.textContent === 'Create Account';
-  var nameEl = document.getElementById('auth-name');
-  var nameOk = !isSignup || (nameEl && nameEl.value.trim().length > 0);
-  var ready = email.value.trim().length > 3 && password.value.length >= 6 && nameOk;
+  var ready = email.value.trim().length > 0 && password.value.length >= 1;
   btn.disabled = !ready;
   btn.style.background = ready ? '#1a6b3c' : '#9a9590';
   btn.style.opacity = ready ? '1' : '0.6';
