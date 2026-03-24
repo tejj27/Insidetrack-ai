@@ -1096,10 +1096,7 @@ function checkAuthReady() {
   btn.style.opacity = ready ? '1' : '0.6';
   btn.style.cursor = ready ? 'pointer' : 'not-allowed';
 }
-function handleAuth() {
-  if (typeof _handleAuth === 'function') _handleAuth();
-  else setTimeout(function(){ if(typeof _handleAuth==='function') _handleAuth(); }, 300);
-}
+function handleAuth() { _handleAuth(); }
 function signOut() {
   if (typeof _signOut === 'function') _signOut();
 }
@@ -3120,7 +3117,7 @@ function showUpgradeModal(){
           <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Password</label>
           <input id="auth-password" type="password" placeholder="Min 6 characters" oninput="checkAuthReady()" onkeydown="if(event.key==='Enter'&&!document.getElementById('auth-submit-btn').disabled)handleAuth()" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
         </div>
-        <button id="auth-submit-btn" onclick="handleAuth()" disabled style="background:#9a9590;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:not-allowed;margin-top:4px;transition:all 0.15s;opacity:0.6">Sign In</button>
+        <button id="auth-submit-btn" onclick="_handleAuth()" disabled style="background:#9a9590;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:not-allowed;margin-top:4px;transition:all 0.15s;opacity:0.6">Sign In</button>
       </div>
       <div style="text-align:center;margin-top:14px;font-size:12px;color:#9a9590">
         By continuing you agree to our <span onclick="showModal('terms')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Privacy Policy</span>
