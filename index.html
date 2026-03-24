@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root {
   --cream:#faf8f4; --cream2:#f2efe8; --cream3:#e4dfd4; --ink:#1a1814; --ink2:#2d2a24;
@@ -1046,6 +1045,72 @@ select:focus{border-color:var(--green)}
   <button class="retailor-toast-btn" onclick="scrollToRetailorScore()">View score ↑</button>
 </div>
 
+<script>
+// Critical functions defined early so buttons always work
+function openAuth(tab) {
+  var el = document.getElementById('auth-overlay');
+  if (!el) return;
+  el.style.display = 'flex';
+  if (tab) switchAuthTab(tab);
+}
+function closeAuth() {
+  var el = document.getElementById('auth-overlay');
+  if (el) el.style.display = 'none';
+  var e = document.getElementById('auth-error');
+  var s = document.getElementById('auth-success');
+  if (e) e.style.display = 'none';
+  if (s) s.style.display = 'none';
+}
+function switchAuthTab(tab) {
+  var isSignup = tab === 'signup';
+  var si = document.getElementById('tab-signin');
+  var su = document.getElementById('tab-signup');
+  var nf = document.getElementById('auth-name-field');
+  var btn = document.getElementById('auth-submit-btn');
+  var err = document.getElementById('auth-error');
+  var suc = document.getElementById('auth-success');
+  if (si) { si.style.background = isSignup ? 'transparent' : 'white'; si.style.color = isSignup ? '#6a6560' : '#1a1814'; }
+  if (su) { su.style.background = isSignup ? 'white' : 'transparent'; su.style.color = isSignup ? '#1a1814' : '#6a6560'; }
+  if (nf) nf.style.display = isSignup ? 'block' : 'none';
+  if (btn) { btn.textContent = isSignup ? 'Create Account' : 'Sign In'; btn.disabled = true; btn.style.background = '#9a9590'; btn.style.opacity = '0.6'; btn.style.cursor = 'not-allowed'; }
+  setTimeout(checkAuthReady, 50);
+  if (err) err.style.display = 'none';
+  if (suc) suc.style.display = 'none';
+}
+function openApp(tool) {
+  var landing = document.getElementById('screen-landing');
+  var app = document.getElementById('screen-app');
+  if (landing) landing.style.display = 'none';
+  if (app) app.style.display = 'flex';
+  if (typeof switchTool === 'function') switchTool(tool || 'ats');
+  else setTimeout(function(){ if(typeof switchTool==='function') switchTool(tool||'ats'); }, 200);
+}
+function checkAuthReady() {
+  var email = document.getElementById('auth-email');
+  var password = document.getElementById('auth-password');
+  var btn = document.getElementById('auth-submit-btn');
+  if (!email || !password || !btn) return;
+  var isSignup = btn.textContent === 'Create Account';
+  var nameEl = document.getElementById('auth-name');
+  var nameOk = !isSignup || (nameEl && nameEl.value.trim().length > 0);
+  var ready = email.value.trim().length > 3 && password.value.length >= 6 && nameOk;
+  btn.disabled = !ready;
+  btn.style.background = ready ? '#1a6b3c' : '#9a9590';
+  btn.style.opacity = ready ? '1' : '0.6';
+  btn.style.cursor = ready ? 'pointer' : 'not-allowed';
+}
+function handleAuth() {
+  if (typeof _handleAuth === 'function') _handleAuth();
+  else setTimeout(function(){ if(typeof _handleAuth==='function') _handleAuth(); }, 300);
+}
+function signOut() {
+  if (typeof _signOut === 'function') _signOut();
+}
+function toggleUserDropdown() {
+  var d = document.getElementById('user-dropdown');
+  if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
+}
+</script>
 <script>
 if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -2809,44 +2874,90 @@ function clDownload() {
 // ── Supabase Auth ──
 const SUPA_URL = 'https://kknzvaayyihfzkaezhft.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrbnp2YWF5eWloZnprYWV6aGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA0NDgsImV4cCI6MjA4OTg0NjQ0OH0.-cR0wDnV0rZ27eQGOkFRkPGEb532NjEHWI6mW9YwgHc';
-let supabase = null;
+let _supa = null;
 let _currentUser = null;
 let _userScans = 0;
 const FREE_SCAN_LIMIT = 3;
 
-function initSupabase() {
-  if (window.supabase && window.supabase.createClient) {
-    supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-    supabase.auth.onAuthStateChange(async function(event, session) {
-      if (session) {
-        _currentUser = session.user;
-        await loadUserProfile();
-        showUserMenu();
-        if (event === 'SIGNED_IN') closeAuth();
-      } else {
-        _currentUser = null;
-        hideUserMenu();
-      }
-    });
-  } else {
-    // Fallback stub if SDK fails to load
-    supabase = {
-      auth: {
-        onAuthStateChange: function(){},
-        signUp: async function(){ return {error:{message:'Auth service unavailable'}}; },
-        signInWithPassword: async function(){ return {error:{message:'Auth service unavailable'}}; },
-        signOut: async function(){}
-      },
-      from: function(){ return {select:function(){ return {eq:function(){ return {single:async function(){ return {data:null}; }}; }}; }}; }
-    };
-  }
+// Direct REST API calls to Supabase — no SDK needed
+async function supaSignUp(email, password, name) {
+  var r = await fetch(SUPA_URL + '/auth/v1/signup', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY},
+    body: JSON.stringify({email:email,password:password,data:{full_name:name}})
+  });
+  var d = await r.json();
+  if (d.error) return {error:d.error};
+  return {data:{user:d.user||d}};
 }
 
-document.addEventListener('DOMContentLoaded', initSupabase);
+async function supaSignIn(email, password) {
+  var r = await fetch(SUPA_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY},
+    body: JSON.stringify({email:email,password:password})
+  });
+  var d = await r.json();
+  if (d.error || d.error_description) return {error:{message:d.error_description||d.error}};
+  // Store session
+  if (d.access_token) {
+    localStorage.setItem('it_token', d.access_token);
+    localStorage.setItem('it_user', JSON.stringify(d.user));
+  }
+  return {data:{user:d.user, session:d}};
+}
+
+async function supaSignOut() {
+  var token = localStorage.getItem('it_token');
+  if (token) {
+    await fetch(SUPA_URL + '/auth/v1/logout', {
+      method: 'POST',
+      headers: {'apikey':SUPA_KEY,'Authorization':'Bearer '+token}
+    });
+  }
+  localStorage.removeItem('it_token');
+  localStorage.removeItem('it_user');
+  _currentUser = null;
+}
+
+async function supaGetProfile(userId) {
+  var token = localStorage.getItem('it_token');
+  var r = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId + '&select=scans_used,plan', {
+    headers: {'apikey':SUPA_KEY,'Authorization':'Bearer '+(token||SUPA_KEY)}
+  });
+  var d = await r.json();
+  return d && d[0] ? d[0] : null;
+}
+
+async function supaUpdateProfile(userId, data) {
+  var token = localStorage.getItem('it_token');
+  await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
+    method: 'PATCH',
+    headers: {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(token||SUPA_KEY),'Prefer':'return=minimal'},
+    body: JSON.stringify(data)
+  });
+}
+
+// Check for existing session on load
+document.addEventListener('DOMContentLoaded', async function() {
+  var stored = localStorage.getItem('it_user');
+  var token = localStorage.getItem('it_token');
+  if (stored && token) {
+    try {
+      _currentUser = JSON.parse(stored);
+      await loadUserProfile();
+      showUserMenu();
+    } catch(e) {
+      localStorage.removeItem('it_user');
+      localStorage.removeItem('it_token');
+    }
+  }
+});
+
 async function loadUserProfile() {
   if (!_currentUser) return;
-  var r = await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
-  if (r.data) { _userScans = r.data.scans_used||0; updateUserMenuDisplay(r.data); }
+  var profile = await supaGetProfile(_currentUser.id);
+  if (profile) { _userScans = profile.scans_used||0; updateUserMenuDisplay(profile); }
 }
 function showUserMenu() {
   var m=document.getElementById('user-menu'); if(!m) return; m.style.display='flex';
@@ -2880,32 +2991,9 @@ function updateUserMenuDisplay(p){
   if(sc)sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+'/'+FREE_SCAN_LIMIT+' scans used');
 }
 function toggleUserDropdown(){var d=document.getElementById('user-dropdown');if(d)d.style.display=d.style.display==='none'?'block':'none';}
-function openAuth(tab){
-  document.getElementById('auth-overlay').style.display='flex';
-  if(tab) switchAuthTab(tab);
-}
-function closeAuth(){
-  document.getElementById('auth-overlay').style.display='none';
-  document.getElementById('auth-error').style.display='none';
-  document.getElementById('auth-success').style.display='none';
-}
-function switchAuthTab(tab){
-  var s=tab==='signup';
-  document.getElementById('tab-signin').style.background=s?'transparent':'white';
-  document.getElementById('tab-signin').style.color=s?'#6a6560':'#1a1814';
-  document.getElementById('tab-signup').style.background=s?'white':'transparent';
-  document.getElementById('tab-signup').style.color=s?'#1a1814':'#6a6560';
-  document.getElementById('auth-name-field').style.display=s?'block':'none';
-  var btn=document.getElementById('auth-submit-btn');
-  btn.textContent=s?'Create Account':'Sign In';
-  btn.disabled=false;
-  btn.style.background='#1a6b3c';
-  document.getElementById('auth-error').style.display='none';
-  document.getElementById('auth-success').style.display='none';
-  document.getElementById('auth-email').value='';
-  document.getElementById('auth-password').value='';
-}
-async function handleAuth(){
+// closeAuth defined in early script
+// switchAuthTab defined in early script
+async function _handleAuth(){
   var email=document.getElementById('auth-email').value.trim();
   var password=document.getElementById('auth-password').value;
   var name=document.getElementById('auth-name').value.trim();
@@ -2915,55 +3003,27 @@ async function handleAuth(){
   var btn=document.getElementById('auth-submit-btn');
   errEl.style.display='none';
   sucEl.style.display='none';
-
-  if(!email||!password){
-    errEl.textContent='Please enter your email and password.';
-    errEl.style.display='block';
-    return;
-  }
-
   btn.disabled=true;
   btn.textContent='Please wait...';
 
   try{
     if(isSignup){
-      // Sign up
-      var r=await supabase.auth.signUp({email:email,password:password,options:{data:{full_name:name}}});
-      if(r.error) throw r.error;
-
-      // Send welcome email (fire and forget)
+      var r=await supaSignUp(email,password,name);
+      if(r.error) throw new Error(r.error.message||r.error);
+      // Send welcome email
       fetch('/api/send-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:email,name:name})}).catch(function(){});
-
-      // Switch to sign in tab and ask them to sign in
-      btn.disabled=false;
-      btn.textContent='Create Account';
-      switchAuthTab('signin');
-      document.getElementById('auth-email').value=email;
-      document.getElementById('auth-password').value=password;
-      var sucEl2=document.getElementById('auth-success');
-      sucEl2.textContent='Account created! Signing you in...';
-      sucEl2.style.display='block';
-
-      // Auto sign in
-      var r2=await supabase.auth.signInWithPassword({email:email,password:password});
-      if(r2.error) throw r2.error;
-      var user = r2.data ? r2.data.user : null;
-      if(!user) throw new Error('Please sign in manually.');
-      _currentUser=user;
+      // Sign in immediately
+      var r2=await supaSignIn(email,password);
+      if(r2.error) throw new Error(r2.error.message||r2.error);
+      _currentUser=r2.data.user;
       closeAuth();
       showUserMenu();
       await loadUserProfile();
       showDlToast('Welcome to InsideTrack.ai! 🎉');
-      return;
-
     } else {
-      // Sign in
-      var r3=await supabase.auth.signInWithPassword({email:email,password:password});
-      console.log('Sign in response:', JSON.stringify({error:r3.error, hasData:!!r3.data, hasUser:!!(r3.data&&r3.data.user)}));
-      if(r3.error) throw r3.error;
-
-      _currentUser = (r3.data && r3.data.user) ? r3.data.user : (r3.data || null);
-      if(!_currentUser) throw new Error('Sign in failed. Please try again.');
+      var r3=await supaSignIn(email,password);
+      if(r3.error) throw new Error(r3.error.message||r3.error);
+      _currentUser=r3.data.user;
       closeAuth();
       showUserMenu();
       await loadUserProfile();
@@ -2976,8 +3036,8 @@ async function handleAuth(){
     btn.textContent=isSignup?'Create Account':'Sign In';
   }
 }
-async function signOut(){
-  await supabase.auth.signOut();
+async function _signOut(){
+  await _supa.auth.signOut();
   _currentUser=null;
   var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
   hideUserMenu();
@@ -2989,10 +3049,10 @@ async function signOut(){
 async function checkScanLimit(){
   // If logged in, check Supabase
   if(_currentUser){
-    var r=await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
-    if(!r.data)return true;
-    if(r.data.plan==='pro')return true;
-    if((r.data.scans_used||0)>=FREE_SCAN_LIMIT){
+    var r=await supaGetProfile(_currentUser.id);
+    if(!r)return true;
+    if(r.plan==='pro')return true;
+    if((r.scans_used||0)>=FREE_SCAN_LIMIT){
       showUpgradeModal();
       return false;
     }
@@ -3009,9 +3069,9 @@ async function checkScanLimit(){
 }
 async function incrementScanCount(){
   if(_currentUser){
-    var r=await supabase.from('profiles').select('scans_used').eq('id',_currentUser.id).single();
+    var r=await _supa.from('profiles').select('scans_used').eq('id',_currentUser.id).single();
     var c=(r.data&&r.data.scans_used)||0;
-    await supabase.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
+    await _supa.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
     _userScans=c+1;
   } else {
     // Guest: track in localStorage
@@ -3045,17 +3105,17 @@ function showUpgradeModal(){
       <div style="display:flex;flex-direction:column;gap:12px">
         <div id="auth-name-field" style="display:none">
           <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Full Name</label>
-          <input id="auth-name" type="text" placeholder="e.g. Tejal Sathe" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+          <input id="auth-name" type="text" placeholder="e.g. Tejal Sathe" oninput="checkAuthReady()" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
         </div>
         <div>
           <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Email</label>
-          <input id="auth-email" type="email" placeholder="your@email.com" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+          <input id="auth-email" type="email" placeholder="your@email.com" oninput="checkAuthReady()" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
         </div>
         <div>
           <label style="font-size:12px;font-weight:600;color:#4a4640;display:block;margin-bottom:4px">Password</label>
-          <input id="auth-password" type="password" placeholder="Min 6 characters" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box" onkeydown="if(event.key==='Enter')handleAuth()">
+          <input id="auth-password" type="password" placeholder="Min 6 characters" oninput="checkAuthReady()" onkeydown="if(event.key==='Enter'&&!document.getElementById('auth-submit-btn').disabled)handleAuth()" style="width:100%;padding:10px 14px;border:1.5px solid #e8e3dd;border-radius:9px;font-family:'Geist',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
         </div>
-        <button id="auth-submit-btn" onclick="handleAuth()" style="background:#1a6b3c;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:background 0.15s" onmouseover="this.style.background='#145a32'" onmouseout="this.style.background='#1a6b3c'">Sign In</button>
+        <button id="auth-submit-btn" onclick="handleAuth()" disabled style="background:#9a9590;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:not-allowed;margin-top:4px;transition:all 0.15s;opacity:0.6">Sign In</button>
       </div>
       <div style="text-align:center;margin-top:14px;font-size:12px;color:#9a9590">
         By continuing you agree to our <span onclick="showModal('terms')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Privacy Policy</span>
