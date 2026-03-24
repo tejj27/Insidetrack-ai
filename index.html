@@ -2892,19 +2892,44 @@ async function signOut(){
   showDlToast('Signed out successfully');
 }
 async function checkScanLimit(){
-  if(!_currentUser){openAuth();return false;}
-  var r=await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
-  if(!r.data)return true;
-  if(r.data.plan==='pro')return true;
-  if((r.data.scans_used||0)>=FREE_SCAN_LIMIT){showDlToast('You have used all 3 free scans. Upgrade to Pro for unlimited!');return false;}
+  // If logged in, check Supabase
+  if(_currentUser){
+    var r=await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
+    if(!r.data)return true;
+    if(r.data.plan==='pro')return true;
+    if((r.data.scans_used||0)>=FREE_SCAN_LIMIT){
+      showUpgradeModal();
+      return false;
+    }
+    return true;
+  }
+  // Guest: use localStorage to count scans
+  var guestScans = parseInt(localStorage.getItem('it_guest_scans')||'0');
+  if(guestScans>=FREE_SCAN_LIMIT){
+    openAuth('signup');
+    showDlToast('You have used all 3 free scans. Sign up to continue!');
+    return false;
+  }
   return true;
 }
 async function incrementScanCount(){
-  if(!_currentUser)return;
-  var r=await supabase.from('profiles').select('scans_used').eq('id',_currentUser.id).single();
-  var c=(r.data&&r.data.scans_used)||0;
-  await supabase.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
-  _userScans=c+1;
+  if(_currentUser){
+    var r=await supabase.from('profiles').select('scans_used').eq('id',_currentUser.id).single();
+    var c=(r.data&&r.data.scans_used)||0;
+    await supabase.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
+    _userScans=c+1;
+  } else {
+    // Guest: track in localStorage
+    var g=parseInt(localStorage.getItem('it_guest_scans')||'0');
+    localStorage.setItem('it_guest_scans', g+1);
+    var remaining = FREE_SCAN_LIMIT - (g+1);
+    if(remaining>0) showDlToast(remaining+' free scan'+(remaining>1?'s':'')+' remaining. Sign up to get unlimited!');
+  }
+}
+
+function showUpgradeModal(){
+  showDlToast('You have used all 3 free scans. Sign up for more!');
+  setTimeout(function(){ openAuth('signup'); }, 1500);
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
