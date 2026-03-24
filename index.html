@@ -2768,12 +2768,7 @@ RULES:
 - NO em dashes (—). Use commas or full stops instead.
 - Always end with "Yours Sincerely," then the candidate's name on a new line.
 - Respond ONLY with valid JSON: {"letter":"<full cover letter text with real newlines as \\n>"}`,
-      `Candidate name: ${name}
-Salutation: ${salutation}
-Company: ${company}
-Role: ${role}
-Job Description: ${jd.slice(0, 1500)}
-CV: ${cv.slice(0, 2000)}`,
+      `Candidate name: ${name}\nSalutation: ${salutation}\nCompany: ${company}\nRole: ${role}\nJob Description: ${jd.slice(0,1500)}\nCV: ${cv.slice(0,2000)}`,
       1400
     );
 
@@ -2814,23 +2809,40 @@ function clDownload() {
 // ── Supabase Auth ──
 const SUPA_URL = 'https://kknzvaayyihfzkaezhft.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrbnp2YWF5eWloZnprYWV6aGZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNzA0NDgsImV4cCI6MjA4OTg0NjQ0OH0.-cR0wDnV0rZ27eQGOkFRkPGEb532NjEHWI6mW9YwgHc';
-const supabase = (window.supabase || {createClient:()=>({auth:{onAuthStateChange:()=>{},signUp:async()=>({}),signInWithPassword:async()=>({}),signOut:async()=>({})},from:()=>({select:()=>({eq:()=>({single:async()=>({data:null})})})})})}).createClient(SUPA_URL, SUPA_KEY);
+let supabase = null;
 let _currentUser = null;
 let _userScans = 0;
 const FREE_SCAN_LIMIT = 3;
-document.addEventListener('DOMContentLoaded', function() {
-  supabase.auth.onAuthStateChange(async function(event, session) {
-    if (session) {
-      _currentUser = session.user;
-      await loadUserProfile();
-      showUserMenu();
-      if (event === 'SIGNED_IN') closeAuth();
-    } else {
-      _currentUser = null;
-      hideUserMenu();
-    }
-  });
-});
+
+function initSupabase() {
+  if (window.supabase && window.supabase.createClient) {
+    supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    supabase.auth.onAuthStateChange(async function(event, session) {
+      if (session) {
+        _currentUser = session.user;
+        await loadUserProfile();
+        showUserMenu();
+        if (event === 'SIGNED_IN') closeAuth();
+      } else {
+        _currentUser = null;
+        hideUserMenu();
+      }
+    });
+  } else {
+    // Fallback stub if SDK fails to load
+    supabase = {
+      auth: {
+        onAuthStateChange: function(){},
+        signUp: async function(){ return {error:{message:'Auth service unavailable'}}; },
+        signInWithPassword: async function(){ return {error:{message:'Auth service unavailable'}}; },
+        signOut: async function(){}
+      },
+      from: function(){ return {select:function(){ return {eq:function(){ return {single:async function(){ return {data:null}; }}; }}; }}; }
+    };
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initSupabase);
 async function loadUserProfile() {
   if (!_currentUser) return;
   var r = await supabase.from('profiles').select('scans_used,plan').eq('id',_currentUser.id).single();
