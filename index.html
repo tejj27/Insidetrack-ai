@@ -1098,10 +1098,7 @@ function checkAuthReady() {
 }
 
 
-function toggleUserDropdown() {
-  var d = document.getElementById('user-dropdown');
-  if (d) d.style.display = d.style.display === 'none' ? 'block' : 'none';
-}
+
 
 if (typeof pdfjsLib !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -2965,16 +2962,23 @@ function showUserMenu() {
   if (!_currentUser) return;
   var m = document.getElementById('user-menu');
   if (m) m.style.display = 'flex';
+  var name = (_currentUser.user_metadata && _currentUser.user_metadata.full_name) || '';
+  var email = _currentUser.email || '';
+  var initial = (name || email || 'U')[0].toUpperCase();
   var a = document.getElementById('user-avatar');
-  if (a) a.textContent = (_currentUser.email || 'U')[0].toUpperCase();
+  if (a) a.textContent = initial;
+  // Hide auth buttons
   var si = document.getElementById('nav-signin-btn'); if (si) si.style.display = 'none';
   var su = document.getElementById('nav-signup-btn'); if (su) su.style.display = 'none';
   var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = 'none';
+  // Update nav label with first name
   var sc = document.getElementById('nav-scan-label');
-  var name = (_currentUser.user_metadata && _currentUser.user_metadata.full_name) || _currentUser.email || '';
-  if (sc) sc.textContent = name.split(' ')[0] || 'Hi!';
+  if (sc) sc.textContent = (name.split(' ')[0] || email.split('@')[0] || 'Hi') + ' ·';
+  // Update dropdown
+  var nameEl = document.getElementById('user-avatar-name');
+  if (nameEl) nameEl.textContent = name || email.split('@')[0] || 'User';
   var emailEl = document.getElementById('user-email-display');
-  if (emailEl) emailEl.textContent = _currentUser.email || '';
+  if (emailEl) emailEl.textContent = email;
 }
 
 function hideUserMenu() {
@@ -3046,15 +3050,15 @@ async function handleAuth(){
   }
 }
 async function signOut(){
-  await _supa.auth.signOut();
+  await supaSignOut();
   _currentUser=null;
   var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
   hideUserMenu();
-  // Reset scan counter
-  var sc=document.getElementById('nav-scan-count');
+  var sc=document.getElementById('nav-scan-label');
   if(sc) sc.textContent='Free · 3 scans';
   showDlToast('Signed out successfully');
 }
+function doSignOut(){ signOut(); }
 async function checkScanLimit(){
   // If logged in, check Supabase
   if(_currentUser){
@@ -3133,15 +3137,35 @@ function showUpgradeModal(){
   </div>
 
   <!-- USER AVATAR MENU -->
-  <div id="user-menu" style="display:none;position:fixed;top:12px;right:16px;z-index:1000;align-items:center;gap:8px">
-    <div id="user-avatar" onclick="toggleUserDropdown()" style="width:34px;height:34px;background:#1a6b3c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>
-    <div id="user-dropdown" style="display:none;position:absolute;top:42px;right:0;background:white;border:1.5px solid #e8e3dd;border-radius:12px;padding:8px;min-width:200px;box-shadow:0 8px 24px rgba(0,0,0,0.12)">
-      <div id="user-email-display" style="padding:8px 12px;font-size:12px;color:#6a6560;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
-      <div id="user-plan-display" style="padding:6px 12px;font-size:12px;font-weight:700;color:#1a6b3c"></div>
-      <div id="user-scans-display" style="padding:2px 12px 10px;font-size:12px;color:#9a9590;border-bottom:1px solid #f0ebe5;margin-bottom:4px"></div>
-      <button onclick="signOut()" style="width:100%;text-align:left;padding:8px 12px;background:none;border:none;font-family:'Geist',sans-serif;font-size:13px;color:#dc2626;cursor:pointer;border-radius:6px">Sign out</button>
+  <div id="user-menu" style="display:none;position:fixed;top:14px;right:16px;z-index:2000;align-items:center;gap:10px">
+    <span id="nav-scan-label" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></span>
+    <div id="user-avatar" onclick="toggleUserDropdown()" style="width:36px;height:36px;background:linear-gradient(135deg,#1a6b3c,#2d9d5c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white;cursor:pointer;box-shadow:0 2px 12px rgba(26,107,60,0.35)"></div>
+  </div>
+
+  <!-- USER DROPDOWN -->
+  <div id="user-dropdown" onclick="event.stopPropagation()" style="display:none;position:fixed;top:58px;right:16px;background:white;border-radius:16px;min-width:240px;box-shadow:0 16px 48px rgba(0,0,0,0.18);z-index:3000;overflow:hidden;border:1px solid #e8e3dd">
+    <div style="background:linear-gradient(135deg,#1a6b3c,#2d9d5c);padding:18px 20px 16px">
+      <div id="user-avatar-name" style="font-size:16px;font-weight:800;color:white;margin-bottom:3px;letter-spacing:-0.3px"></div>
+      <div id="user-email-display" style="font-size:12px;color:rgba(255,255,255,0.7)"></div>
+    </div>
+    <div style="padding:14px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#f5f0eb;border-radius:10px;padding:10px 14px;margin-bottom:10px">
+        <div id="user-plan-display" style="font-size:13px;font-weight:700;color:#1a6b3c"></div>
+        <div id="user-scans-display" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></div>
+      </div>
+      <button onmousedown="doSignOut()" style="width:100%;padding:10px 14px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;color:#dc2626;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer">
+        Sign out
+      </button>
     </div>
   </div>
 
+<script>
+document.addEventListener('click', function(e) {
+  var dd = document.getElementById('user-dropdown');
+  var av = document.getElementById('user-avatar');
+  if (dd && av && !dd.contains(e.target) && !av.contains(e.target)) {
+    dd.style.display = 'none';
+  }
+});
+</script>
 </body>
-</html>
