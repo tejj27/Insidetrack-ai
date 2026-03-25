@@ -1740,8 +1740,12 @@ function renderMatcher(data) {
 
 // ── DOCX builder ──
 function downloadCVasPDF() {
-  var cvTextEl = document.getElementById('tailored-cv-text');
-  var cvText = cvTextEl ? cvTextEl.value : '';
+  // Try multiple sources for the CV text
+  var cvText = _tailoredCVText || '';
+  if (!cvText) {
+    var el = document.getElementById('tailor-cv-output');
+    if (el) cvText = el.value;
+  }
   if (!cvText) { showDlToast('Please tailor your CV first'); return; }
   var printWin = window.open('', '_blank');
   var style = '<style>body{font-family:Georgia,serif;max-width:680px;margin:32px auto;font-size:10.5pt;line-height:1.5;color:#1a1814}h1{font-size:17pt;text-align:center;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}h2{font-size:10.5pt;border-bottom:1.5px solid #000;padding-bottom:2px;margin-top:16px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}@media print{body{margin:16px;max-width:100%}}</style>';
