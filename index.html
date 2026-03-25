@@ -610,30 +610,8 @@ select:focus{border-color:var(--green)}
                   <div class="tpl-thumb"><div style="height:5px;background:#1a4fa0;width:55%;margin:0 auto 2px;border-radius:1px"></div><div style="height:1.5px;background:#1a4fa0;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#1a4fa0;width:100%;margin-bottom:4px"></div><div style="height:2.5px;background:#1a4fa0;width:40%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#c0c8e0;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#e8eaf0;width:90%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#1a4fa0;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#e8eaf0;flex:1;border-radius:1px"></div></div></div>
                   <div class="tpl-label">Executive</div>
                 </button>
-                <button onclick="selectTemplate('clean')" id="tpl-clean" class="tpl-btn">
-                  <div class="tpl-thumb"><div style="height:5px;background:#2d2d2d;width:60%;margin-bottom:1px;border-radius:1px"></div><div style="height:2px;background:#e0e0e0;width:80%;margin-bottom:2px;border-radius:1px"></div><div style="height:3px;background:#e0e0e0;width:100%;margin-bottom:4px"></div><div style="height:2.5px;background:#2d2d2d;width:40%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#e0e0e0;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#ebebeb;width:90%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:4px;height:2px;background:#bbb;border-radius:1px;flex-shrink:0"></div><div style="height:2px;background:#ebebeb;flex:1;border-radius:1px"></div></div></div>
-                  <div class="tpl-label">Clean</div>
-                </button>
-                <button onclick="selectTemplate('sharp')" id="tpl-sharp" class="tpl-btn">
-                  <div class="tpl-thumb" style="padding:0;overflow:hidden;display:flex;flex-direction:row">
-                    <div style="width:16px;background:#1a1814;flex-shrink:0;display:flex;flex-direction:column;padding:5px 3px;gap:3px">
-                      <div style="height:3px;background:rgba(255,255,255,0.8);border-radius:1px"></div>
-                      <div style="height:2px;background:rgba(255,255,255,0.4);border-radius:1px"></div>
-                      <div style="height:2px;background:rgba(255,255,255,0.4);border-radius:1px"></div>
-                      <div style="height:2px;background:rgba(255,255,255,0.4);border-radius:1px"></div>
-                    </div>
-                    <div style="flex:1;padding:5px 4px;display:flex;flex-direction:column;gap:2px">
-                      <div style="height:4px;background:#1a1814;width:80%;border-radius:1px"></div>
-                      <div style="height:2px;background:#ccc;width:90%;border-radius:1px;margin-bottom:2px"></div>
-                      <div style="height:2.5px;background:#1a6b3c;width:55%;border-radius:1px;margin-bottom:1px"></div>
-                      <div style="height:1px;background:#1a6b3c;width:100%;margin-bottom:2px"></div>
-                      <div style="height:2px;background:#ddd;width:95%;border-radius:1px"></div>
-                      <div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#1a6b3c;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#ddd;flex:1;border-radius:1px"></div></div>
-                      <div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#1a6b3c;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#ddd;width:70%;border-radius:1px"></div></div>
-                    </div>
-                  </div>
-                  <div class="tpl-label">Sharp</div>
-                </button>
+
+
               </div>
             </div>
             <!-- View tabs -->
@@ -2396,7 +2374,7 @@ function renderVisa(data, isUK, country, sector){
 
 function selectTemplate(name) {
   _activeTemplate = name;
-  ['classic','modern','minimal','executive','clean','sharp'].forEach(function(t) {
+  ['classic','modern','minimal','executive'].forEach(function(t) {
     var btn = document.getElementById('tpl-' + t);
     if (!btn) return;
     btn.className = btn.className.replace(/\s*tpl-active/g, '');
