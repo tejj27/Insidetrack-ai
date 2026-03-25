@@ -587,6 +587,7 @@ select:focus{border-color:var(--green)}
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="copy-btn" onclick="copyTailoredCV(this)" style="margin:0">📋 Copy</button>
                 <button id="dl-docx-btn" onclick="downloadCV()" style="display:inline-flex;align-items:center;gap:5px;background:var(--green);border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background='#145a32'" onmouseout="this.style.background='var(--green)'">⬇ Download .docx</button>
+                <button onclick="downloadCVasPDF()" style="display:inline-flex;align-items:center;gap:5px;background:#1a4fa0;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background='#143d7a'" onmouseout="this.style.background='#1a4fa0'">⬇ Download .pdf</button>
               </div>
             </div>
             <!-- Template picker -->
@@ -1738,6 +1739,47 @@ function renderMatcher(data) {
 }
 
 // ── DOCX builder ──
+function downloadCVasPDF() {
+  var cvTextEl = document.getElementById('tailored-cv-text');
+  var cvText = cvTextEl ? cvTextEl.value : '';
+  if (!cvText) { showDlToast('Please tailor your CV first'); return; }
+  var printWin = window.open('', '_blank');
+  var style = '<style>body{font-family:Georgia,serif;max-width:680px;margin:32px auto;font-size:10.5pt;line-height:1.5;color:#1a1814}h1{font-size:17pt;text-align:center;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}h2{font-size:10.5pt;border-bottom:1.5px solid #000;padding-bottom:2px;margin-top:16px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}@media print{body{margin:16px;max-width:100%}}</style>';
+  var bodyHtml = '';
+  var lines = cvText.split(String.fromCharCode(10));
+  var inList = false;
+  var lineNum = 0;
+  for (var i=0; i<lines.length; i++) {
+    var l = lines[i].trim();
+    if (!l) {
+      if(inList){bodyHtml+='</ul>';inList=false;}
+      bodyHtml+='<div style="height:4px"></div>';
+      continue;
+    }
+    if (lineNum===0) { bodyHtml+='<h1>'+l+'</h1>'; lineNum++; continue; }
+    var isHeading = /^(SUMMARY|PROFILE|EDUCATION|EXPERIENCE|EMPLOYMENT|SKILLS|PROJECTS|CERTIFICATIONS|LANGUAGES|REFERENCES|ACHIEVEMENTS|VOLUNTEERING|AWARDS|INTERESTS|ADDITIONAL)/i.test(l) && l.length < 45;
+    if (isHeading) {
+      if(inList){bodyHtml+='</ul>';inList=false;}
+      bodyHtml+='<h2>'+l+'</h2>';
+      lineNum++; continue;
+    }
+    var isBullet = l.charAt(0)==='•' || (l.charAt(0)==='-' && l.length>2);
+    if (isBullet) {
+      if(!inList){bodyHtml+='<ul>';inList=true;}
+      bodyHtml+='<li>'+l.replace(/^[•\-]\s*/,'')+'</li>';
+      lineNum++; continue;
+    }
+    if(inList){bodyHtml+='</ul>';inList=false;}
+    bodyHtml+='<p>'+l+'</p>';
+    lineNum++;
+  }
+  if(inList) bodyHtml+='</ul>';
+  printWin.document.write('<html><head><title>CV</title>'+style+'</head><body>'+bodyHtml+'</body></html>');
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(function(){ printWin.print(); }, 600);
+}
+
 function buildDocxBlob(text) {
   const sc = ({
     classic:   {nf:'Times New Roman', bf:'Times New Roman', nc:'1A1814', hc:'1A1814', rc:'1A1814', na:'center', ns:40, hs:20, bs:19, rule:'000000'},
@@ -3030,12 +3072,13 @@ async function handleAuth(){
       showDlToast('Welcome to InsideTrack.ai! 🎉');
     } else {
       var r3=await supaSignIn(email,password);
-      if(r3.error) throw new Error(r3.error.message||r3.error);
+      if(r3.error) throw new Error(r3.error.message||'Invalid email or password.');
+      if(!r3.data || !r3.data.user) throw new Error('Sign in failed. Please check your email and password.');
       _currentUser=r3.data.user;
       closeAuth();
       showUserMenu();
       await loadUserProfile();
-      showDlToast('Welcome back! ✓');
+      showDlToast('Welcome back, '+(_currentUser.user_metadata&&_currentUser.user_metadata.full_name||_currentUser.email.split('@')[0])+'! ✓');
     }
   } catch(e){
     errEl.textContent=e.message;
@@ -3047,10 +3090,27 @@ async function handleAuth(){
 async function signOut(){
   await supaSignOut();
   _currentUser=null;
+  // Clear ALL app data from localStorage
+  localStorage.removeItem('insidetrack_apps');
+  localStorage.removeItem('it_guest_scans');
+  localStorage.removeItem('it_ats_result');
+  localStorage.removeItem('it_token');
+  localStorage.removeItem('it_user');
+  // Clear ATS result from screen
+  var atsResult = document.getElementById('ats-result');
+  if(atsResult) atsResult.innerHTML='';
+  var atsResultWrap = document.getElementById('ats-result-wrap');
+  if(atsResultWrap) atsResultWrap.classList.remove('visible');
+  // Close dropdown and hide menu
   var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
   hideUserMenu();
   var sc=document.getElementById('nav-scan-label');
   if(sc) sc.textContent='Free · 3 scans';
+  // Go back to landing page
+  var landing=document.getElementById('screen-landing');
+  var app=document.getElementById('screen-app');
+  if(landing) landing.style.display='flex';
+  if(app) app.style.display='none';
   showDlToast('Signed out successfully');
 }
 function doSignOut(){ signOut(); }
