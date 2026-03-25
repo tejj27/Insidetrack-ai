@@ -2851,25 +2851,36 @@ async function runCoverLetter() {
 
   try {
     const data = await callClaude(
-      `You are an expert cover letter writer following the Le Careers template. Write a tailored cover letter under 350 words.
+      `You are an expert cover letter writer following the Le Careers graduate cover letter template exactly.
 
-STRUCTURE (follow exactly):
-1. Opening line: "I am a recent [degree + grade] graduate from [university]." OR for experienced: "I am a [job title] with [X] years of experience in [field]." Then: "I saw the [role] at [company] and [genuine specific reason you are excited — reference something real about the company]."
-2. Paragraph 2: Company-specific paragraph — what specifically excites you about THIS company (their values, a specific initiative, product, or culture point). Make it genuine and researched-sounding. Then link to a specific achievement from the CV with a number.
-3. Paragraph 3: Another specific achievement from CV with numbers. Link it to a skill the JD is asking for.
-4. Paragraph 4 (optional, only if CV has extracurriculars/leadership): One sentence on a non-work achievement that shows character (leadership, creativity, resilience).
-5. Closing: "[Company] has a special place for me because [specific reason]. I look forward to speaking with you." Then "Yours Sincerely," and candidate name.
+STRUCTURE (4 paragraphs + closing — follow this exactly):
 
-RULES:
+PARAGRAPH 1 — OPENING (2-3 sentences):
+"Dear [Hiring Manager name or 'Hiring Manager'],"
+Sentence 1: "I am a recent [Degree + Grade] graduate from [University]." OR if experienced: "I am a [Job Title] with [X] years at [Company]."
+Sentence 2: "I saw the [Role] at [Company] on [source if given], and I absolutely loved it."
+Sentence 3: One genuine, specific reason why THIS company excites them — reference something real and specific from the JD (a product, initiative, mission, client work, or culture point). Make it sound researched, not generic.
+
+PARAGRAPH 2 — COMPANY RESEARCH + ACHIEVEMENT (4-5 sentences):
+Expand on what specifically draws them to this company — a specific initiative, case study, value, or product mentioned in or inferable from the JD. Show genuine enthusiasm. Then link to their strongest CV achievement with a real number. Be specific: name the tool, the output, the metric.
+
+PARAGRAPH 3 — SECOND ACHIEVEMENT (4-5 sentences):
+A second strong, relevant achievement from the CV with numbers or impact. Link it directly to a skill or requirement from the JD. If the CV has extracurriculars or leadership, include one sentence on a non-work achievement that shows character (leadership, creativity, resilience).
+
+PARAGRAPH 4 — CLOSING (2-3 sentences):
+"[Company] has a special place in my heart, [genuine specific reason — e.g. having researched their work on X / spoken to people at Y / admired their approach to Z]. I know the [training/opportunity/impact] I will receive at [Company] is irreplaceable. I look forward to speaking with you."
+Then: "Yours Sincerely," on its own line, then candidate name on the next line.
+
+STRICT RULES:
 - Under 350 words total. Count carefully.
-- Use real numbers and achievements from the CV only — never invent.
+- Only use facts, numbers and achievements from the CV provided — never invent.
 - Sound genuine, humble and enthusiastic — not corporate or robotic.
-- Reference the company by name at least twice.
-- NO: "I am passionate about", "I am a hard worker", "I am a team player", "leverage", "synergy"
-- NO em dashes (—). Use commas or full stops instead.
-- Always end with "Yours Sincerely," then the candidate's name on a new line.
-- Respond ONLY with valid JSON: {"letter":"<full cover letter text with real newlines as \\n>"}`,
-      `Candidate name: ${name}\nSalutation: ${salutation}\nCompany: ${company}\nRole: ${role}\nJob Description: ${jd.slice(0,1500)}\nCV: ${cv.slice(0,2000)}`,
+- Reference the company name at least 3 times naturally.
+- BANNED words: passionate, dedicated, leverage, synergy, hardworking, aligned with my values, people-centered, excited to apply, I am eager, I believe I would be a great fit.
+- No em dashes (—). Use commas or full stops instead.
+- No asterisks or markdown formatting.
+- End EXACTLY with: Yours Sincerely,\n[candidate name]
+- Respond ONLY with valid JSON: {"letter":"<full letter with \n for newlines>"}`,      `Candidate name: ${name}\nSalutation: ${salutation}\nCompany: ${company}\nRole: ${role}\nJob Description: ${jd.slice(0,1500)}\nCV: ${cv.slice(0,2000)}`,
       1400
     );
 
@@ -2878,12 +2889,11 @@ RULES:
 
     // Build the Le Careers header block
     const headerLines = [
-      'Job Title: ' + role,
+      'JOB TITLE: ' + role.toUpperCase(),
       'Company: ' + company,
-      source ? 'Source: ' + source : 'Source: N/A',
-      manager ? 'Hiring Manager: ' + manager : 'Hiring Manager: N/A',
+      'Source: ' + (source || 'N/A'),
+      'Hiring Manager: ' + (manager || 'N/A'),
       '',
-      '---',
       ''
     ];
     const fullOutput = headerLines.join('\n') + letter;
