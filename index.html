@@ -1375,10 +1375,18 @@ async function runTailorCV() {
     Must be exactly: "References available on request"
 
 12. PAGE LENGTH — STRICTLY ENFORCE
-    Fewer than 2 work roles OR under 2 years experience → 1 PAGE ABSOLUTE MAXIMUM. No exceptions.
-    2-5 years experience → 1 page. Only 2 pages if 3+ roles with substantial content.
+    Fewer than 2 work roles OR under 2 years experience → 1 PAGE ABSOLUTE MAXIMUM. No exceptions whatsoever.
+    2-5 years experience → 1 page. Only 2 pages if 4+ roles with substantial content.
     5+ years experience → max 2 pages.
-    To fit 1 page: summary = 2 sentences MAX. Bullets = 12-15 words max. Keep only top 3-4 bullets per role. Projects = 1 line each. Skills = 1 comma-separated line. Certifications = 1 line comma-separated.
+    To fit 1 page AGGRESSIVELY:
+    - Summary = 2 sentences MAX, 40 words total
+    - Bullets = MAX 15 words each, keep only top 4 bullets per role
+    - Projects = 1 line each, no sub-bullets
+    - Skills = 1 comma-separated line
+    - Certifications = 1 comma-separated line (not separate lines)
+    - Languages = 1 line only if space allows, otherwise REMOVE
+    - Remove all blank lines between sections
+    - "References available on request" = last line, always include
 
 ═══ BULLET RULES ═══
 Format: Strong past-tense verb + specific task + tool/method + measurable result
@@ -1730,10 +1738,10 @@ function downloadCVasPDF() {
 
   // Full template CSS per template
   var tplCSS = {
-    classic: '@page{margin:12mm 15mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:1.5px;font-size:18pt;margin:0 0 4px 0;color:#1a1814}h2{border-bottom:1.5px solid #1a1814;text-transform:uppercase;letter-spacing:0.5px;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0;color:#1a1814}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    classic: '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:1.5px;font-size:16pt;margin:0 0 3px 0;color:#1a1814}h2{border-bottom:1.5px solid #1a1814;text-transform:uppercase;letter-spacing:0.5px;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;color:#1a1814}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
     modern:  '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #1a6b3c;padding-bottom:5px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
-    minimal: '@page{margin:12mm 15mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:17pt;font-weight:700;margin:0 0 4px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:1px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
-    executive: '@page{margin:12mm 15mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:17pt;margin:0 0 4px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    minimal: '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:left;font-size:16pt;font-weight:700;margin:0 0 3px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:1px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
+    executive: '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:16pt;margin:0 0 3px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
     clean:   '@page{margin:12mm 15mm;size:A4}body{font-family:Arial,sans-serif;color:#2d2d2d;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:18pt;font-weight:700;margin:0 0 4px 0;color:#2d2d2d;border-bottom:2px solid #e0e0e0;padding-bottom:5px}h2{background:#f2f2f2;color:#2d2d2d;text-transform:uppercase;font-size:9.5pt;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
     sharp:   '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:18pt;font-weight:700;margin:0 0 4px 0;color:#1a1814;border-left:5px solid #1a6b3c;padding-left:10px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}'
   };
