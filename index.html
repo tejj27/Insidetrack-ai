@@ -1740,7 +1740,6 @@ function renderMatcher(data) {
 
 // ── DOCX builder ──
 function downloadCVasPDF() {
-  // Try multiple sources for the CV text
   var cvText = _tailoredCVText || '';
   if (!cvText) {
     var el = document.getElementById('tailor-cv-output');
@@ -1748,7 +1747,46 @@ function downloadCVasPDF() {
   }
   if (!cvText) { showDlToast('Please tailor your CV first'); return; }
   var printWin = window.open('', '_blank');
-  var style = '<style>body{font-family:Georgia,serif;max-width:680px;margin:32px auto;font-size:10.5pt;line-height:1.5;color:#1a1814}h1{font-size:17pt;text-align:center;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}h2{font-size:10.5pt;border-bottom:1.5px solid #000;padding-bottom:2px;margin-top:16px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}@media print{body{margin:16px;max-width:100%}}</style>';
+
+  // Template styles matching selected template
+  var tplStyles = {
+    classic:   'font-family:Georgia,serif;color:#1a1814;',
+    modern:    'font-family:Calibri,sans-serif;color:#1a1814;',
+    minimal:   'font-family:Arial,sans-serif;color:#111;',
+    executive: 'font-family:Georgia,serif;color:#1a4fa0;',
+    clean:     'font-family:Arial,sans-serif;color:#2d2d2d;',
+    sharp:     'font-family:Calibri,sans-serif;color:#1a1814;'
+  };
+  var tplH1 = {
+    classic:   'text-align:center;text-transform:uppercase;letter-spacing:1px;font-size:18pt;',
+    modern:    'text-align:left;font-size:18pt;border-bottom:2px solid #1a6b3c;padding-bottom:4px;',
+    minimal:   'text-align:left;font-size:17pt;font-weight:700;',
+    executive: 'text-align:center;text-transform:uppercase;letter-spacing:2px;font-size:17pt;color:#1a4fa0;',
+    clean:     'text-align:left;font-size:17pt;font-weight:700;',
+    sharp:     'text-align:left;font-size:17pt;border-left:4px solid #1a6b3c;padding-left:10px;'
+  };
+  var tplH2 = {
+    classic:   'border-bottom:1.5px solid #000;text-transform:uppercase;letter-spacing:0.5px;',
+    modern:    'color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;',
+    minimal:   'color:#444;border-bottom:1px solid #e5e5e5;text-transform:uppercase;',
+    executive: 'color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;',
+    clean:     'background:#f0f0f0;padding:3px 8px;border-radius:3px;text-transform:uppercase;',
+    sharp:     'color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;'
+  };
+  var t = _activeTemplate || 'classic';
+  var bodyStyle = tplStyles[t] || tplStyles.classic;
+  var h1Style = tplH1[t] || tplH1.classic;
+  var h2Style = tplH2[t] || tplH2.classic;
+
+  var style = '<style>' +
+    '@page{margin:15mm 18mm;size:A4}' +
+    'body{' + bodyStyle + 'max-width:100%;margin:0;padding:0;font-size:10.5pt;line-height:1.5}' +
+    'h1{' + h1Style + 'margin:0 0 4px 0}' +
+    'h2{' + h2Style + 'font-size:10pt;padding-bottom:2px;margin-top:14px;margin-bottom:5px}' +
+    'p{margin:2px 0}' +
+    'ul{margin:3px 0;padding-left:16px}' +
+    'li{margin:1px 0}' +
+    '</style>';
   var bodyHtml = '';
   var lines = cvText.split(String.fromCharCode(10));
   var inList = false;
@@ -1778,10 +1816,14 @@ function downloadCVasPDF() {
     lineNum++;
   }
   if(inList) bodyHtml+='</ul>';
-  printWin.document.write('<html><head><title>CV</title>'+style+'</head><body>'+bodyHtml+'</body></html>');
+  var instructions = '<div style="display:none" class="no-print" id="print-tip" style="background:#fffbea;border:1px solid #f0c040;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#7a4500;font-family:Arial,sans-serif">' +
+    '<b>To remove header/footer:</b> In the print dialog → More settings → uncheck "Headers and footers"' +
+    '</div>';
+  var noprint = '<style>.no-print{display:block!important}@media print{.no-print{display:none!important}}</style>';
+  printWin.document.write('<html><head><title>CV</title>'+style+noprint+'</head><body>'+instructions+bodyHtml+'</body></html>');
   printWin.document.close();
   printWin.focus();
-  setTimeout(function(){ printWin.print(); }, 600);
+  setTimeout(function(){ printWin.print(); }, 800);
 }
 
 function buildDocxBlob(text) {
