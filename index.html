@@ -1839,7 +1839,11 @@ function buildDocxBlob(text) {
       li++; continue;
     }
 
-    // NAME (first non-empty line)
+    // NAME (first non-empty line) — skip header metadata lines
+    if(li===0 && (line.startsWith('Job Title:') || line.startsWith('Company:') || line.startsWith('Source:') || line.startsWith('Hiring Manager:'))){
+      body += para(`<w:r>${rpr(false,19,'4a4640',sc.nf)}<w:t>${xe(line)}</w:t></w:r>`,{before:0,after:20});
+      li++; continue;
+    }
     if(li===0){
       const align = sc.na==='center'?'center':'left';
       const nameText = (sc.na==='center') ? line.toUpperCase() : line;
@@ -2889,7 +2893,7 @@ STRICT RULES:
 
     // Build the Le Careers header block
     const headerLines = [
-      'JOB TITLE: ' + role.toUpperCase(),
+      'Job Title: ' + role,
       'Company: ' + company,
       'Source: ' + (source || 'N/A'),
       'Hiring Manager: ' + (manager || 'N/A'),
