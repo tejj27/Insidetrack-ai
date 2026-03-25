@@ -1749,44 +1749,19 @@ function downloadCVasPDF() {
   var printWin = window.open('', '_blank');
 
   // Template styles matching selected template
-  var tplStyles = {
-    classic:   'font-family:Georgia,serif;color:#1a1814;',
-    modern:    'font-family:Calibri,sans-serif;color:#1a1814;',
-    minimal:   'font-family:Arial,sans-serif;color:#111;',
-    executive: 'font-family:Georgia,serif;color:#1a4fa0;',
-    clean:     'font-family:Arial,sans-serif;color:#2d2d2d;',
-    sharp:     'font-family:Calibri,sans-serif;color:#1a1814;'
-  };
-  var tplH1 = {
-    classic:   'text-align:center;text-transform:uppercase;letter-spacing:1px;font-size:18pt;',
-    modern:    'text-align:left;font-size:18pt;border-bottom:2px solid #1a6b3c;padding-bottom:4px;',
-    minimal:   'text-align:left;font-size:17pt;font-weight:700;',
-    executive: 'text-align:center;text-transform:uppercase;letter-spacing:2px;font-size:17pt;color:#1a4fa0;',
-    clean:     'text-align:left;font-size:17pt;font-weight:700;',
-    sharp:     'text-align:left;font-size:17pt;border-left:4px solid #1a6b3c;padding-left:10px;'
-  };
-  var tplH2 = {
-    classic:   'border-bottom:1.5px solid #000;text-transform:uppercase;letter-spacing:0.5px;',
-    modern:    'color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;',
-    minimal:   'color:#444;border-bottom:1px solid #e5e5e5;text-transform:uppercase;',
-    executive: 'color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;',
-    clean:     'background:#f0f0f0;padding:3px 8px;border-radius:3px;text-transform:uppercase;',
-    sharp:     'color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;'
-  };
   var t = _activeTemplate || 'classic';
-  var bodyStyle = tplStyles[t] || tplStyles.classic;
-  var h1Style = tplH1[t] || tplH1.classic;
-  var h2Style = tplH2[t] || tplH2.classic;
 
-  var style = '<style>' +
-    '@page{margin:15mm 18mm;size:A4}' +
-    'body{' + bodyStyle + 'max-width:100%;margin:0;padding:0;font-size:10.5pt;line-height:1.5}' +
-    'h1{' + h1Style + 'margin:0 0 4px 0}' +
-    'h2{' + h2Style + 'font-size:10pt;padding-bottom:2px;margin-top:14px;margin-bottom:5px}' +
-    'p{margin:2px 0}' +
-    'ul{margin:3px 0;padding-left:16px}' +
-    'li{margin:1px 0}' +
-    '</style>';
+  // Full template CSS per template
+  var tplCSS = {
+    classic: '@page{margin:15mm 18mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:1.5px;font-size:18pt;margin:0 0 4px 0;color:#1a1814}h2{border-bottom:1.5px solid #1a1814;text-transform:uppercase;letter-spacing:0.5px;font-size:10pt;padding-bottom:2px;margin:14px 0 5px 0;color:#1a1814}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    modern:  '@page{margin:15mm 18mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #1a6b3c;padding-bottom:5px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    minimal: '@page{margin:15mm 18mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:17pt;font-weight:700;margin:0 0 4px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9.5pt;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:1px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    executive: '@page{margin:15mm 18mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:17pt;margin:0 0 4px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:10pt;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    clean:   '@page{margin:15mm 18mm;size:A4}body{font-family:Arial,sans-serif;color:#2d2d2d;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:18pt;font-weight:700;margin:0 0 4px 0;color:#2d2d2d;border-bottom:2px solid #e0e0e0;padding-bottom:5px}h2{background:#f2f2f2;color:#2d2d2d;text-transform:uppercase;font-size:9.5pt;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    sharp:   '@page{margin:15mm 18mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:18pt;font-weight:700;margin:0 0 4px 0;color:#1a1814;border-left:5px solid #1a6b3c;padding-left:10px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}'
+  };
+
+  var style = '<style>' + (tplCSS[t] || tplCSS.classic) + '</style>';
   var bodyHtml = '';
   var lines = cvText.split(String.fromCharCode(10));
   var inList = false;
