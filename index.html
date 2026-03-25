@@ -424,7 +424,7 @@ select:focus{border-color:var(--green)}
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="btn btn-ghost btn-sm" onclick="backToLanding()">← Home</button>
-      <button onclick="switchTool('visatest')" style="background:none;border:1px dashed #c4b5fd;border-radius:7px;padding:5px 10px;font-size:11px;color:#7c3aed;cursor:pointer;font-family:'Geist',sans-serif">🧪 Visa Test</button>
+      
     </div>
   </nav>
 
@@ -966,7 +966,7 @@ select:focus{border-color:var(--green)}
       </div><!-- /panel-coverletter -->
 
       <!-- ── VISA TEST PANEL (hidden, dev only) ── -->
-      <div class="tool-panel" id="panel-visatest">
+      <div class="tool-panel" id="panel-visatest" style="display:none">
         <div class="panel-header">
           <div class="panel-eyebrow" style="color:#7c3aed"><div class="panel-eyebrow-dot" style="background:#7c3aed"></div>🧪 VISA FINDER — API TEST</div>
           <h2 class="panel-title">Visa Sponsor Test (Adzuna + JSearch)</h2>
@@ -1127,7 +1127,7 @@ function backToLanding() {
 function switchTool(tool) {
   if (tool === 'tracker') setTimeout(renderTracker, 0);
   if (tool === 'visatest') setTimeout(vtLoadKeys, 0);
-  ['ats','visa','outreach','tracker','coverletter','visatest'].forEach(t => {
+  ['ats','visa','outreach','tracker','coverletter'].forEach(t => {
     document.getElementById('panel-'+t).classList.remove('active');
     const sb = document.getElementById('sbtn-'+t);
     if (sb) sb.classList.remove('active');
@@ -3055,18 +3055,21 @@ async function signOut(){
 }
 function doSignOut(){ signOut(); }
 async function checkScanLimit(){
-  // If logged in, check Supabase
   if(_currentUser){
-    var r=await supaGetProfile(_currentUser.id);
-    if(!r)return true;
-    if(r.plan==='pro')return true;
-    if((r.scans_used||0)>=FREE_SCAN_LIMIT){
-      showUpgradeModal();
-      return false;
+    try {
+      var r = await supaGetProfile(_currentUser.id);
+      if(!r) return true;
+      if(r.plan==='pro') return true;
+      if((r.scans_used||0)>=FREE_SCAN_LIMIT){
+        showUpgradeModal();
+        return false;
+      }
+      return true;
+    } catch(e) {
+      return true; // allow scan if profile check fails
     }
-    return true;
   }
-  // Guest: use localStorage to count scans
+  // Guest: use localStorage
   var guestScans = parseInt(localStorage.getItem('it_guest_scans')||'0');
   if(guestScans>=FREE_SCAN_LIMIT){
     openAuth('signup');
@@ -3077,10 +3080,14 @@ async function checkScanLimit(){
 }
 async function incrementScanCount(){
   if(_currentUser){
-    var r=await _supa.from('profiles').select('scans_used').eq('id',_currentUser.id).single();
-    var c=(r.data&&r.data.scans_used)||0;
-    await _supa.from('profiles').update({scans_used:c+1}).eq('id',_currentUser.id);
-    _userScans=c+1;
+    try {
+      var profile = await supaGetProfile(_currentUser.id);
+      var c = (profile&&profile.scans_used)||0;
+      await supaUpdateProfile(_currentUser.id, {scans_used:c+1});
+      _userScans=c+1;
+      await loadUserProfile();
+    } catch(e){ console.log('increment error',e); }
+    var dummy=0;
   } else {
     // Guest: track in localStorage
     var g=parseInt(localStorage.getItem('it_guest_scans')||'0');
