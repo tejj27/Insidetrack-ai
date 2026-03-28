@@ -230,15 +230,15 @@ select:focus{border-color:var(--green)}
   <div class="hero">
     <div class="hero-badge">✦ AI-powered · Free to start</div>
     <h1 class="hero-title">Your unfair advantage<br>in every <span>job application</span></h1>
-    <p class="hero-sub">Four AI tools that scan your CV, find low-competition jobs, rank your best opportunities, and decode every rejection — so every application counts.</p>
+    <p class="hero-sub">InsideTrack gives you five AI tools to tailor your CV, write cover letters, find visa sponsors, generate outreach messages, and track every application — all in one place.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
       <button id="hero-signin-btn" class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
     </div>
     <div class="hero-stats">
-      <div style="text-align:center"><div class="stat-num">3×</div><div class="stat-lbl">More interviews with<br>tailored CVs</div></div>
-      <div style="text-align:center"><div class="stat-num">80%</div><div class="stat-lbl">Jobs never posted<br>publicly</div></div>
-      <div style="text-align:center"><div class="stat-num">48h</div><div class="stat-lbl">Window before a job<br>gets flooded</div></div>
+      <div style="text-align:center"><div class="stat-num">60s</div><div class="stat-lbl">To scan your CV<br>against any job</div></div>
+      <div style="text-align:center"><div class="stat-num">10</div><div class="stat-lbl">Visa sponsors found<br>for your profile</div></div>
+      <div style="text-align:center"><div class="stat-num">5×</div><div class="stat-lbl">Tools in one place<br>free to start</div></div>
     </div>
   </div>
 
@@ -247,7 +247,7 @@ select:focus{border-color:var(--green)}
       <div class="tool-num">01 · ATS SCANNER</div>
       <div class="tool-icon">📊</div>
       <div class="tool-title">ATS Pass Probability</div>
-      <div class="tool-desc">Upload your CV and paste the job description. AI scores your match, finds missing keywords, and rewrites your CV to the exact format recruiters expect — without adding skills you don't have.</div>
+      <div class="tool-desc">Upload your CV and a job description. AI scores your ATS match, finds missing keywords, and rewrites your CV to pass the filter — using only skills you actually have.</div>
       <div class="tool-cta"><span class="tool-cta-label">Upload CV + JD</span><button class="btn btn-green btn-sm">Scan now →</button></div>
     </div>
     <div class="tool-card" onclick="openApp('visa')">
@@ -261,8 +261,14 @@ select:focus{border-color:var(--green)}
       <div class="tool-num">03 · OUTREACH AI</div>
       <div class="tool-icon">✉️</div>
       <div class="tool-title">LinkedIn Outreach</div>
-      <div class="tool-desc">Generate a personalised LinkedIn message that stands out in a recruiter's inbox — natural, confident, under 90 words. Includes a short version and a follow-up if they don't reply.</div>
+      <div class="tool-desc">Generate 5 personalised LinkedIn messages — connection note, recruiter message, and 3 follow-ups. Natural, confident, under 90 words each.</div>
       <div class="tool-cta"><span class="tool-cta-label">CV + company + role</span><button class="btn btn-sm" style="background:#0077b5;color:white">Generate message →</button></div>
+    </div>
+    <div class="tool-card" onclick="openApp('coverletter')">
+      <div class="tool-eyebrow">05 · COVER LETTER AI</div>
+      <div class="tool-title">✉️ Cover Letter Generator</div>
+      <div class="tool-desc">Generate a tailored cover letter following the Le Careers template — under 350 words, genuine tone, real achievements. Download as DOCX instantly.</div>
+      <div style="font-size:11px;color:var(--ink4);font-family:'Geist Mono',monospace">CV + role + company</div>
     </div>
     <div class="tool-card" onclick="openApp('tracker')">
       <div class="tool-num">04 · APPLICATION TRACKER</div>
