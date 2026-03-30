@@ -1372,7 +1372,8 @@ async function runTailorCV() {
 8. SKILLS
    Keep ALL skills from original CV. Then mirror JD phrasing where candidate clearly has that skill.
    NEVER remove skills that were in the original — only add JD phrasing equivalents.
-   One comma-separated line.
+   CRITICAL: If original CV has subcategories (e.g. "Technical Skills:" and "Soft Skills:" or "Tools:" and "Languages:"), PRESERVE these subcategories exactly. Do not flatten into one list.
+   If original is one flat list, keep it as one comma-separated line.
    Skills candidate HAS — mirror JD phrasing: ${found}
    Skills MISSING from CV — do NOT add: ${missing}
 
@@ -1381,24 +1382,39 @@ async function runTailorCV() {
    Format: "English (fluent), Hindi (native)"
 
 10. CERTIFICATIONS (only if present in original)
-    Simple list, one per line or comma-separated.
+    ALWAYS keep — never remove. List on one line comma-separated if space is tight.
+
+10b. INTERNSHIPS / WORK PLACEMENTS (only if present in original)
+    ALWAYS keep — treat same as work experience. Format: "Role | Company  Dates" with 1-2 bullets.
+
+10c. VOLUNTEERING (only if present in original)
+    ALWAYS keep — valuable signal for recruiters. Format: "Role | Organisation  Dates" with 1 line description.
+
+10d. ADDITIONAL SECTIONS (Awards, Publications, Leadership, Extracurriculars)
+    Keep any section that was in the original CV. Compress to 1 line per item if space is needed.
 
 11. FINAL LINE
     Must be exactly: "References available on request"
 
-12. PAGE LENGTH — STRICTLY ENFORCE
-    Fewer than 2 work roles OR under 2 years experience → 1 PAGE ABSOLUTE MAXIMUM. No exceptions whatsoever.
-    2-5 years experience → 1 page. Only 2 pages if 4+ roles with substantial content.
-    5+ years experience → max 2 pages.
-    To fit 1 page AGGRESSIVELY:
-    - Summary = 2 sentences MAX, 40 words total
-    - Bullets = MAX 15 words each, keep only top 4 bullets per role
-    - Projects = 1 line each, no sub-bullets
-    - Skills = 1 comma-separated line
-    - Certifications = 1 comma-separated line (not separate lines)
-    - Languages = 1 line only if space allows, otherwise REMOVE
-    - Remove all blank lines between sections
-    - "References available on request" = last line, always include
+12. PAGE LENGTH — INTELLIGENT DECISION
+    NEVER delete sections to force a page limit. Instead compress intelligently.
+    Under 2 years experience with 1 role → aim for 1 page, but NEVER remove certifications, internships, volunteering or languages to achieve this.
+    2-5 years experience → 1-2 pages depending on content. Do not cut valuable sections.
+    5+ years experience → up to 2 pages.
+    
+    COMPRESSION RULES (use these instead of deleting):
+    - Bullets: max 20 words each. Cut the weakest 1-2 bullets per role if needed, never all of them.
+    - Summary: 2-3 sentences max.
+    - Skills: keep ALL skills, compress into comma-separated lines by category if subcategories exist.
+    - Certifications: keep ALL, list on one line comma-separated if space is tight.
+    - Languages, Volunteering, Internships: ALWAYS keep — these are valuable signals to recruiters.
+    - Projects: keep max 3, compress to 1 line each if needed.
+    
+    SECTION HIERARCHY — CRITICAL:
+    - If original CV has "Technical Skills" and "Soft Skills" as separate subsections, KEEP them separate.
+    - Never merge subcategories into one flat list.
+    - Preserve the candidate's original section organisation.
+    - "References available on request" = last line always.
 
 ═══ BULLET RULES ═══
 Format: Strong past-tense verb + specific task + tool/method + measurable result
