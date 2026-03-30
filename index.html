@@ -1339,65 +1339,98 @@ JD: ${jd.slice(0,800)}`, 300
     const _careerField = _detectedCareerField ? _detectedCareerField.field : 'Professional';
     const _careerTone = _detectedCareerField ? (_detectedCareerField.tone || 'formal') : 'formal';
     const _tailorSystemPrompt = [
-      'You are a world-class CV coach. Your job is PRESERVATION-FIRST, OPTIMISATION-SECOND.',
+      'You are a world-class CV coach following the Le Careers CV template. Your system is COMPLETENESS-FIRST, OPTIMISATION-SECOND.',
       '',
-      'CAREER FIELD: ' + _careerField,
-      'TONE: ' + _careerTone,
+      'CAREER FIELD: ' + _careerField + ' | TONE: ' + _careerTone,
       '',
-      '━━━ GOLDEN RULES — NEVER BREAK ━━━',
-      '1. NEVER remove an entire section. Every section in the input MUST appear in the output.',
-      '2. NEVER invent skills, qualifications, dates, companies or metrics not in the original.',
-      '3. NEVER change the candidate career direction or job titles.',
-      '4. NEVER use ** or * markdown — plain text only.',
-      '5. NEVER merge separate skill subcategories into one flat list.',
-      '6. Certifications, Projects, Internships, Volunteering, Languages, Awards — ALL MUST BE PRESERVED.',
+      '━━━ STEP 1: SECTION EXTRACTION (do this mentally first) ━━━',
+      'Before writing anything, identify EVERY section in the input CV:',
+      '- Name, Contact, Summary/Profile, Education, Work Experience/Professional Experience',
+      '- Projects, Internships, Volunteering, Achievements/Leadership',
+      '- Skills (note ALL subcategories e.g. Technical Skills / Soft Skills / Tools)',
+      '- Languages, Certifications, Additional Information, Awards, Publications',
+      '- ANY other section present in the input',
+      'RULE: Every section you identify MUST appear in the output. No exceptions.',
       '',
-      '━━━ YOUR PROCESS ━━━',
-      'STEP 1: Extract all sections from input CV.',
-      'STEP 2: Improve each section individually — better verbs, clearer impact.',
-      'STEP 3: Align keywords with JD where candidate clearly has that skill.',
-      'STEP 4: Output full CV with ALL sections intact.',
+      '━━━ STEP 2: IMPROVE EACH SECTION (never delete) ━━━',
+      'For each section: improve wording, fix spelling/grammar, strengthen impact, align with JD keywords.',
+      'NEVER remove a section because it seems small or irrelevant.',
+      'NEVER reposition the candidate into a different career field.',
       '',
-      '━━━ SECTION RULES ━━━',
-      'NAME: First line only.',
-      'CONTACT: City, Country • email | phone | LinkedIn: url',
-      'SUMMARY: 2 sentences max. Qualification + top achievement. Target role + 2 key skills. BANNED: passionate, dedicated, hardworking, leverage, synergy.',
-      'EDUCATION: Degree, Grade | University  Dates. Bullet for exceptional modules only.',
-      'WORK EXPERIENCE: Keep ALL roles. Job Title | Company  Start-End. Roles 1-3: up to 5 bullets. Roles 4-5: up to 2 bullets. Strong verb + tool + measurable result per bullet.',
-      'PROJECTS (PRESERVE ALWAYS): Keep EVERY project. Never reduce count. Format: bullet Project Name | Tools - one sentence outcome.',
-      'CERTIFICATIONS (PRESERVE ALWAYS): Every certification MUST appear by name. Never write "various certifications".',
-      'INTERNSHIPS (PRESERVE ALWAYS): Treat as work experience. Keep all.',
-      'VOLUNTEERING (PRESERVE ALWAYS): Keep all entries. Role | Organisation  Dates - one line description.',
-      'SKILLS: If original has subcategories (Technical/Soft/Tools etc) KEEP THEM SEPARATE. Never flatten. Keep all skills. Missing from CV do NOT add: ' + missing + '. Present in CV mirror JD phrasing: ' + found + '.',
-      'LANGUAGES: Keep all. Format: English (fluent), Hindi (native).',
-      'AWARDS/ACHIEVEMENTS/LEADERSHIP (PRESERVE ALWAYS): Keep every item.',
-      'ANY OTHER SECTION: Keep it. Improve wording only.',
+      '━━━ GOLDEN RULES ━━━',
+      '1. NEVER drop any section present in the input.',
+      '2. NEVER invent facts, numbers, dates, companies or qualifications.',
+      '3. NEVER use markdown (no ** or *).',
+      '4. NEVER merge skill subcategories — preserve every category label exactly.',
+      '5. Fix ALL typos including section headings (e.g. "SKILS" → "SKILLS").',
+      '6. Certifications, Languages, Projects, Volunteering — ALWAYS in output.',
+      '',
+      '━━━ LE CAREERS FORMAT ━━━',
+      '',
+      'LINE 1: Full name only.',
+      '',
+      'LINE 2: Email: x | Mobile: x | LinkedIn: x | City, Country',
+      '',
+      'SUMMARY',
+      'One short paragraph, 2-3 sentences. Sentence 1: degree + grade + university + top achievement with number.',
+      'Sentence 2: target role from JD + 2 key skills. Include "I have the right to work in the UK." ONLY if original CV mentions visa/sponsorship.',
+      'BANNED: passionate, dedicated, hardworking, leverage, synergy, team player.',
+      '',
+      'EDUCATION',
+      'Degree, Grade | University  Dates',
+      '• Top X% of year-group (only if exceptional)',
+      '• Modules: Subject (grade%), Subject (grade%) — only if grades are strong',
+      'Keep ALL degrees. Remove societies/clubs only.',
+      '',
+      'PROFESSIONAL EXPERIENCE (or WORK EXPERIENCE — use original heading)',
+      'Job Title | Company  Start Date - End Date',
+      '• Promoted/award line FIRST if applicable',
+      '• Strong past-tense verb + specific tool/method + measurable number',
+      'Keep ALL roles. Roles 1-3: up to 5 bullets. Roles 4-5: up to 2 bullets. Beyond 5: one line.',
+      '',
+      'PROJECTS (include if present — NEVER remove)',
+      '• Project Name | Tools — one sentence outcome with number if available',
+      'Keep EVERY project from input. Never reduce count.',
+      '',
+      'INTERNSHIPS / WORK PLACEMENTS (include if present — NEVER remove)',
+      'Treat same as Professional Experience.',
+      '',
+      'ACHIEVEMENTS & LEADERSHIP ACTIVITIES (include if present — NEVER remove)',
+      'Title | Organisation  Dates',
+      '• one line or bullet with specific number/outcome',
+      '',
+      'ADDITIONAL INFORMATION',
+      'This section MUST contain ALL of the following if present in input:',
+      'Languages: English (fluent), X (native), Y (intermediate) — keep ALL languages',
+      'Skills: [all skills from original grouped logically] — mirror JD phrasing for: ' + found,
+      'Certifications: [ALL certifications by name — NEVER omit any] — do NOT add: ' + missing,
+      'If input has other subsections here (e.g. Interests, References) — keep them.',
+      '',
       'FINAL LINE: References available on request',
       '',
       '━━━ PAGE LENGTH ━━━',
-      'DO NOT force a page limit. Let content determine length.',
-      '1 role + under 2 years: aim for 1 page using COMPRESSION not deletion.',
-      '2-4 roles: 1-2 pages fine.',
-      '5+ roles: 2 pages expected.',
-      'COMPRESSION = shorter bullets (15-20 words). NEVER = deleting entire sections.',
+      'Under 3 years experience: 1-2 pages — use compression not deletion.',
+      '3+ years or 3+ roles: up to 2 pages.',
+      'COMPRESSION = tighter bullets (15-20 words max). DELETION of sections = NEVER allowed.',
       '',
-      '━━━ CAREER FIELD ADAPTATION ━━━',
-      'Technology: emphasise technical stack, system scale, architecture decisions.',
-      'Business/Consulting: emphasise stakeholder impact, process improvement, commercial outcomes.',
+      '━━━ CAREER FIELD TONE ━━━',
+      'Technology: emphasise technical stack, system scale, architecture.',
+      'Business: emphasise stakeholder impact, process improvement, commercial outcomes.',
       'Finance: emphasise accuracy, risk, compliance, quantified financial impact.',
       'Law: emphasise legal research, drafting, client matters, jurisdiction.',
       'Creative: emphasise portfolio, campaigns, audience reach, creative tools.',
       'Healthcare: emphasise patient outcomes, clinical tools, regulatory compliance.',
-      'Engineering: emphasise technical specs, safety, materials, project scale.',
+      'Engineering: emphasise specs, safety, scale, delivery.',
       'Education: emphasise student outcomes, curriculum, assessment.',
       '',
       'ATS score to beat: ' + currentScore + '%',
-      'Respond ONLY with valid JSON: {"estimated_new_score":<integer>,"bump_description":"<one honest sentence>","changes_made":["<change 1>","<change 2>","<change 3>","<change 4>"],"gaps":["<gap 1>","<gap 2>"],"tailored_cv":"<FULL CV — ALL sections preserved — ends with References available on request>"}'
+      'Respond ONLY with valid JSON — no markdown fences:',
+      '{"estimated_new_score":<integer>,"bump_description":"<one sentence>","changes_made":["<change 1>","<change 2>","<change 3>","<change 4>"],"gaps":["<gap 1>","<gap 2>"],"tailored_cv":"<FULL CV — every section from input preserved and improved — plain text — ends with: References available on request>"}'
     ].join('\n');
     const data = await callClaude(
       _tailorSystemPrompt,
-      'ORIGINAL CV — do not add anything not here:\n' + resumeText.slice(0,4500) + '\n\nJOB DESCRIPTION:\n' + jd.slice(0,1800),
-      8000);
+      'ORIGINAL CV — preserve every section exactly as structured below:\n' + resumeText.slice(0,6000) + '\n\nJOB DESCRIPTION (align keywords where evidenced):\n' + jd.slice(0,2000),
+      10000);
     const estimatedScore = Math.min(99, Math.max(currentScore+5, data.estimated_new_score||(currentScore+15)));
     document.getElementById('tailor-old-score').textContent = currentScore + '%';
     document.getElementById('tailor-new-score').textContent = '~' + estimatedScore + '%';
@@ -1752,7 +1785,7 @@ function downloadCVasPDF() {
       continue;
     }
     if (lineNum===0) { bodyHtml+='<h1>'+l+'</h1>'; lineNum++; continue; }
-    var isHeading = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|EDUCATION|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE SKILLS|PROJECTS|CERTIFICATIONS|LANGUAGES|REFERENCES|ACHIEVEMENTS|VOLUNTEERING|AWARDS|INTERESTS|ADDITIONAL INFORMATION|EXTRACURRICULARS|LEADERSHIP|PUBLICATIONS)/i.test(l.trim()) && l.trim().length < 55;
+    var isHeading = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|EDUCATION|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE SKILLS|SOFT SKILLS|TOOLS|PROJECTS|CERTIFICATIONS|LANGUAGES|REFERENCES|ACHIEVEMENTS|ACHIEVEMENTS & LEADERSHIP|ACHIEVEMENT & LEADERSHIP ACTIVITIES|ACHIEVEMENTS & LEADERSHIP ACTIVITIES|VOLUNTEERING|AWARDS|INTERESTS|ADDITIONAL INFORMATION|ADDITIONAL|INTERNSHIPS|EXTRACURRICULARS|LEADERSHIP|PUBLICATIONS|TRAINING)/i.test(l.trim()) && l.trim().length < 60;
     if (isHeading) {
       if(inList){bodyHtml+='</ul>';inList=false;}
       bodyHtml+='<h2>'+l+'</h2>';
@@ -1857,7 +1890,7 @@ function buildDocxBlob(text) {
     return `<w:p>${pPr}${runs}</w:p>`;
   }
 
-  const HEADING_RE = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|EDUCATION|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EXPERIENCE|EMPLOYMENT|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|INTERESTS?|ADDITIONAL INFORMATION|EXTRACURRICULARS?)[\s:]*$/i;
+  const HEADING_RE = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|EDUCATION|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|SOFT SKILLS?|TOOLS?|ACHIEVEMENTS?|ACHIEVEMENT & LEADERSHIP|ACHIEVEMENTS & LEADERSHIP ACTIVITIES|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|INTERESTS?|ADDITIONAL INFORMATION|ADDITIONAL|INTERNSHIPS?|EXTRACURRICULARS?|PUBLICATIONS?|TRAINING)[\s:]*$/i;
 
   let body = '';
   const lines = text.split('\n');
