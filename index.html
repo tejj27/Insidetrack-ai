@@ -530,7 +530,31 @@ select:focus{border-color:var(--green)}
           </div>
 
           <!-- Tailor banner -->
-          <div class="tailor-banner" id="tailor-banner" style="display:none;margin-top:20px">
+          <!-- Career Field Detection Banner -->
+              <div id="career-field-banner" style="display:none;background:linear-gradient(135deg,#f0f7ff,#e8f4ff);border:1.5px solid #1a4fa0;border-radius:12px;padding:14px 18px;margin-bottom:14px;display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span id="career-field-icon" style="font-size:20px"></span>
+                  <div>
+                    <div style="font-size:13px;font-weight:700;color:#1a4fa0">Career field detected: <span id="career-field-name"></span></div>
+                    <div style="font-size:11px;color:#4a5fa0;margin-top:1px" id="career-field-reason"></div>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <span style="font-size:11px;color:#6a6560">Not right?</span>
+                  <select id="career-field-select" onchange="overrideCareerField()" style="font-size:12px;padding:4px 8px;border:1.5px solid #1a4fa0;border-radius:6px;background:white;color:#1a4fa0;font-weight:600;cursor:pointer">
+                    <option value="Technology">💻 Technology</option>
+                    <option value="Business">💼 Business</option>
+                    <option value="Finance">📊 Finance</option>
+                    <option value="Law">⚖️ Law</option>
+                    <option value="Creative">🎨 Creative</option>
+                    <option value="Healthcare">🏥 Healthcare</option>
+                    <option value="Engineering">⚙️ Engineering</option>
+                    <option value="Education">📚 Education</option>
+                    <option value="Other">🌐 Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tailor-banner" id="tailor-banner" style="display:none;margin-top:20px">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
               <div>
                 <div style="font-weight:700;font-size:15px;margin-bottom:4px">✨ Want a higher score?</div>
@@ -1281,22 +1305,42 @@ function renderATS(data) {
 }
 
 // ── Tailor CV ──
+let _detectedCareerField = null;
+
 async function runTailorCV() {
   const jd = document.getElementById('ats-jd').value.trim();
   if (!resumeText || !jd || !_atsResult) { showError('ats-error','Please run the ATS analysis first.'); return; }
   const btn = document.getElementById('tailor-btn');
   btn.disabled = true;
-  btn.innerHTML = '<div class="loader-ring" style="width:15px;height:15px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px;border-top-color:#0e6e6e"></div>Tailoring…';
+  btn.innerHTML = '<div class="loader-ring" style="width:15px;height:15px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px;border-top-color:#0e6e6e"></div>Detecting career field…';
   document.getElementById('tailor-result').style.display = 'none';
   _reTailorCount = 0;
+  try {
+    // Step 1: Detect career field
+    const fieldData = await callClaude(
+      `You are a career classification AI. Analyze the CV and job description and classify the career field.
+Return ONLY valid JSON, no other text:
+{"field":"Technology|Business|Law|Creative|Healthcare|Finance|Engineering|Education|Other","confidence":0-100,"reason":"one sentence why","tone":"formal|technical|creative","cv_length":"1-page|2-page","suggested_template":"modern|classic|minimal|executive"}`,
+      `CV: ${resumeText.slice(0,1500)}
+JD: ${jd.slice(0,800)}`, 300
+    );
+    _detectedCareerField = fieldData;
+    
+    // Show field detection banner
+    showCareerFieldBanner(fieldData);
+    btn.innerHTML = '<div class="loader-ring" style="width:15px;height:15px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px;border-top-color:#0e6e6e"></div>Tailoring CV…';
+  } catch(e) {
+    _detectedCareerField = {field:'Business', confidence:70, tone:'formal', cv_length:'1-2 page', suggested_template:'modern'};
+  }
   try {
     const missing = (_atsResult.missing_keywords||[]).join(', ');
     const found = (_atsResult.found_keywords||[]).join(', ');
     const currentScore = _atsResult.score || 0;
     const data = await callClaude(
-      `You are a professional CV coach. Rewrite this CV following the exact structure and rules below.
+      `You are a professional CV coach specialising in ${_detectedCareerField ? _detectedCareerField.field : 'professional'} careers. Rewrite this CV following the exact structure and rules below. Adapt tone and emphasis for the ${_detectedCareerField ? _detectedCareerField.field : 'professional'} field — do NOT reposition the candidate into a different field than their CV shows.
 
 ═══ INTEGRITY — NEVER break these ═══
+- CRITICAL: Do NOT change the candidate's career direction. If they are a Business Analyst, keep them as a Business Analyst. If they are a Software Engineer, keep them as a Software Engineer. Never reposition to a different career field.
 - NEVER invent skills, tools, qualifications, dates or metrics not in the original CV
 - NEVER change job titles, company names or numbers
 - NEVER add a keyword unless clearly evidenced in the original CV
@@ -1812,6 +1856,47 @@ function downloadCVasPDF() {
   printWin.document.close();
   printWin.focus();
   setTimeout(function(){ printWin.print(); }, 800);
+}
+
+
+function showCareerFieldBanner(fieldData) {
+  var banner = document.getElementById('career-field-banner');
+  var icon = document.getElementById('career-field-icon');
+  var name = document.getElementById('career-field-name');
+  var reason = document.getElementById('career-field-reason');
+  var select = document.getElementById('career-field-select');
+  if (!banner) return;
+  
+  var icons = {
+    'Technology':'💻','Business':'💼','Finance':'📊','Law':'⚖️',
+    'Creative':'🎨','Healthcare':'🏥','Engineering':'⚙️','Education':'📚','Other':'🌐'
+  };
+  var field = fieldData.field || 'Business';
+  if (icon) icon.textContent = icons[field] || '🌐';
+  if (name) name.textContent = field + ' (' + (fieldData.confidence||70) + '% confidence)';
+  if (reason) reason.textContent = fieldData.reason || '';
+  if (select) select.value = field;
+  banner.style.display = 'flex';
+  
+  // Auto-select suggested template
+  if (fieldData.suggested_template && typeof selectTemplate === 'function') {
+    selectTemplate(fieldData.suggested_template);
+  }
+}
+
+function overrideCareerField() {
+  var select = document.getElementById('career-field-select');
+  if (!select || !_detectedCareerField) return;
+  _detectedCareerField.field = select.value;
+  var icons = {
+    'Technology':'💻','Business':'💼','Finance':'📊','Law':'⚖️',
+    'Creative':'🎨','Healthcare':'🏥','Engineering':'⚙️','Education':'📚','Other':'🌐'
+  };
+  var icon = document.getElementById('career-field-icon');
+  var name = document.getElementById('career-field-name');
+  if (icon) icon.textContent = icons[select.value] || '🌐';
+  if (name) name.textContent = select.value + ' (manually selected)';
+  showDlToast('Career field updated to ' + select.value);
 }
 
 function buildDocxBlob(text) {
