@@ -1343,14 +1343,16 @@ JD: ${jd.slice(0,800)}`, 300
       '',
       'CAREER FIELD: ' + _careerField + ' | TONE: ' + _careerTone,
       '',
-      '━━━ STEP 1: SECTION EXTRACTION (do this mentally first) ━━━',
-      'Before writing anything, identify EVERY section in the input CV:',
-      '- Name, Contact, Summary/Profile, Education, Work Experience/Professional Experience',
-      '- Projects, Internships, Volunteering, Achievements/Leadership',
-      '- Skills (note ALL subcategories e.g. Technical Skills / Soft Skills / Tools)',
-      '- Languages, Certifications, Additional Information, Awards, Publications',
-      '- ANY other section present in the input',
-      'RULE: Every section you identify MUST appear in the output. No exceptions.',
+      '━━━ STEP 1: SECTION MIRRORING — CRITICAL ━━━',
+      'Read the input CV and list every section heading exactly as written.',
+      'Example: if input has "WORK EXPERIENCE", output must say "WORK EXPERIENCE" — not "PROFESSIONAL EXPERIENCE".',
+      'Example: if input has "ADDITIONAL INFORMATION", output must say "ADDITIONAL INFORMATION".',
+      'Example: if input has "ACHIEVEMENTS & LEADERSHIP ACTIVITIES", output must say "ACHIEVEMENTS & LEADERSHIP ACTIVITIES".',
+      'The output CV must have the EXACT same sections in the EXACT same order as the input.',
+      'NEVER add sections that were not in the input.',
+      'NEVER rename sections.',
+      'NEVER reorder sections.',
+      'NEVER drop sections.',
       '',
       '━━━ STEP 2: IMPROVE EACH SECTION (never delete) ━━━',
       'For each section: improve wording, fix spelling/grammar, strengthen impact, align with JD keywords.',
@@ -1365,46 +1367,32 @@ JD: ${jd.slice(0,800)}`, 300
       '5. Fix ALL typos including section headings (e.g. "SKILS" → "SKILLS").',
       '6. Certifications, Languages, Projects, Volunteering — ALWAYS in output.',
       '',
-      '━━━ LE CAREERS FORMAT ━━━',
+      '━━━ FORMATTING RULES ━━━',
       '',
-      'LINE 1: Full name only.',
+      'NAME: First line. Full name only.',
+      'CONTACT: One line. Use same format as input (email | phone | LinkedIn | location).',
       '',
-      'LINE 2: Email: x | Mobile: x | LinkedIn: x | City, Country',
+      'FOR EACH SECTION (in same order as input):',
+      'Use the EXACT section heading from the input CV.',
+      'Improve the content — better wording, stronger verbs, fixed grammar.',
+      'Keep all subsections and categories exactly as structured in input.',
       '',
-      'SUMMARY',
-      'One short paragraph, 2-3 sentences. Sentence 1: degree + grade + university + top achievement with number.',
-      'Sentence 2: target role from JD + 2 key skills. Include "I have the right to work in the UK." ONLY if original CV mentions visa/sponsorship.',
-      'BANNED: passionate, dedicated, hardworking, leverage, synergy, team player.',
-      '',
-      'EDUCATION',
-      'Degree, Grade | University  Dates',
-      '• Top X% of year-group (only if exceptional)',
-      '• Modules: Subject (grade%), Subject (grade%) — only if grades are strong',
-      'Keep ALL degrees. Remove societies/clubs only.',
-      '',
-      'PROFESSIONAL EXPERIENCE (or WORK EXPERIENCE — use original heading)',
+      'WORK EXPERIENCE / PROFESSIONAL EXPERIENCE (whatever heading input uses):',
       'Job Title | Company  Start Date - End Date',
-      '• Promoted/award line FIRST if applicable',
-      '• Strong past-tense verb + specific tool/method + measurable number',
-      'Keep ALL roles. Roles 1-3: up to 5 bullets. Roles 4-5: up to 2 bullets. Beyond 5: one line.',
+      'Roles 1-3: up to 5 bullets. Roles 4-5: up to 2 bullets. Beyond 5: one line.',
+      'Each bullet: strong verb + specific tool + measurable result.',
       '',
-      'PROJECTS (include if present — NEVER remove)',
-      '• Project Name | Tools — one sentence outcome with number if available',
-      'Keep EVERY project from input. Never reduce count.',
+      'SKILLS (preserve EXACT subcategory structure from input):',
+      'If input has "Technical Skills:" and "Soft Skills:" — keep both labels and lists.',
+      'If input has one flat list — keep as one flat list.',
+      'Mirror JD phrasing for skills candidate has: ' + found,
+      'Do NOT add skills not in CV: ' + missing,
       '',
-      'INTERNSHIPS / WORK PLACEMENTS (include if present — NEVER remove)',
-      'Treat same as Professional Experience.',
+      'CERTIFICATIONS (exact heading from input, all items preserved):',
+      'List every certification by name. Never summarise as "various".',
       '',
-      'ACHIEVEMENTS & LEADERSHIP ACTIVITIES (include if present — NEVER remove)',
-      'Title | Organisation  Dates',
-      '• one line or bullet with specific number/outcome',
-      '',
-      'ADDITIONAL INFORMATION',
-      'This section MUST contain ALL of the following if present in input:',
-      'Languages: English (fluent), X (native), Y (intermediate) — keep ALL languages',
-      'Skills: [all skills from original grouped logically] — mirror JD phrasing for: ' + found,
-      'Certifications: [ALL certifications by name — NEVER omit any] — do NOT add: ' + missing,
-      'If input has other subsections here (e.g. Interests, References) — keep them.',
+      'LANGUAGES (exact heading from input, all languages preserved):',
+      'Keep every language and proficiency level.',
       '',
       'FINAL LINE: References available on request',
       '',
@@ -1785,7 +1773,15 @@ function downloadCVasPDF() {
       continue;
     }
     if (lineNum===0) { bodyHtml+='<h1>'+l+'</h1>'; lineNum++; continue; }
-    var isHeading = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|EDUCATION|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE SKILLS|SOFT SKILLS|TOOLS|PROJECTS|CERTIFICATIONS|LANGUAGES|REFERENCES|ACHIEVEMENTS|ACHIEVEMENTS & LEADERSHIP|ACHIEVEMENT & LEADERSHIP ACTIVITIES|ACHIEVEMENTS & LEADERSHIP ACTIVITIES|VOLUNTEERING|AWARDS|INTERESTS|ADDITIONAL INFORMATION|ADDITIONAL|INTERNSHIPS|EXTRACURRICULARS|LEADERSHIP|PUBLICATIONS|TRAINING)/i.test(l.trim()) && l.trim().length < 60;
+    // Dynamic heading: ALL CAPS, short, no bullets/symbols/contact info
+    var _lt = l.trim();
+    var _letters = _lt.replace(/[^a-zA-Z]/g,'');
+    var _upper = (_lt.match(/[A-Z]/g)||[]).length;
+    var _lower = (_lt.match(/[a-z]/g)||[]).length;
+    var isHeading = _letters.length >= 2 && _upper > 0 && _lower === 0 
+      && _lt.length <= 60 && !_lt.startsWith('•') && !_lt.startsWith('-')
+      && !_lt.includes('@') && !_lt.includes('http')
+      && !(_lt.includes('|') && _lt.length > 30);
     if (isHeading) {
       if(inList){bodyHtml+='</ul>';inList=false;}
       bodyHtml+='<h2>'+l+'</h2>';
@@ -1890,7 +1886,22 @@ function buildDocxBlob(text) {
     return `<w:p>${pPr}${runs}</w:p>`;
   }
 
-  const HEADING_RE = /^(SUMMARY|PROFESSIONAL SUMMARY|PROFILE|EDUCATION|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|SOFT SKILLS?|TOOLS?|ACHIEVEMENTS?|ACHIEVEMENT & LEADERSHIP|ACHIEVEMENTS & LEADERSHIP ACTIVITIES|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|INTERESTS?|ADDITIONAL INFORMATION|ADDITIONAL|INTERNSHIPS?|EXTRACURRICULARS?|PUBLICATIONS?|TRAINING)[\s:]*$/i;
+  // Dynamic heading detection - matches any ALL CAPS line that looks like a section heading
+  const HEADING_RE = {
+    test: function(line) {
+      var t = line.trim();
+      if (!t || t.length < 2 || t.length > 65) return false;
+      if (t.startsWith('•') || t.startsWith('-') || t.startsWith('*')) return false;
+      if (t.includes('@') || t.includes('http') || t.includes('linkedin')) return false;
+      if (t.includes('|') && t.length > 30) return false; // contact line
+      // Must be mostly uppercase
+      var letters = t.replace(/[^a-zA-Z]/g,'');
+      if (letters.length < 2) return false;
+      var upperCount = (t.match(/[A-Z]/g)||[]).length;
+      var lowerCount = (t.match(/[a-z]/g)||[]).length;
+      return upperCount > 0 && lowerCount === 0 && t === t.toUpperCase();
+    }
+  };
 
   let body = '';
   const lines = text.split('\n');
