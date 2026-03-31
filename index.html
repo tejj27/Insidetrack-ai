@@ -1362,11 +1362,14 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED words everywhere: passionate, dedicated, hardworking, leverage, synergy.',
       '',
       '━━━ RULE 3: SUMMARY SECTION ━━━',
-      'Write exactly 3 lines — no more, no less.',
-      'Line 1: Most impressive highlight — top award, achievement, or standout experience.',
-      'Line 2: Educational background.',
-      'Line 3: What kind of role/opportunity they are actively seeking — tailor this to the JD.',
-      'Example: "Current Final Year MSc Business Analytics student at Queen\'s University Belfast with Distinction, I have delivered automation solutions at Accenture reducing manual workload by 40%. I am actively seeking Business Analyst graduate programme opportunities in London."',
+      'CRITICAL: The summary must contain EXACTLY 3 lines of text. Not 4. Not 5. Exactly 3.',
+      'Each line is separated by a single newline. There must be NO blank lines within the summary.',
+      'Count your lines before outputting. If you have written 4 or more lines, you must shorten.',
+      'Line 1: ONE sentence — most impressive achievement or standout experience (specific, not generic).',
+      'Line 2: ONE sentence — educational background with grade/distinction.',
+      'Line 3: ONE sentence — the specific type of role they are seeking, tailored to the JD.',
+      'Each line must be a single concise sentence. No sub-sentences. No semicolons splitting into extra lines.',
+      'BANNED words: passionate, dedicated, hardworking, leverage, synergy, seeking to, looking to.',
       'Do NOT use generic filler. Every word must earn its place.',
       '',
       '━━━ RULE 4: EDUCATION SECTION ━━━',
@@ -1529,8 +1532,9 @@ REFINEMENT FOCUS FOR THIS PASS:
 4. Do NOT add skills not evidenced in CV: ${stillMissing}
 
 SUMMARY RULE (apply if not already done):
-- Exactly 3 lines: (1) top achievement/award, (2) education background, (3) what role they seek — tailored to the JD.
-- No filler words. No banned words: passionate, dedicated, hardworking, leverage, synergy.
+- EXACTLY 3 lines of text. Count them — if 4+, shorten. No blank lines within the summary.
+- Line 1: ONE sentence — top achievement. Line 2: ONE sentence — education. Line 3: ONE sentence — role sought (tailored to JD).
+- BANNED: passionate, dedicated, hardworking, leverage, synergy, seeking to, looking to.
 
 EDUCATION RULE (apply if not already done):
 - Format: "Degree, Grade | University     Start - End Date"
@@ -1809,7 +1813,8 @@ function downloadCVasPDF() {
   var bodyHtml = '';
   var lines = cvText.split(String.fromCharCode(10));
   var inList = false;
-  var lineNum = 0;
+  var lineNum = 0, gotContact = false;
+  var contactAlign = (t==='classic'||t==='executive') ? 'center' : 'left';
   for (var i=0; i<lines.length; i++) {
     var l = lines[i].trim();
     if (!l) {
@@ -1818,6 +1823,12 @@ function downloadCVasPDF() {
       continue;
     }
     if (lineNum===0) { bodyHtml+='<h1>'+l+'</h1>'; lineNum++; continue; }
+    if (!gotContact && lineNum<=4 && (/@|linkedin|\.com|[\d]{5,}/.test(l)) && l.length<200) {
+      gotContact = true;
+      if(inList){bodyHtml+='</ul>';inList=false;}
+      bodyHtml+='<p style="text-align:'+contactAlign+';font-size:9pt;color:#888;margin:2px 0 6px 0">'+l+'</p>';
+      lineNum++; continue;
+    }
     // Dynamic heading: ALL CAPS, short, no bullets/symbols/contact info
     var _lt = l.trim();
     var _letters = _lt.replace(/[^a-zA-Z]/g,'');
