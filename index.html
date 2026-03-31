@@ -1364,30 +1364,26 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED words everywhere: passionate, dedicated, hardworking, leverage, synergy.',
       '',
       '━━━ RULE 3: SUMMARY SECTION ━━━',
-      'CRITICAL: The summary must contain EXACTLY 3 lines of text. Not 4. Not 5. Exactly 3.',
-      'Each line is separated by a single newline. There must be NO blank lines within the summary.',
-      'Count your lines before outputting. If you have written 4 or more lines, you must shorten.',
-      'EACH LINE MUST BE UNDER 100 CHARACTERS. Count the characters.',
+      'Write the summary as ONE short connected paragraph — NOT separate robotic sentences.',
+      'It must flow naturally from one sentence to the next, like a human introduction.',
+      'Maximum 3 SHORT lines when printed. Each sentence under 100 characters.',
+      'No blank lines within the summary. No bullet points.',
       '',
-      'TONE: Write as natural, flowing prose — NOT robotic disconnected sentences.',
-      'It should read like a human telling their story. Use first person where it flows naturally.',
-      'Each line should connect to the next thematically.',
+      'Structure (3 sentences flowing together):',
+      '  Sentence 1: Educational background — degree, grade, university.',
+      '  Sentence 2: ONE top achievement/experience with a specific result.',
+      '  Sentence 3: What role they are actively seeking — tailored to the JD and location.',
       '',
-      'Line 1 (under 100 chars): Achievement at a named employer — specific result, confident tone.',
-      'Line 2 (under 100 chars): Degree + grade + university — weave in a relevant specialism.',
-      'Line 3 (under 100 chars): Actively seeking [specific role] in [specific industry/location] — tailored to the JD.',
+      'GOOD example — read how it flows:',
+      '  Having recently graduated with MSc Business Analytics (Distinction) from Queen\'s University Belfast, I delivered automation solutions at Accenture reducing manual workload by 40%. I am actively seeking Business Analyst roles in London within digital transformation and technology services.',
       '',
-      'GOOD example (flowing, human, confident):',
-      '  Drove 40% manual workload reduction at Accenture, leading enterprise automation and digital transformation.',
-      '  MSc Business Analytics (Distinction) from Queen\'s University Belfast, specialising in data-driven decision-making.',
-      '  Actively seeking Business Analyst roles in London\'s technology sector to deliver impactful Agile solutions.',
+      'ANOTHER GOOD example:',
+      '  Current MSc TESOL student at University of Edinburgh with predicted 1st, I have completed strategy consulting simulations at BCG and excelled in internships at local consulting firms. I am actively seeking consulting graduate programme opportunities in London.',
       '',
-      'BAD example (robotic, disconnected — do NOT do this):',
-      '  Business Analyst delivering 40% manual workload reduction through automation at Accenture.',
-      '  MSc Business Analytics (Distinction), Queen\'s University Belfast, 2024-2025.',
-      '  Seeking Business Analyst roles in technology services focused on digital transformation.',
+      'BAD example (robotic — do NOT do this):',
+      '  Business Analyst delivering 40% workload reduction. MSc Business Analytics (Distinction). Seeking BA roles.',
       '',
-      'BANNED words: passionate, dedicated, hardworking, leverage, synergy, seeking to, looking to.',
+      'BANNED words: passionate, dedicated, hardworking, leverage, synergy.',
       '',
       '━━━ RULE 4: EDUCATION SECTION ━━━',
       'Format each degree entry EXACTLY like this (with | and tab-separated date on the same line):',
@@ -1429,8 +1425,23 @@ JD: ${jd.slice(0,800)}`, 300
       'If the original CV has a flat list, reorganise into logical categories based on the skills present.',
       'Do NOT invent skills not in the original CV.',
       '',
-      '━━━ RULE 7: LENGTH ━━━',
-      'Do NOT force 1 page. Preserve all content — only remove weak phrasing or repetition.',
+      '━━━ RULE 7: CV LENGTH BASED ON EXPERIENCE ━━━',
+      'First, estimate the candidate\'s total years of professional experience from the CV.',
+      '',
+      'IF total experience is LESS THAN 5 years → Target 1 PAGE:',
+      '  - Shorten wording, remove repetition, keep bullet points to 1 line where possible.',
+      '  - Limit each role to 3-4 concise bullet points.',
+      '  - Keep summary concise (max 3 short lines as one paragraph).',
+      '  - Keep ALL sections, roles, and projects — do NOT remove any.',
+      '',
+      'IF total experience is 5 YEARS OR MORE → Allow 2 PAGES:',
+      '  - Preserve detail and depth. Do NOT aggressively shorten.',
+      '  - Allow 4-6 bullet points per role if needed.',
+      '  - Maintain clear structure and spacing.',
+      '  - Keep all relevant experience and projects.',
+      '',
+      'CRITICAL: NEVER remove entire sections or job roles to meet page limits.',
+      'NEVER delete important experience or projects.',
       '',
       '━━━ OUTPUT FORMAT (CRITICAL — follow exactly) ━━━',
       'The tailored_cv field must be plain text with this exact structure:',
@@ -2688,7 +2699,7 @@ function renderCVPreview() {
 
   var out = '<div style="font-family:' + s.bodyFont + ';font-size:' + s.bodySz + ';color:' + s.bodyColor + ';line-height:1.45">';
   var lines = text.split('\n');
-  var li = 0, gotContact = false;
+  var li = 0, gotContact = false, previewSection = '';
 
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i].trim();
@@ -2706,11 +2717,19 @@ function renderCVPreview() {
     }
 
     if (HEADING_RE.test(line) || (/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line) && line.length > 3 && line.length < 60)) {
+      previewSection = line.toUpperCase();
       if (s.headingBg) {
         out += '<div style="margin-top:12px;background:' + s.headingBg + ';padding:3px 6px;font-family:' + s.headingFont + ';font-size:' + s.headingSz + ';font-weight:bold;color:' + s.headingColor + ';text-transform:uppercase;margin-bottom:5px">' + ex(line) + '</div>';
       } else {
         out += '<div style="margin-top:13px;padding-bottom:3px;border-bottom:' + s.headingBorder + ';font-family:' + s.headingFont + ';font-size:' + s.headingSz + ';font-weight:bold;color:' + s.headingColor + ';text-transform:uppercase;margin-bottom:4px">' + ex(line) + '</div>';
       }
+      li++; continue;
+    }
+
+    // Certification bullets bold
+    if (/CERTIF/i.test(previewSection) && /^[•\-\*▸○◦]/.test(line)) {
+      var certContent = line.replace(/^[•\-\*▸○◦]\s*/, '');
+      out += '<div style="display:flex;gap:8px;margin:3px 0;padding-left:8px"><span style="color:' + s.bulletColor + ';flex-shrink:0">•</span><span style="font-weight:bold">' + ex(certContent) + '</span></div>';
       li++; continue;
     }
 
@@ -2729,6 +2748,19 @@ function renderCVPreview() {
       } else {
         out += '<div style="font-weight:bold;margin:6px 0 2px;color:' + s.nameColor + '">' + ex(line) + '</div>';
       }
+      li++; continue;
+    }
+
+    // Skills category labels → bold label before colon
+    if (/SKILL|INTEREST|AWARD/i.test(previewSection) && line.includes(':')) {
+      var pci = line.indexOf(':');
+      out += '<div style="margin:3px 0"><span style="font-weight:bold;color:' + s.nameColor + '">' + ex(line.substring(0,pci)) + '</span>' + ex(line.substring(pci)) + '</div>';
+      li++; continue;
+    }
+
+    // Project titles → bold
+    if (/PROJECT/i.test(previewSection) && !line.includes('|') && !/\d{4}/.test(line)) {
+      out += '<div style="font-weight:bold;margin:6px 0 2px;color:' + s.nameColor + '">' + ex(line) + '</div>';
       li++; continue;
     }
 
