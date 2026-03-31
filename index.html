@@ -1353,7 +1353,9 @@ JD: ${jd.slice(0,800)}`, 300
       'Do NOT remove any sections.',
       'Do NOT add new sections unless explicitly needed (e.g. Projects if highly relevant).',
       'Do NOT change section order.',
-      'Keep all headings exactly as they appear in the input.',
+      'EXCEPTION — split combined headings: if a section heading combines two sections with "/" or "&",',
+      '  split them into two separate sections (e.g. "SKILLS / AWARDS AND ACHIEVEMENTS" → "SKILLS" then "AWARDS AND ACHIEVEMENTS").',
+      '  Each section must have its own heading on its own line.',
       '',
       '━━━ RULE 2: GENERAL CONTENT RULES ━━━',
       'Improve grammar, clarity, and professionalism.',
@@ -1365,14 +1367,26 @@ JD: ${jd.slice(0,800)}`, 300
       'CRITICAL: The summary must contain EXACTLY 3 lines of text. Not 4. Not 5. Exactly 3.',
       'Each line is separated by a single newline. There must be NO blank lines within the summary.',
       'Count your lines before outputting. If you have written 4 or more lines, you must shorten.',
-      'EACH LINE MUST BE UNDER 100 CHARACTERS. Short, punchy, one sentence. Not a long wrap-around sentence.',
-      'Line 1 (under 100 chars): Top achievement or standout experience with a specific result.',
-      'Line 2 (under 100 chars): Degree, grade, university — one line only.',
-      'Line 3 (under 100 chars): The specific role sought + location, tailored to the JD.',
-      'Example of correct 3-line summary:',
-      '  Delivered 40% manual workload reduction via Automation Anywhere at Accenture.',
+      'EACH LINE MUST BE UNDER 100 CHARACTERS. Count the characters.',
+      '',
+      'TONE: Write as natural, flowing prose — NOT robotic disconnected sentences.',
+      'It should read like a human telling their story. Use first person where it flows naturally.',
+      'Each line should connect to the next thematically.',
+      '',
+      'Line 1 (under 100 chars): Achievement at a named employer — specific result, confident tone.',
+      'Line 2 (under 100 chars): Degree + grade + university — weave in a relevant specialism.',
+      'Line 3 (under 100 chars): Actively seeking [specific role] in [specific industry/location] — tailored to the JD.',
+      '',
+      'GOOD example (flowing, human, confident):',
+      '  Drove 40% manual workload reduction at Accenture, leading enterprise automation and digital transformation.',
+      '  MSc Business Analytics (Distinction) from Queen\'s University Belfast, specialising in data-driven decision-making.',
+      '  Actively seeking Business Analyst roles in London\'s technology sector to deliver impactful Agile solutions.',
+      '',
+      'BAD example (robotic, disconnected — do NOT do this):',
+      '  Business Analyst delivering 40% manual workload reduction through automation at Accenture.',
       '  MSc Business Analytics (Distinction), Queen\'s University Belfast, 2024-2025.',
-      '  Actively seeking Business Analyst roles in London within financial services.',
+      '  Seeking Business Analyst roles in technology services focused on digital transformation.',
+      '',
       'BANNED words: passionate, dedicated, hardworking, leverage, synergy, seeking to, looking to.',
       '',
       '━━━ RULE 4: EDUCATION SECTION ━━━',
@@ -1817,7 +1831,7 @@ function downloadCVasPDF() {
   var bodyHtml = '';
   var lines = cvText.split(String.fromCharCode(10));
   var inList = false;
-  var lineNum = 0, gotContact = false;
+  var lineNum = 0, gotContact = false, currentSection = '';
   var contactAlign = (t==='classic'||t==='executive') ? 'center' : 'left';
   for (var i=0; i<lines.length; i++) {
     var l = lines[i].trim();
@@ -1838,22 +1852,40 @@ function downloadCVasPDF() {
     var _letters = _lt.replace(/[^a-zA-Z]/g,'');
     var _upper = (_lt.match(/[A-Z]/g)||[]).length;
     var _lower = (_lt.match(/[a-z]/g)||[]).length;
-    var isHeading = _letters.length >= 2 && _upper > 0 && _lower === 0 
+    var isHeading = _letters.length >= 2 && _upper > 0 && _lower === 0
       && _lt.length <= 60 && !_lt.startsWith('•') && !_lt.startsWith('-')
       && !_lt.includes('@') && !_lt.includes('http')
       && !(_lt.includes('|') && _lt.length > 30);
     if (isHeading) {
       if(inList){bodyHtml+='</ul>';inList=false;}
+      currentSection = _lt;
       bodyHtml+='<h2>'+l+'</h2>';
       lineNum++; continue;
     }
     var isBullet = l.charAt(0)==='•' || (l.charAt(0)==='-' && l.length>2);
+    // Certification bullets → bold
+    if (isBullet && /CERTIF/i.test(currentSection)) {
+      if(!inList){bodyHtml+='<ul>';inList=true;}
+      bodyHtml+='<li><strong>'+l.replace(/^[•\-]\s*/,'')+'</strong></li>';
+      lineNum++; continue;
+    }
     if (isBullet) {
       if(!inList){bodyHtml+='<ul>';inList=true;}
       bodyHtml+='<li>'+l.replace(/^[•\-]\s*/,'')+'</li>';
       lineNum++; continue;
     }
     if(inList){bodyHtml+='</ul>';inList=false;}
+    // Skills category labels (e.g. "Technical: SQL, Python") → bold label
+    if (/SKILL|INTEREST|AWARD/i.test(currentSection) && l.includes(':')) {
+      var _ci = l.indexOf(':');
+      bodyHtml+='<p style="margin:3px 0"><strong>'+l.substring(0,_ci)+'</strong>'+l.substring(_ci)+'</p>';
+      lineNum++; continue;
+    }
+    // Project titles (in PROJECTS section, no bullet, no date, no pipe) → bold
+    if (/PROJECT/i.test(currentSection) && !l.includes('|') && !/^\d{4}/.test(l)) {
+      bodyHtml+='<p style="margin:6px 0 2px"><strong>'+l+'</strong></p>';
+      lineNum++; continue;
+    }
     // Role/degree lines: has date or pipe → bold subheading with date right-aligned
     var _hasDate = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(l);
     var _hasPipe = l.includes('|');
