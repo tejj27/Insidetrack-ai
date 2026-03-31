@@ -1420,8 +1420,9 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.',
       'BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".',
       'Harvard standard: each bullet = action verb + specific task + measurable result. No personal pronouns (no "I", "my", "we").',
-      'PROJECT BULLETS — LENGTH: Each project bullet must fit on ONE line (under 120 characters). If too long, condense wording — do not remove the bullet or project.',
-      'PROJECT TITLES: Never add a date or pipe to the project title line unless the original CV has one.',
+      'ALL BULLETS — LENGTH: Every single bullet point MUST fit on ONE line (under 120 characters printed). Count the characters. If over 120, condense — cut filler words, shorten phrases. Never remove a bullet.',
+      'PROJECT TITLES: REMOVE tool names from project titles. If the original title has tools in parentheses like "HR Attrition Analytics (Tableau, Random Forest)", strip them → "HR Attrition Analytics". Tools go inside the bullet points only.',
+      'COMPANY NAMES: Write company names in normal Title Case — never ALL CAPS. Example: "Accenture" not "ACCENTURE", "NHS" is an acronym so stays as-is.',
       '',
       '━━━ RULE 6: SKILLS SECTION ━━━',
       'Divide skills into clear labelled categories. Suggested format:',
@@ -1461,11 +1462,12 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Do NOT list degrees or academic qualifications in Awards, Certifications, or any other section.',
       '  - Each section must contain unique, non-overlapping information.',
       '',
-      'AWARDS AND ACHIEVEMENTS SECTION — CONDITIONAL:',
-      '  - Only include this section if there are REAL awards: scholarships, prizes, competitions, rankings, employer recognition.',
-      '  - Degree grades (e.g. Distinction, First Class) are NOT awards — they are already in Education.',
-      '  - If the only items in this section are degree grades, REMOVE the entire section.',
-      '  - Never duplicate Education content here.',
+      'AWARDS AND ACHIEVEMENTS SECTION — STRICT RULE:',
+      '  - BEFORE outputting this section: check every item. Ask: "Is this a scholarship, prize, competition win, or employer recognition?" If YES → keep. If NO → remove.',
+      '  - Degree grades (e.g. "MSc Business Analytics (Distinction)", "Bachelor of Computer Applications (First Class)") are NOT awards.',
+      '  - These are already in Education. Do NOT repeat them in Awards under any circumstances.',
+      '  - If after removing degree grades the section is EMPTY → DELETE the entire Awards section. Do not output it at all.',
+      '  - This is non-negotiable. An Awards section containing only degrees is WRONG.',
       '',
       'BULLET POINT DEDUPLICATION (CRITICAL — check every role):',
       '  - Read ALL bullets for a role before outputting. Identify bullets that convey similar meaning.',
@@ -1622,10 +1624,13 @@ SKILLS RULE (apply if not already done):
 - Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
 - Do NOT add skills not in the original.
 
-AWARDS SECTION RULE (apply always):
-- ONLY include Awards section if there are real awards: scholarships, prizes, competitions, employer recognition.
-- Degree grades (Distinction, First Class) are NOT awards — already in Education. Do NOT repeat them here.
-- If the only items are degree grades, REMOVE the Awards section entirely.
+AWARDS SECTION RULE (apply always — CRITICAL):
+- Check EVERY item in Awards. Degree grades (Distinction, First Class, MSc X, BCA X) are NOT awards.
+- If section only contains degree grades → DELETE the entire section. Do not output it at all.
+- Only keep if there are real awards: scholarships, prizes, competitions, employer recognition.
+- COMPANY NAMES: Title Case only — "Accenture" not "ACCENTURE". Acronyms (NHS, IBM) are fine.
+- PROJECT TITLES: Strip tool names from parentheses in titles. "HR Attrition Analytics (Tableau)" → "HR Attrition Analytics". Tools go in bullets.
+- ALL BULLETS must be ONE line max (under 120 chars). Condense if longer — do not remove.
 
 DEDUPLICATION RULE (apply always):
 - Degrees belong ONLY in Education. Do NOT list them in Awards or any other section.
