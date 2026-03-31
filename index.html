@@ -1390,10 +1390,11 @@ JD: ${jd.slice(0,800)}`, 300
       '  Degree Title, Grade | University Name     Start Date - End Date',
       '  • Graduated in the top X% of year-group  (only include if this information is in the CV)',
       '  • Scholarship or award name  (only if present in CV)',
-      '  • Relevant high-scoring modules: Module Name (XX%), Module Name (XX%)  (only if grades are listed in CV)',
-      'Include ONLY: degree, grade/classification, university, dates, ranking vs peers, scholarships/awards.',
-      'Include modules ONLY if: the grade is listed AND it is relevant to the JD.',
-      'Do NOT include: dissertations, societies, extracurricular activities, generic module lists without grades.',
+      '  • Ranking vs peers, e.g. "Graduated top 10% of year"  (only if present in CV)',
+      'Include ONLY: degree, grade/classification, university, dates, scholarships/awards, peer ranking.',
+      'NEVER include modules — not even with grades. Modules belong nowhere on the CV.',
+      'NEVER include dissertations under any circumstance. Not in Education, not anywhere.',
+      'NEVER include societies, extracurricular activities, or generic module lists.',
       '(If a project is highly relevant to the JD, create a PROJECTS section — do not put it in Education)',
       '',
       '━━━ RULE 5: EXPERIENCE & PROJECTS SECTION ━━━',
@@ -1412,7 +1413,8 @@ JD: ${jd.slice(0,800)}`, 300
       'Only YOUR actions and responsibilities — no generalisations or mention of others.',
       'If there are awards/achievements for a role, list them FIRST in the bullet list.',
       'Use strong past-tense action verbs: Built, Delivered, Designed, Led, Analysed, Created, Managed, Developed.',
-      'BANNED phrases: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams", "assisted with", "collaborated with".',
+      'BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.',
+      'BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".',
       'Harvard standard: each bullet = action verb + specific task + measurable result. No personal pronouns (no "I", "my", "we").',
       '',
       '━━━ RULE 6: SKILLS SECTION ━━━',
@@ -1428,11 +1430,13 @@ JD: ${jd.slice(0,800)}`, 300
       '━━━ RULE 7: CV LENGTH BASED ON EXPERIENCE ━━━',
       'First, estimate the candidate\'s total years of professional experience from the CV.',
       '',
-      'IF total experience is LESS THAN 5 years → Target 1 PAGE:',
-      '  - Shorten wording, remove repetition, keep bullet points to 1 line where possible.',
-      '  - Limit each role to 3-4 concise bullet points.',
-      '  - Keep summary concise (max 3 short lines as one paragraph).',
+      'IF total experience is LESS THAN 5 years → MUST FIT 1 PAGE:',
+      '  - This is non-negotiable. 1 page only.',
+      '  - Shorten every bullet to 1 line where possible. Remove padding words.',
+      '  - Limit each role to 3-4 concise bullet points maximum.',
+      '  - Keep summary to 3 short sentences (one short paragraph).',
       '  - Keep ALL sections, roles, and projects — do NOT remove any.',
+      '  - If content is still too long: tighten wording further, do not remove sections.',
       '',
       'IF total experience is 5 YEARS OR MORE → Allow 2 PAGES:',
       '  - Preserve detail and depth. Do NOT aggressively shorten.',
@@ -1450,6 +1454,12 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Degrees belong ONLY in the Education section.',
       '  - Do NOT list degrees or academic qualifications in Awards, Certifications, or any other section.',
       '  - Each section must contain unique, non-overlapping information.',
+      '',
+      'AWARDS AND ACHIEVEMENTS SECTION — CONDITIONAL:',
+      '  - Only include this section if there are REAL awards: scholarships, prizes, competitions, rankings, employer recognition.',
+      '  - Degree grades (e.g. Distinction, First Class) are NOT awards — they are already in Education.',
+      '  - If the only items in this section are degree grades, REMOVE the entire section.',
+      '  - Never duplicate Education content here.',
       '',
       'BULLET POINT DEDUPLICATION (CRITICAL — check every role):',
       '  - Read ALL bullets for a role before outputting. Identify bullets that convey similar meaning.',
@@ -1586,8 +1596,8 @@ SUMMARY RULE (apply if not already done):
 
 EDUCATION RULE (apply if not already done):
 - Format: "Degree, Grade | University     Start - End Date"
-- Sub-bullets (•) for: ranking vs peers (top X%), scholarships/awards, relevant high-scoring modules only.
-- Remove: dissertations, societies, extracurriculars, generic module lists without grades.
+- Sub-bullets ONLY for: scholarships, prizes, peer ranking (top X%). Nothing else.
+- REMOVE ALL: modules (even with grades), dissertations, societies, extracurriculars. No exceptions.
 
 EXPERIENCE & PROJECTS RULE (apply if not already done):
 - NEVER remove any role or project — improve weak bullets instead.
@@ -1595,18 +1605,24 @@ EXPERIENCE & PROJECTS RULE (apply if not already done):
 - Most recent roles: max 4-5 bullets. Roles 4-5: max 2-3 bullets each.
 - Each bullet = ONE specific action + tools/methods used + result/impact. No personal pronouns (no I/we/my).
 - Awards/achievements for a role go FIRST in its bullet list.
-- BANNED: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams", "collaborated with".
+- BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.
+- BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".
 
 SKILLS RULE (apply if not already done):
 - Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
 - Do NOT add skills not in the original.
 
+AWARDS SECTION RULE (apply always):
+- ONLY include Awards section if there are real awards: scholarships, prizes, competitions, employer recognition.
+- Degree grades (Distinction, First Class) are NOT awards — already in Education. Do NOT repeat them here.
+- If the only items are degree grades, REMOVE the Awards section entirely.
+
 DEDUPLICATION RULE (apply always):
-- Degrees belong ONLY in Education. Do NOT list them in Awards, Certifications, or any other section.
+- Degrees belong ONLY in Education. Do NOT list them in Awards or any other section.
 - Read ALL bullets per role — merge bullets that convey similar meaning into ONE stronger bullet.
-- BAD: "Gathered requirements..." + "Conducted workshops to gather requirements..." → these are duplicates.
-- GOOD: merge into "Conducted stakeholder workshops to gather, define, and document business requirements."
-- Each bullet must communicate a DISTINCT contribution. No repeated keywords across bullets in the same role.
+- BAD: "Gathered requirements..." + "Conducted workshops to gather requirements..." → duplicates, merge them.
+- GOOD: "Conducted stakeholder workshops to gather, define, and document business requirements."
+- Each bullet must communicate a DISTINCT contribution. No repeated keywords across bullets.
 
 RULES:
 - Do NOT fabricate numbers or experience
