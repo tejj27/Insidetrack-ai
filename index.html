@@ -1363,23 +1363,33 @@ JD: ${jd.slice(0,800)}`, 300
     const _tailorSystemPrompt = [
       'You are an expert ATS CV optimisation assistant and career coach.',
       '',
-      '⚠️ BEFORE WRITING ANYTHING — COMPLETE THESE CHECKS:',
-      'Check 1 — Role count: How many separate jobs are in Work Experience?',
-      '  • 1 job → write 4-5 bullets for that job (minimum 4)',
-      '  • 2 jobs → write 3 bullets each',
-      '  • 3+ jobs → write 2 bullets each',
-      '  Self-check after writing: count bullets per role. Adjust to meet the minimum AND maximum.',
+      '⚠️ BEFORE WRITING ANYTHING — COMPLETE THESE CHECKS IN ORDER:',
       '',
-      'Check 2 — Experience years: total years of professional work experience?',
-      '  • Under 5 years: keep every bullet under 85 characters. Summary = exactly 3 sentences each under 85 chars.',
-      '  • 5+ years: 2 pages allowed.',
+      'Check 1 — Count work experience roles (jobs). Apply bullet limits:',
+      '  • 1 job only → write EXACTLY 4 bullets. Not 5. Not 6. Not 10. EXACTLY 4.',
+      '  • 2 jobs → write EXACTLY 3 bullets each.',
+      '  • 3+ jobs → write EXACTLY 2 bullets each (most impactful only).',
+      '  MANDATORY self-check: After writing bullets, COUNT them per role.',
+      '  If you wrote MORE than the limit → DELETE the weakest bullets immediately.',
+      '  Do this before outputting. This is not optional.',
       '',
-      'Check 3 — Summary: count sentences. Must be exactly 3. Each sentence under 85 characters.',
-      '  Self-check: paste each sentence and count characters. If over 85, shorten it.',
+      'Check 2 — Total years of professional experience (count from CV dates):',
+      '  • Under 5 years → entire CV must fit 1 page. Apply strict condensing.',
+      '  • 5+ years → 2 pages allowed.',
       '',
-      'Check 4 — Skills: list every skill from the original. Has any been dropped? If yes, add it back.',
+      'Check 3 — Summary: write as flowing narrative prose, not staccato facts.',
+      '  MANDATORY self-check: Is it exactly 3 sentences? Does it flow naturally?',
       '',
-      'Check 5 — Awards: does it contain anything already in Certifications or Education? If yes, remove duplicates. If empty after → delete Awards section entirely.',
+      'Check 4 — Skills: compare output Skills to original. Any skill dropped? Add it back.',
+      '  MANDATORY self-check: Is the section heading spelled SKILLS (not SKILS, SKILL, etc.)? Fix if not.',
+      '',
+      'Check 5 — Awards/Achievements: read EVERY item. Is it a degree grade or certification?',
+      '  If yes → REMOVE it. Degrees go in Education. Certs go in Certifications.',
+      '  If Awards is now empty → DELETE the entire Awards section.',
+      '',
+      'Check 6 — Section headings: did you copy headings EXACTLY from the original CV?',
+      '  NEVER rename, abbreviate, or misspell section headings.',
+      '  SKILLS not SKILS. EDUCATION not EDUC. Copy exactly.',
       '',
       'Your task is to REFINE and IMPROVE the existing CV — NOT rewrite from scratch.',
       'Preserve all sections and roles. Apply the section-specific rules below carefully.',
@@ -1408,26 +1418,31 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED words everywhere: passionate, dedicated, hardworking, leverage, synergy.',
       '',
       '━━━ RULE 3: SUMMARY SECTION ━━━',
-      'Write EXACTLY 3 sentences. No more, no fewer. ONE short paragraph.',
-      'SELF-CHECK before outputting: measure each sentence. If any sentence is over 85 characters, rewrite it shorter.',
-      'No bullet points. No blank lines within the summary.',
+      'Write EXACTLY 3 sentences as ONE flowing paragraph. No bullet points, no blank lines inside.',
       '',
-      'Each sentence structure:',
-      '  Sentence 1: Education — degree, grade, university. Example (82 chars):',
-      '    "MSc Business Analytics (Distinction) graduate from Queen\'s University Belfast."',
-      '  Sentence 2: Top achievement — ONE result with a number if possible. Example (76 chars):',
-      '    "Delivered automation solutions at Accenture, reducing manual workload by 40%."',
-      '  Sentence 3: Role sought — tailored to this JD, location. Example (73 chars):',
-      '    "Seeking Business Analyst roles in London within digital transformation."',
+      'CRITICAL — it must read like natural human prose, not 3 robotic facts.',
+      'Use relative clauses and connecting language. Think: how would a person introduce themselves?',
       '',
-      '❌ BAD (this is 3 sentences but each is 100+ chars — DO NOT write like this):',
-      '  "Technical Business Analyst with experience delivering digital experiences and bridging business needs with technology delivery..."',
-      '  "Strong background in SQL, Power BI, data platforms, and workflow optimisation with exposure to web APIs..."',
+      'Structure (3 flowing sentences):',
+      '  Sentence 1: Who you are — current degree/stage + university + grade. Use "Having recently..." or "Currently..."',
+      '  Sentence 2: What you have done — your ONE best achievement or experience with a specific result/number.',
+      '  Sentence 3: What you are seeking — exact role type from JD, location, sector/company type.',
       '',
-      '✅ GOOD (3 short sentences, each fits on ONE printed line):',
-      '  "MSc Business Analytics (Distinction) graduate from Queen\'s University Belfast.',
-      '  Delivered automation solutions at Accenture, reducing manual workload by 40%.',
-      '  Seeking Business Analyst roles in London within digital transformation."',
+      '✅ GOLD STANDARD EXAMPLE (copy this style exactly):',
+      '  "Having recently graduated with MSc Business Analytics (Distinction) from Queen\'s University Belfast,',
+      '  I delivered automation solutions at Accenture that reduced manual workload by 40%.',
+      '  I am actively seeking Business Analyst roles in London within digital transformation and technology services."',
+      '',
+      '✅ ANOTHER GOOD EXAMPLE (notice how it flows — no staccato):',
+      '  "Currently completing an MSc Business Analytics (Distinction) at Queen\'s University Belfast,',
+      '  I have delivered process automation at Accenture reducing manual workload by 40% and built Power BI dashboards tracking KPIs.',
+      '  I am actively seeking Business Analyst opportunities in London within digital transformation."',
+      '',
+      '❌ BAD — robotic, each sentence is a standalone fact (DO NOT do this):',
+      '  "MSc Business Analytics graduate. Delivered automation at Accenture. Seeking BA roles in London."',
+      '',
+      '❌ BAD — too long, wraps to 6 lines (DO NOT do this):',
+      '  "Technical Business Analyst with experience delivering digital experiences and bridging business needs with technology delivery within managed services environments..."',
       '',
       'BANNED words: passionate, dedicated, hardworking, leverage, synergy.',
       '',
@@ -1659,54 +1674,53 @@ APPLY THESE SPECIFIC CHANGES (if not already applied from previous pass):
 ${(_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}: BEFORE: "${s.before}" → AFTER: "${s.after}"`).join('\n')}
 
 SUMMARY RULE (apply — CRITICAL):
-- EXACTLY 3 sentences. Count them. If 4+, delete the weakest sentence.
-- Each sentence MUST be under 85 characters — no exceptions. Measure it.
-- All 3 sentences form ONE paragraph. No bullet points, no blank lines within.
+- EXACTLY 3 sentences as ONE flowing paragraph. No bullet points, no blank lines.
+- Write as natural PROSE — not 3 robotic standalone facts.
+- Use "Having recently graduated..." or "Currently completing..." to open naturally.
+- GOOD: "Having recently graduated with MSc Business Analytics (Distinction) from Queen's University Belfast, I delivered automation at Accenture reducing manual workload by 40%. I am actively seeking Business Analyst roles in London within digital transformation."
+- BAD: "MSc Business Analytics graduate. Delivered automation. Seeking BA roles." (too robotic)
 - BANNED: passionate, dedicated, hardworking, leverage, synergy.
 
 EDUCATION RULE (apply if not already done):
 - Format: "Degree, Grade | University     Start - End Date"
 - Sub-bullets ONLY for: scholarships, prizes, peer ranking (top X%). Nothing else.
-- REMOVE ALL: modules, dissertations, societies, extracurriculars.
+- REMOVE: modules, dissertations, societies, extracurriculars.
+
+SECTION HEADINGS RULE (CRITICAL — apply always):
+- NEVER rename, abbreviate, or misspell section headings.
+- Copy headings EXACTLY from the original CV.
+- SKILLS not SKILS. EXPERIENCE not EXPERINCE. Spell every heading correctly.
 
 1-PAGE RULE (for <5 years experience — apply strictly):
-- If candidate has less than 5 years work experience, the ENTIRE CV must fit 1 page.
-- SUMMARY: exactly 3 sentences, each under 85 chars.
-- WORK EXPERIENCE: MAX 3 bullets per role, each under 85 chars.
-- PROJECTS: MAX 2 bullets per project, each under 85 chars.
-- Every line in the CV under 85 characters to prevent text wrapping.
-- Do NOT remove any role, project, or section — only shorten bullet wording.
+- Count work experience years first. Under 5 years → 1 page ONLY.
+- Bullet count: 1 role = 4 bullets, 2 roles = 3 each, 3+ roles = 2 each.
+- COUNT your bullets after writing. If over limit → DELETE weakest until at limit.
+- PROJECTS: MAX 2 bullets per project.
+- Do NOT remove any role, project, or section — only shorten wording.
 
-EXPERIENCE & PROJECTS RULE (apply if not already done):
-- NEVER remove any role or project — improve weak bullets instead.
-- Each bullet = ONE specific action + tools/methods + result. No personal pronouns.
+EXPERIENCE RULE:
+- NEVER remove any role or project.
+- Each bullet = action verb + specific task + result. No personal pronouns.
 - BANNED verbs: Supported, Assisted, Helped, Collaborated → use Delivered, Built, Led, Drove.
-- BANNED phrases: "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".
-- PROJECT TITLES: Remove tool names from parentheses. "Customer Segmentation (Python, K-Means)" → "Customer Segmentation".
 
-SKILLS RULE (apply if not already done):
-- Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
-- Do NOT add skills not in the original.
+SKILLS RULE:
+- Preserve ALL skills from original. Do not drop any.
+- Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages.
+- MANDATORY: spell the section heading as SKILLS (not SKILS or SKILL).
 
-AWARDS SECTION RULE (apply always — CRITICAL):
-- Check EVERY item in Awards. Degree grades (Distinction, First Class, MSc X, BCA X) are NOT awards.
-- If section only contains degree grades → DELETE the entire section. Do not output it at all.
-- Only keep if there are real awards: scholarships, prizes, competitions, employer recognition.
-- COMPANY NAMES: Title Case only — "Accenture" not "ACCENTURE". Acronyms (NHS, IBM) are fine.
-- PROJECT TITLES: Strip tool names from parentheses in titles. "HR Attrition Analytics (Tableau)" → "HR Attrition Analytics". Tools go in bullets.
-- ALL BULLETS must be ONE line max (under 85 chars). Condense if longer — do not remove.
+AWARDS SECTION RULE (CRITICAL):
+- BEFORE outputting this section, check EVERY item.
+- Degrees (MSc, BSc, BA, BCA, Distinction, First Class) → NOT awards → REMOVE.
+- Certifications already in Certifications section → REMOVE.
+- If NOTHING real remains → DELETE the entire Awards section entirely.
+- Only KEEP: scholarships, prizes, competition wins, employer recognition awards.
 
-DEDUPLICATION RULE (apply always):
-- Degrees belong ONLY in Education. Do NOT list them in Awards or any other section.
-- Read ALL bullets per role — merge bullets that convey similar meaning into ONE stronger bullet.
-- BAD: "Gathered requirements..." + "Conducted workshops to gather requirements..." → duplicates, merge them.
-- GOOD: "Conducted stakeholder workshops to gather, define, and document business requirements."
-- Each bullet must communicate a DISTINCT contribution. No repeated keywords across bullets.
+DEDUPLICATION:
+- Degrees in Education only. Never in Awards.
+- Merge duplicate bullets within same role into ONE stronger bullet.
 
 RULES:
 - Do NOT fabricate numbers or experience
-- If candidate has <5 years experience: enforce 1-page — max 3 bullets/role, max 2 bullets/project, all bullets under 85 chars
-- If candidate has 5+ years: preserve detail, 2 pages fine
 - NO ** or * — plain text only
 
 Respond ONLY with valid JSON:
@@ -2011,7 +2025,7 @@ function downloadCVasPDF() {
     }
     if(inList){bodyHtml+='</ul>';inList=false;}
     // Skills category labels (e.g. "Technical: SQL, Python") → bold label
-    if (/SKILL|INTEREST|AWARD/i.test(currentSection) && l.includes(':')) {
+    if (/SKIL|INTEREST|AWARD/i.test(currentSection) && l.includes(':')) {
       var _ci = l.indexOf(':');
       bodyHtml+='<p style="margin:3px 0"><strong>'+l.substring(0,_ci)+'</strong>'+l.substring(_ci)+'</p>';
       lineNum++; continue;
@@ -3021,7 +3035,7 @@ function renderCVPreview() {
     }
 
     // Skills labels (Category: items)
-    if (/SKILL|INTEREST|AWARD/i.test(previewSection) && line.includes(':')) {
+    if (/SKIL|INTEREST|AWARD/i.test(previewSection) && line.includes(':')) {
       var ci2 = line.indexOf(':');
       out+='<div'+edAttr('skill-line')+' style="margin:3px 0"><span style="font-weight:bold;color:'+s.nameColor+'">'+ex(line.substring(0,ci2))+'</span>'+ex(line.substring(ci2))+'</div>';
       li++; continue;
