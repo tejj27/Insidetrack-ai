@@ -1443,6 +1443,25 @@ JD: ${jd.slice(0,800)}`, 300
       'CRITICAL: NEVER remove entire sections or job roles to meet page limits.',
       'NEVER delete important experience or projects.',
       '',
+      '━━━ RULE 8: DEDUPLICATION & CONTENT QUALITY ━━━',
+      '',
+      'CROSS-SECTION DUPLICATION:',
+      '  - Do NOT repeat the same information across sections.',
+      '  - Degrees belong ONLY in the Education section.',
+      '  - Do NOT list degrees or academic qualifications in Awards, Certifications, or any other section.',
+      '  - Each section must contain unique, non-overlapping information.',
+      '',
+      'BULLET POINT DEDUPLICATION (CRITICAL — check every role):',
+      '  - Read ALL bullets for a role before outputting. Identify bullets that convey similar meaning.',
+      '  - Merge overlapping bullets into ONE stronger, concise bullet.',
+      '  - BAD: "Gathered business requirements..." AND "Conducted stakeholder workshops to gather requirements..."',
+      '  - GOOD: "Conducted stakeholder workshops to gather, define, and document business requirements and workflows"',
+      '  - Each bullet must communicate a DISTINCT contribution or outcome — no keyword recycling.',
+      '',
+      'NO REDUNDANT LANGUAGE:',
+      '  - Avoid repeating the same keyword or phrase across multiple bullets in the same role.',
+      '  - Remove weaker or repetitive phrasing. Keep the strongest version of similar points.',
+      '',
       '━━━ OUTPUT FORMAT (CRITICAL — follow exactly) ━━━',
       'The tailored_cv field must be plain text with this exact structure:',
       '',
@@ -1581,6 +1600,13 @@ EXPERIENCE & PROJECTS RULE (apply if not already done):
 SKILLS RULE (apply if not already done):
 - Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
 - Do NOT add skills not in the original.
+
+DEDUPLICATION RULE (apply always):
+- Degrees belong ONLY in Education. Do NOT list them in Awards, Certifications, or any other section.
+- Read ALL bullets per role — merge bullets that convey similar meaning into ONE stronger bullet.
+- BAD: "Gathered requirements..." + "Conducted workshops to gather requirements..." → these are duplicates.
+- GOOD: merge into "Conducted stakeholder workshops to gather, define, and document business requirements."
+- Each bullet must communicate a DISTINCT contribution. No repeated keywords across bullets in the same role.
 
 RULES:
 - Do NOT fabricate numbers or experience
