@@ -200,11 +200,18 @@ select:focus{border-color:var(--green)}
 .tf-active{background:var(--green);border-color:var(--green);color:white}
 .tf-active:hover{background:var(--green-mid);color:white}
 
-.tpl-btn{background:var(--cream);border:2px solid var(--cream3);border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:70px}
+.tpl-btn{background:var(--cream);border:2px solid var(--cream3);border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:72px}
 .tpl-btn:hover{border-color:var(--green);transform:translateY(-1px)}
 .tpl-active{border-color:var(--green)!important;background:#f0f7f3}
-.tpl-label{font-size:11px;font-weight:600;color:var(--ink3);font-family:'Geist',sans-serif}
-.tpl-thumb{width:50px;height:64px;background:white;border:1px solid var(--cream3);border-radius:3px;padding:5px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.tpl-label{font-size:10px;font-weight:700;color:var(--ink3);font-family:'Geist',sans-serif;text-align:center;letter-spacing:0.03em}
+.tpl-sub{font-size:9px;color:var(--ink4);font-family:'Geist',sans-serif;text-align:center;margin-top:-2px}
+.tpl-thumb{width:52px;height:66px;background:white;border:1px solid var(--cream3);border-radius:3px;padding:5px;display:flex;flex-direction:column;gap:2px;overflow:hidden;position:relative}
+/* WYSIWYG editing styles */
+#cv-preview-doc[contenteditable="true"]{outline:2px solid #1a6b3c;outline-offset:4px;cursor:text}
+#cv-preview-doc[contenteditable="true"] [data-cv-type]:hover{background:rgba(26,107,60,0.06);border-radius:3px;outline:1px dashed rgba(26,107,60,0.3)}
+#cv-preview-doc[contenteditable="true"] [data-cv-type]:focus{background:rgba(26,107,60,0.08);outline:none}
+.wysiwyg-hint{display:none;font-size:11px;color:var(--green);text-align:center;padding:6px;background:#f0f7f3;border-bottom:1px solid #c8dfc8}
+.wysiwyg-hint.visible{display:block}
 </style>
 </head>
 <body>
@@ -623,32 +630,45 @@ select:focus{border-color:var(--green)}
             <!-- Template picker -->
             <div style="padding:12px 16px;border-bottom:1px solid var(--cream3);background:white">
               <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink4);margin-bottom:10px">Choose template — all ATS-safe</div>
-              <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button onclick="selectTemplate('classic')" id="tpl-classic" class="tpl-btn tpl-active">
-                  <div class="tpl-thumb"><div style="height:5px;background:#000;width:60%;margin:0 auto 2px;border-radius:1px"></div><div style="height:2px;background:#ccc;width:80%;margin:0 auto 3px;border-radius:1px"></div><div style="height:1.5px;background:#000;width:100%;margin-bottom:3px"></div><div style="height:2.5px;background:#000;width:40%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ccc;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#ddd;width:90%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#555;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#ddd;flex:1;border-radius:1px"></div></div></div>
-                  <div class="tpl-label">Classic</div>
+                  <div class="tpl-thumb"><div style="height:4px;background:#1a1814;width:55%;margin:0 auto 2px;border-radius:1px"></div><div style="height:1px;background:#1a1814;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#888;width:38%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ddd;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#ddd;width:90%;margin-bottom:1px;border-radius:1px"></div><div style="height:1.5px;background:#ddd;width:85%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:2.5px;height:2.5px;background:#555;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#eee;flex:1;border-radius:1px"></div></div></div>
+                  <div class="tpl-label">Classic</div><div class="tpl-sub">General</div>
                 </button>
-                <button onclick="selectTemplate('modern')" id="tpl-modern" class="tpl-btn">
-                  <div class="tpl-thumb"><div style="height:5px;background:#1a6b3c;width:65%;margin-bottom:2px;border-radius:1px"></div><div style="height:2px;background:#ccc;width:80%;margin-bottom:3px;border-radius:1px"></div><div style="height:1.5px;background:#1a6b3c;width:100%;margin-bottom:3px"></div><div style="height:2.5px;background:#1a6b3c;width:40%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#c8c3bb;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#e5e5e5;width:90%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#1a6b3c;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#e5e5e5;flex:1;border-radius:1px"></div></div></div>
-                  <div class="tpl-label">Modern</div>
+                <button onclick="selectTemplate('consulting')" id="tpl-consulting" class="tpl-btn">
+                  <div class="tpl-thumb"><div style="height:5px;background:#0f1f3d;width:70%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ccc;width:100%;margin-bottom:3px"></div><div style="height:1.5px;background:#0f1f3d;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#0f1f3d;width:42%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#c8d0e0;width:100%;margin-bottom:2px"></div><div style="display:flex;gap:2px;align-items:center;margin-bottom:1px"><div style="width:5px;height:1.5px;background:#0f1f3d;flex-shrink:0"></div><div style="height:1.5px;background:#e0e4ec;flex:1;border-radius:1px"></div></div><div style="display:flex;gap:2px;align-items:center"><div style="width:5px;height:1.5px;background:#0f1f3d;flex-shrink:0"></div><div style="height:1.5px;background:#e0e4ec;flex:1;border-radius:1px"></div></div></div>
+                  <div class="tpl-label">Consulting</div><div class="tpl-sub">Business</div>
                 </button>
-                <button onclick="selectTemplate('minimal')" id="tpl-minimal" class="tpl-btn">
-                  <div class="tpl-thumb"><div style="height:5px;background:#111;width:55%;margin-bottom:3px;border-radius:1px"></div><div style="height:1.5px;background:#bbb;width:75%;margin-bottom:5px;border-radius:1px"></div><div style="height:2px;background:#888;width:38%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#e5e5e5;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#e5e5e5;width:90%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:2px;height:2px;background:#aaa;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#ececec;flex:1;border-radius:1px"></div></div></div>
-                  <div class="tpl-label">Minimal</div>
+                <button onclick="selectTemplate('tech')" id="tpl-tech" class="tpl-btn">
+                  <div class="tpl-thumb"><div style="height:5px;background:#111;width:65%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ccc;width:100%;margin-bottom:3px"></div><div style="height:1.5px;background:#0369a1;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#0369a1;width:40%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#bfdbf7;width:100%;margin-bottom:2px"></div><div style="display:flex;gap:2px;align-items:center;margin-bottom:1px"><div style="width:3px;height:3px;background:#0369a1;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#dbeafe;flex:1;border-radius:1px"></div></div><div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#0369a1;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#dbeafe;flex:1;border-radius:1px"></div></div></div>
+                  <div class="tpl-label">Tech</div><div class="tpl-sub">CS / Engineering</div>
                 </button>
-                <button onclick="selectTemplate('executive')" id="tpl-executive" class="tpl-btn">
-                  <div class="tpl-thumb"><div style="height:5px;background:#1a4fa0;width:55%;margin:0 auto 2px;border-radius:1px"></div><div style="height:1.5px;background:#1a4fa0;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#1a4fa0;width:100%;margin-bottom:4px"></div><div style="height:2.5px;background:#1a4fa0;width:40%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#c0c8e0;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#e8eaf0;width:90%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:3px;height:3px;background:#1a4fa0;border-radius:50%;flex-shrink:0"></div><div style="height:2px;background:#e8eaf0;flex:1;border-radius:1px"></div></div></div>
-                  <div class="tpl-label">Executive</div>
+                <button onclick="selectTemplate('law')" id="tpl-law" class="tpl-btn">
+                  <div class="tpl-thumb"><div style="height:4px;background:#1a1814;width:60%;margin:0 auto 1px;border-radius:1px"></div><div style="height:1px;background:#1a1814;width:100%;margin-bottom:1px"></div><div style="height:1px;background:#1a1814;width:100%;margin-bottom:4px"></div><div style="height:2px;background:#555;width:45%;margin:0 auto 1px;border-radius:1px"></div><div style="height:1px;background:#bbb;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#ddd;width:100%;margin-bottom:1px;border-radius:1px"></div><div style="height:1.5px;background:#ddd;width:95%;margin-bottom:1px;border-radius:1px"></div><div style="height:1.5px;background:#ddd;width:90%;border-radius:1px"></div></div>
+                  <div class="tpl-label">Law</div><div class="tpl-sub">Legal</div>
                 </button>
-
-
+                <button onclick="selectTemplate('science')" id="tpl-science" class="tpl-btn">
+                  <div class="tpl-thumb"><div style="height:5px;background:#0d3d38;width:68%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ccc;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#0d6655;width:100%;background:#e8f5f3;border-radius:2px;padding:1px 3px;margin-bottom:3px"><div style="height:1px;background:#0d6655;width:38%;border-radius:1px"></div></div><div style="height:2px;background:#e8f5f3;width:100%;border-radius:2px;padding:1px 3px;margin-bottom:2px"><div style="height:1px;background:#0d6655;width:55%;border-radius:1px"></div></div><div style="display:flex;gap:2px;align-items:center;margin-bottom:1px"><div style="width:2.5px;height:2.5px;background:#0d6655;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#c8e8e4;flex:1;border-radius:1px"></div></div><div style="display:flex;gap:2px;align-items:center"><div style="width:2.5px;height:2.5px;background:#0d6655;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#c8e8e4;flex:1;border-radius:1px"></div></div></div>
+                  <div class="tpl-label">Science</div><div class="tpl-sub">Research</div>
+                </button>
+                <button onclick="selectTemplate('creative')" id="tpl-creative" class="tpl-btn">
+                  <div class="tpl-thumb" style="flex-direction:row;padding:0;gap:0"><div style="width:16px;background:#1a1814;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:5px 2px;gap:3px"><div style="width:10px;height:10px;border-radius:50%;background:#c8b560"></div><div style="height:1.5px;background:rgba(255,255,255,0.4);width:10px;border-radius:1px"></div><div style="height:1px;background:rgba(255,255,255,0.25);width:10px;border-radius:1px"></div></div><div style="flex:1;padding:5px;display:flex;flex-direction:column;gap:2px"><div style="height:4px;background:#c8b560;width:70%;border-radius:1px"></div><div style="height:1px;background:#ddd;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#c8b560;width:55%;border-radius:1px;margin-bottom:1px"></div><div style="height:1.5px;background:#eee;width:90%;border-radius:1px"></div><div style="height:1.5px;background:#eee;width:85%;border-radius:1px"></div></div></div>
+                  <div class="tpl-label">Creative</div><div class="tpl-sub">Fashion / Design</div>
+                </button>
+              </div>
+              <div id="creative-photo-row" style="display:none;margin-top:10px;padding:8px 12px;background:#f8f5f0;border-radius:8px;display:flex;align-items:center;gap:10px">
+                <span style="font-size:11px;color:var(--ink4);font-weight:600">📸 Profile photo (optional):</span>
+                <button onclick="uploadCVPhoto()" style="background:var(--ink);color:white;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer">Upload photo</button>
+                <button onclick="_cvPhoto=null;renderCVPreview()" id="remove-photo-btn" style="display:none;background:none;border:1px solid var(--cream3);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--ink4);cursor:pointer;font-family:'Geist',sans-serif">Remove</button>
               </div>
             </div>
             <!-- View tabs -->
             <div style="display:flex;border-bottom:1px solid var(--cream3);background:var(--cream2)">
               <button onclick="switchCVView('preview')" id="view-preview-btn" style="flex:1;padding:10px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-bottom:2px solid var(--green);background:var(--cream2);color:var(--green);cursor:pointer">👁 Preview</button>
               <button onclick="switchCVView('edit')" id="view-edit-btn" style="flex:1;padding:10px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-bottom:2px solid transparent;background:var(--cream2);color:var(--ink4);cursor:pointer">✏️ Edit text</button>
+              <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="flex:1;padding:10px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-bottom:2px solid transparent;background:var(--cream2);color:var(--ink4);cursor:pointer">🖊 Edit inline</button>
             </div>
+            <div class="wysiwyg-hint" id="wysiwyg-hint">✏️ Click any text in the CV to edit it directly. Changes save automatically.</div>
             <!-- Preview pane -->
             <div id="cv-preview-pane" style="background:#f0ede8;min-height:400px;display:flex;justify-content:center;align-items:flex-start">
               <div id="cv-preview-doc" style="background:white;width:100%;max-width:680px;margin:20px auto;padding:40px 48px;box-shadow:0 4px 24px rgba(0,0,0,0.12);font-size:11pt;line-height:1.4;color:#000;min-height:500px"></div>
@@ -1117,6 +1137,8 @@ if (typeof pdfjsLib !== 'undefined') {
 let resumeText = '', resumeFileName = '', _atsResult = null;
 let _tailoredCVText = '', _lastVerifiedScore = 0, _reTailorCount = 0;
 let _activeTemplate = 'classic';
+let _cvPhoto = null;       // base64 photo for Creative template
+let _wysiwygMode = false;  // WYSIWYG inline edit toggle
 let _lastATSCompany = '', _lastATSRole = '';
 let matcherText = '';
 
@@ -1917,11 +1939,9 @@ function renderMatcher(data) {
 
 // ── DOCX builder ──
 function downloadCVasPDF() {
-  var cvText = _tailoredCVText || '';
-  if (!cvText) {
-    var el = document.getElementById('tailor-cv-output');
-    if (el) cvText = el.value;
-  }
+  // Always prefer textarea value (may have been edited by user after tailoring)
+  var el = document.getElementById('tailor-cv-output');
+  var cvText = (el && el.value && el.value.trim()) ? el.value : (_tailoredCVText || '');
   if (!cvText) { showDlToast('Please tailor your CV first'); return; }
   var printWin = window.open('', '_blank');
 
@@ -1930,12 +1950,16 @@ function downloadCVasPDF() {
 
   // Full template CSS per template
   var tplCSS = {
-    classic: '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:1.5px;font-size:16pt;margin:0 0 3px 0;color:#1a1814}h2{border-bottom:1.5px solid #1a1814;text-transform:uppercase;letter-spacing:0.5px;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;color:#1a1814}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
-    modern:  '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #1a6b3c;padding-bottom:5px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
-    minimal: '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:left;font-size:16pt;font-weight:700;margin:0 0 3px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:1px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
-    executive: '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:16pt;margin:0 0 3px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
-    clean:   '@page{margin:12mm 15mm;size:A4}body{font-family:Arial,sans-serif;color:#2d2d2d;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:18pt;font-weight:700;margin:0 0 4px 0;color:#2d2d2d;border-bottom:2px solid #e0e0e0;padding-bottom:5px}h2{background:#f2f2f2;color:#2d2d2d;text-transform:uppercase;font-size:9.5pt;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
-    sharp:   '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:18pt;font-weight:700;margin:0 0 4px 0;color:#1a1814;border-left:5px solid #1a6b3c;padding-left:10px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;padding-bottom:2px;margin:14px 0 5px 0;letter-spacing:0.5px}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}'
+    classic:    '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,"Times New Roman",serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:1.5px;font-size:16pt;margin:0 0 3px 0;color:#1a1814}h2{border-bottom:1.5px solid #1a1814;text-transform:uppercase;letter-spacing:0.5px;font-size:9.5pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;color:#1a1814}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}',
+    consulting: '@page{margin:10mm 14mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.45;margin:0;padding:0}h1{text-align:left;font-size:22pt;font-weight:700;margin:0 0 4px 0;color:#0f1f3d;border-left:4px solid #0f1f3d;padding-left:12px;letter-spacing:-0.5px}h2{color:#0f1f3d;border-bottom:2px solid #0f1f3d;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:3px;margin:14px 0 5px 0}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0f1f3d}',
+    tech:       '@page{margin:10mm 13mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0f172a}h2{color:#0369a1;border-bottom:1.5px solid #0369a1;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0369a1}',
+    law:        '@page{margin:12mm 16mm;size:A4}body{font-family:"Times New Roman",Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.6;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:17pt;margin:0 0 2px 0;color:#1a1814}h2{text-align:left;text-transform:uppercase;letter-spacing:1.5px;font-size:9.5pt;font-weight:700;border-top:1.5px solid #1a1814;border-bottom:1.5px solid #1a1814;padding:2px 0;margin:14px 0 6px 0;color:#1a1814}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:2px 0}',
+    science:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0d3d38}h2{background:#e8f5f3;color:#0d6655;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0d6655}',
+    creative:   '@page{margin:0;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0}#sidebar{width:150px;min-height:100vh;background:#1a1814;padding:24px 14px;float:left;color:white;box-sizing:border-box}#main{margin-left:150px;padding:24px 28px}h1{font-size:14pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:white;margin:0 0 10px 0;line-height:1.2}h2{color:#c8a84b;border-bottom:1.5px solid #c8a84b;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}li::marker{color:#c8a84b}.contact-item{font-size:8pt;color:rgba(255,255,255,0.7);margin-bottom:4px;word-break:break-all}',
+    // backwards compatibility
+    modern:     '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #1a6b3c;padding-bottom:5px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    minimal:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:left;font-size:16pt;font-weight:700;margin:0 0 3px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:1px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
+    executive:  '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:16pt;margin:0 0 3px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
   };
 
   var style = '<style>' + (tplCSS[t] || tplCSS.classic) + '</style>';
@@ -2680,13 +2704,106 @@ function renderVisa(data, isUK, country, sector){
 
 function selectTemplate(name) {
   _activeTemplate = name;
-  ['classic','modern','minimal','executive'].forEach(function(t) {
+  ['classic','consulting','tech','law','science','creative'].forEach(function(t) {
     var btn = document.getElementById('tpl-' + t);
     if (!btn) return;
     btn.className = btn.className.replace(/\s*tpl-active/g, '');
     if (t === name) btn.className += ' tpl-active';
   });
+  // Show/hide photo row for Creative template
+  var photoRow = document.getElementById('creative-photo-row');
+  if (photoRow) photoRow.style.display = (name === 'creative') ? 'flex' : 'none';
   renderCVPreview();
+}
+
+function uploadCVPhoto() {
+  var input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      _cvPhoto = ev.target.result;
+      var rmBtn = document.getElementById('remove-photo-btn');
+      if (rmBtn) rmBtn.style.display = 'inline-flex';
+      renderCVPreview();
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function toggleWYSIWYG() {
+  _wysiwygMode = !_wysiwygMode;
+  var doc = document.getElementById('cv-preview-doc');
+  var btn = document.getElementById('wysiwyg-btn');
+  var hint = document.getElementById('wysiwyg-hint');
+  var previewPane = document.getElementById('cv-preview-pane');
+  var editor = document.getElementById('tailor-cv-output');
+  // Always show preview pane in WYSIWYG mode
+  if (_wysiwygMode) {
+    if (previewPane) previewPane.style.display = 'flex';
+    if (editor) editor.style.display = 'none';
+    var pb = document.getElementById('view-preview-btn');
+    var eb = document.getElementById('view-edit-btn');
+    if (pb) { pb.style.borderBottomColor = 'transparent'; pb.style.color = 'var(--ink4)'; }
+    if (eb) { eb.style.borderBottomColor = 'transparent'; eb.style.color = 'var(--ink4)'; }
+  }
+  if (btn) {
+    btn.style.borderBottomColor = _wysiwygMode ? 'var(--green)' : 'transparent';
+    btn.style.color = _wysiwygMode ? 'var(--green)' : 'var(--ink4)';
+    btn.textContent = _wysiwygMode ? '✅ Done editing' : '🖊 Edit inline';
+  }
+  if (hint) hint.className = _wysiwygMode ? 'wysiwyg-hint visible' : 'wysiwyg-hint';
+  if (doc) {
+    renderCVPreview();
+    if (_wysiwygMode) {
+      doc.contentEditable = 'true';
+      doc.addEventListener('input', _onWYSIWYGInput);
+    } else {
+      doc.contentEditable = 'false';
+      doc.removeEventListener('input', _onWYSIWYGInput);
+    }
+  }
+}
+
+function _onWYSIWYGInput() {
+  var text = _serializeWYSIWYG();
+  if (text) {
+    _tailoredCVText = text;
+    var ta = document.getElementById('tailor-cv-output');
+    if (ta) ta.value = text;
+  }
+}
+
+function _serializeWYSIWYG() {
+  var doc = document.getElementById('cv-preview-doc');
+  if (!doc) return '';
+  var lines = [];
+  var nodes = doc.querySelectorAll('[data-cv-type]');
+  if (!nodes.length) return (doc.innerText || '').trim();
+  nodes.forEach(function(el) {
+    var type = el.getAttribute('data-cv-type');
+    var text = (el.innerText || '').trim();
+    switch(type) {
+      case 'name': lines.push(text); break;
+      case 'contact': lines.push(text); break;
+      case 'heading': lines.push(''); lines.push(text.toUpperCase()); break;
+      case 'role-entry': {
+        var le = el.querySelector('[data-left]'); var re = el.querySelector('[data-right]');
+        var l2 = le ? (le.innerText||'').trim() : text;
+        var r2 = re ? (re.innerText||'').trim() : '';
+        lines.push(r2 ? l2 + '     ' + r2 : l2); break;
+      }
+      case 'bullet': { var bt = text; if(!bt.startsWith('•'))bt='• '+bt; lines.push(bt); break; }
+      case 'project-title': lines.push(text); break;
+      case 'text': lines.push(text); break;
+      case 'skill-line': lines.push(text); break;
+      default: if(text) lines.push(text);
+    }
+  });
+  return lines.join('\n');
 }
 
 function switchCVView(mode) {
@@ -2718,153 +2835,205 @@ function renderCVPreview() {
   var doc = document.getElementById('cv-preview-doc');
   if (!doc || !textarea) return;
   var text = textarea.value;
+  // Sync edits from textarea back to _tailoredCVText (fixes PDF download after edit)
+  if (text && text.trim()) _tailoredCVText = text;
   if (!text) return;
 
-  var tpl = _activeTemplate;
-  var GREEN = '#1a6b3c', BLUE = '#1a4fa0', INK = '#1a1814', GRAY = '#4a4640', LIGHT = '#9a9590';
+  var tpl = _activeTemplate || 'classic';
+  var E = _wysiwygMode; // editable mode?
 
-  var styles = {
-    classic:   {nameAlign:'center',nameSz:'20pt',nameFont:'Times New Roman',nameColor:INK,contactAlign:'center',contactSz:'9pt',contactColor:LIGHT,headingColor:INK,headingSz:'10pt',headingFont:'Times New Roman',headingBorder:'1.5px solid #000',bodyFont:'Times New Roman',bodySz:'10pt',bodyColor:INK,bulletColor:INK,ruleColor:'#000'},
-    modern:    {nameAlign:'left',nameSz:'22pt',nameFont:'Calibri,Arial',nameColor:INK,contactAlign:'left',contactSz:'9pt',contactColor:LIGHT,headingColor:GREEN,headingSz:'10pt',headingFont:'Calibri,Arial',headingBorder:'1.5px solid #c8c3bb',bodyFont:'Calibri,Arial',bodySz:'10pt',bodyColor:GRAY,bulletColor:GREEN,ruleColor:GREEN},
-    minimal:   {nameAlign:'left',nameSz:'22pt',nameFont:'Arial',nameColor:'#111',contactAlign:'left',contactSz:'8.5pt',contactColor:'#888',headingColor:'#444',headingSz:'9pt',headingFont:'Arial',headingBorder:'1px solid #e5e5e5',bodyFont:'Arial',bodySz:'9.5pt',bodyColor:'#333',bulletColor:'#888',ruleColor:'#ddd'},
-    executive: {nameAlign:'center',nameSz:'20pt',nameFont:'Georgia,Times New Roman',nameColor:BLUE,contactAlign:'center',contactSz:'9pt',contactColor:LIGHT,headingColor:BLUE,headingSz:'10pt',headingFont:'Georgia,Times New Roman',headingBorder:'1.5px solid '+BLUE,bodyFont:'Georgia,Times New Roman',bodySz:'10pt',bodyColor:'#2a2a2a',bulletColor:BLUE,ruleColor:BLUE},
-    clean:     {nameAlign:'left',nameSz:'22pt',nameFont:'Arial',nameColor:'#2d2d2d',contactAlign:'left',contactSz:'8.5pt',contactColor:'#888',headingColor:'#2d2d2d',headingSz:'9.5pt',headingFont:'Arial',headingBorder:'none',bodyFont:'Arial',bodySz:'9.5pt',bodyColor:'#444',bulletColor:'#aaa',ruleColor:'#e0e0e0',headingBg:'#f5f5f5'},
-    sharp:     {nameAlign:'left',nameSz:'18pt',nameFont:'Calibri,Arial',nameColor:'#1a1814',contactAlign:'left',contactSz:'8.5pt',contactColor:'#555',headingColor:'#1a6b3c',headingSz:'9.5pt',headingFont:'Calibri,Arial',headingBorder:'1.5px solid #1a6b3c',bodyFont:'Calibri,Arial',bodySz:'9.5pt',bodyColor:'#222',bulletColor:'#1a6b3c',ruleColor:'#1a6b3c',sidebarMode:true}
+  function ex(t){ return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function edAttr(type){ return E ? ' contenteditable="true" data-cv-type="'+type+'"' : ' data-cv-type="'+type+'"'; }
+
+  // ── Template style configs ──
+  var T = {
+    classic: {
+      pad:'36px 48px', font:"'Times New Roman',Georgia,serif", sz:'10pt', color:'#1a1814', lh:'1.45',
+      nameAlign:'center', nameSz:'20pt', nameFont:"'Times New Roman',Georgia,serif", nameColor:'#1a1814', nameTransform:'uppercase', nameSpacing:'1.5px',
+      conAlign:'center', conSz:'9pt', conColor:'#888',
+      hColor:'#1a1814', hSz:'9.5pt', hFont:"'Times New Roman',Georgia,serif", hBorder:'1.5px solid #1a1814', hBg:'', hPad:'0 0 2px 0', hTransform:'uppercase',
+      bullet:'•', bulletColor:'#1a1814', ruleColor:'#1a1814', sidebar:false, photo:false,
+    },
+    consulting: {
+      pad:'36px 48px', font:"'Calibri',Arial,sans-serif", sz:'10.5pt', color:'#1a1814', lh:'1.45',
+      nameAlign:'left', nameSz:'24pt', nameFont:"'Calibri',Arial,sans-serif", nameColor:'#0f1f3d', nameTransform:'none', nameSpacing:'-0.5px',
+      conAlign:'left', conSz:'9pt', conColor:'#444',
+      hColor:'#0f1f3d', hSz:'9.5pt', hFont:"'Calibri',Arial,sans-serif", hBorder:'2px solid #0f1f3d', hBg:'', hPad:'0 0 3px 0', hTransform:'uppercase',
+      bullet:'—', bulletColor:'#0f1f3d', ruleColor:'#0f1f3d', sidebar:false, photo:false,
+      nameAccentBorder: 'border-left:4px solid #0f1f3d;padding-left:12px',
+    },
+    tech: {
+      pad:'32px 44px', font:"'Calibri',Arial,sans-serif", sz:'10.5pt', color:'#1a1814', lh:'1.5',
+      nameAlign:'left', nameSz:'22pt', nameFont:"'Calibri',Arial,sans-serif", nameColor:'#0f172a', nameTransform:'none', nameSpacing:'-0.3px',
+      conAlign:'left', conSz:'9pt', conColor:'#555',
+      hColor:'#0369a1', hSz:'9.5pt', hFont:"'Calibri',Arial,sans-serif", hBorder:'1.5px solid #0369a1', hBg:'', hPad:'0 0 3px 0', hTransform:'uppercase',
+      bullet:'▸', bulletColor:'#0369a1', ruleColor:'#0369a1', sidebar:false, photo:false,
+    },
+    law: {
+      pad:'40px 52px', font:"'Times New Roman',Georgia,serif", sz:'10.5pt', color:'#1a1814', lh:'1.6',
+      nameAlign:'center', nameSz:'17pt', nameFont:"'Times New Roman',Georgia,serif", nameColor:'#1a1814', nameTransform:'uppercase', nameSpacing:'3px',
+      conAlign:'center', conSz:'9pt', conColor:'#444',
+      hColor:'#1a1814', hSz:'9.5pt', hFont:"'Times New Roman',Georgia,serif", hBorder:'none', hBg:'', hPad:'0 0 1px 0', hTransform:'uppercase', hDoubleRule:true,
+      bullet:'•', bulletColor:'#1a1814', ruleColor:'#1a1814', ruleDouble:true, sidebar:false, photo:false,
+    },
+    science: {
+      pad:'32px 44px', font:"Arial,sans-serif", sz:'10pt', color:'#1a1814', lh:'1.5',
+      nameAlign:'left', nameSz:'21pt', nameFont:"Arial,sans-serif", nameColor:'#0d3d38', nameTransform:'none', nameSpacing:'0',
+      conAlign:'left', conSz:'9pt', conColor:'#4a4a4a',
+      hColor:'#0d6655', hSz:'9.5pt', hFont:"Arial,sans-serif", hBorder:'none', hBg:'#e8f5f3', hPad:'3px 8px', hTransform:'uppercase',
+      bullet:'•', bulletColor:'#0d6655', ruleColor:'#0d6655', sidebar:false, photo:false,
+    },
+    creative: {
+      pad:'0', font:"'Calibri',Arial,sans-serif", sz:'10pt', color:'#1a1814', lh:'1.45',
+      nameAlign:'left', nameSz:'15pt', nameFont:"'Calibri',Arial,sans-serif", nameColor:'white', nameTransform:'uppercase', nameSpacing:'2px',
+      conAlign:'left', conSz:'8pt', conColor:'rgba(255,255,255,0.7)',
+      hColor:'#c8a84b', hSz:'9pt', hFont:"'Calibri',Arial,sans-serif", hBorder:'1.5px solid #c8a84b', hBg:'', hPad:'0 0 2px 0', hTransform:'uppercase',
+      bullet:'▸', bulletColor:'#c8a84b', ruleColor:'#c8a84b', sidebar:true, sidebarBg:'#1a1814', sidebarW:'150px', photo:true,
+    },
   };
-  var s = styles[tpl] || styles.classic;
 
-  function ex(t) { return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var s = T[tpl] || T.classic;
 
-  var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|EXTRACURRICULARS?|INTERESTS?|ACTIVITIES|ADDITIONAL INFORMATION)[\s:]*$/i;
-
-  // Sharp template: dark sidebar layout
-  if (s.sidebarMode) {
+  // ── Creative/sidebar template ──
+  if (s.sidebar) {
     var allLines = text.split('\n');
     var nameLine = allLines[0] || '';
-    var contactLine = '';
-    var bodyLines = [];
-    var foundContact = false;
-    for (var ci = 1; ci < allLines.length; ci++) {
+    var contactLine = ''; var bodyLines = []; var fc = false;
+    for (var ci=1; ci<allLines.length; ci++) {
       var cl = allLines[ci].trim();
-      if (!foundContact && cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length < 200) {
-        contactLine = cl; foundContact = true;
-      } else {
-        bodyLines.push(allLines[ci]);
-      }
+      if (!fc && cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length<200) { contactLine=cl; fc=true; }
+      else bodyLines.push(allLines[ci]);
     }
-    // Render sidebar layout
-    out = '<div style="display:flex;min-height:600px;font-family:' + s.bodyFont + ';font-size:' + s.bodySz + '">';
-    // Dark left sidebar
-    out += '<div style="width:140px;background:#1a1814;padding:20px 14px;flex-shrink:0;color:white">';
-    out += '<div style="font-size:13pt;font-weight:800;color:white;line-height:1.2;margin-bottom:10px;word-break:break-word">' + ex(nameLine) + '</div>';
+    var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|EXTRACURRICULARS?|INTERESTS?|ACTIVITIES|PUBLICATIONS?|ADDITIONAL)[\s:]*$/i;
+    var out = '<div style="display:flex;min-height:600px;font-family:'+s.font+';font-size:'+s.sz+';line-height:'+s.lh+'">';
+    // Sidebar
+    out += '<div style="width:'+s.sidebarW+';background:'+s.sidebarBg+';padding:24px 14px;flex-shrink:0;color:white">';
+    if (s.photo && _cvPhoto) {
+      out += '<div style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:2.5px solid #c8a84b;margin:0 auto 14px"><img src="'+_cvPhoto+'" style="width:100%;height:100%;object-fit:cover"></div>';
+    } else if (s.photo) {
+      out += '<div style="width:60px;height:60px;border-radius:50%;background:#2d2d2d;border:2px dashed #c8a84b;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="uploadCVPhoto()"><span style="font-size:18px">📷</span></div>';
+    }
+    out += '<div'+edAttr('name')+' style="font-size:'+s.nameSz+';font-weight:800;font-family:'+s.nameFont+';color:'+s.nameColor+';text-transform:'+s.nameTransform+';letter-spacing:'+s.nameSpacing+';line-height:1.2;margin-bottom:10px;word-break:break-word">'+ex(nameLine)+'</div>';
     if (contactLine) {
-      var parts = contactLine.split(/[|•]/);
-      parts.forEach(function(p) {
-        if (p.trim()) out += '<div style="font-size:7.5pt;color:rgba(255,255,255,0.65);margin-bottom:4px;line-height:1.4;word-break:break-all">' + ex(p.trim()) + '</div>';
-      });
+      var cparts = contactLine.split(/[|•]/);
+      out += '<div'+edAttr('contact')+'>';
+      cparts.forEach(function(p){ if(p.trim()) out+='<div style="font-size:'+s.conSz+';color:'+s.conColor+';margin-bottom:4px;line-height:1.4;word-break:break-all">'+ex(p.trim())+'</div>'; });
+      out += '</div>';
     }
     out += '</div>';
-    // Main content area
-    out += '<div style="flex:1;padding:20px 22px;color:' + s.bodyColor + '">';
-    var HEADING_RE2 = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|EXTRACURRICULARS?|INTERESTS?|ACTIVITIES|ADDITIONAL INFORMATION)[\s:]*$/i;
+    // Main content
+    out += '<div style="flex:1;padding:24px 26px;color:'+s.color+'">';
     bodyLines.forEach(function(raw) {
       var line = raw.trim();
-      if (!line) { out += '<div style="height:4px"></div>'; return; }
-      if (HEADING_RE2.test(line) || (/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line) && line.length > 3 && line.length < 60)) {
-        out += '<div style="margin-top:12px;padding-bottom:2px;border-bottom:1.5px solid #1a6b3c;font-family:' + s.headingFont + ';font-size:' + s.headingSz + ';font-weight:800;color:#1a6b3c;text-transform:uppercase;margin-bottom:4px;letter-spacing:0.5px">' + ex(line) + '</div>';
-        return;
+      if (!line) { out+='<div style="height:4px"></div>'; return; }
+      if (HEADING_RE.test(line)||(/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line)&&line.length>3&&line.length<60)) {
+        out+='<div'+edAttr('heading')+' style="margin-top:12px;padding-bottom:2px;border-bottom:'+s.hBorder+';font-family:'+s.hFont+';font-size:'+s.hSz+';font-weight:800;color:'+s.hColor+';text-transform:'+s.hTransform+';margin-bottom:4px;letter-spacing:0.5px">'+ex(line)+'</div>'; return;
       }
       if (/^[•\-\*▸○◦]/.test(line)) {
-        var content = line.replace(/^[•\-\*▸○◦]\s*/, '');
-        out += '<div style="display:flex;gap:7px;margin:3px 0;padding-left:4px"><span style="color:#1a6b3c;flex-shrink:0;font-weight:700">▸</span><span>' + ex(content) + '</span></div>';
-        return;
+        var bc = line.replace(/^[•\-\*▸○◦]\s*/,'');
+        out+='<div'+edAttr('bullet')+' style="display:flex;gap:7px;margin:3px 0;padding-left:4px"><span style="color:'+s.bulletColor+';flex-shrink:0;font-weight:700">'+s.bullet+'</span><span>'+ex(bc)+'</span></div>'; return;
       }
-      var hasDate = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(line);
-      var hasPipe = line.includes('|');
-      if ((hasDate || hasPipe) && line.length < 130) {
+      var hd = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(line);
+      var hp = line.includes('|');
+      if ((hd||hp)&&line.length<150) {
         var pts = line.split(/\s{2,}|\t/);
-        if (pts.length >= 2) {
-          out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px"><span style="font-weight:700;color:#1a1814">' + ex(pts[0].trim()) + '</span><span style="font-size:8pt;color:#888;font-style:italic">' + ex(pts[pts.length-1].trim()) + '</span></div>';
-        } else {
-          out += '<div style="font-weight:700;margin:6px 0 2px">' + ex(line) + '</div>';
-        }
+        if (pts.length>=2) {
+          out+='<div'+edAttr('role-entry')+' style="display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px"><span data-left style="font-weight:700;font-size:10.5pt;color:#1a1814">'+ex(pts[0].trim())+'</span><span data-right style="font-size:8pt;color:#888;font-style:italic;padding-left:6px">'+ex(pts[pts.length-1].trim())+'</span></div>';
+        } else { out+='<div'+edAttr('role-entry')+' style="font-weight:700;margin:6px 0 2px">'+ex(line)+'</div>'; }
         return;
       }
-      out += '<div style="margin:2px 0;color:' + s.bodyColor + '">' + ex(line) + '</div>';
+      out+='<div'+edAttr('text')+' style="margin:2px 0">'+ex(line)+'</div>';
     });
     out += '</div></div>';
     doc.innerHTML = out;
     return;
   }
 
-  var out = '<div style="font-family:' + s.bodyFont + ';font-size:' + s.bodySz + ';color:' + s.bodyColor + ';line-height:1.45">';
+  // ── Standard (non-sidebar) templates ──
+  var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|EXTRACURRICULARS?|INTERESTS?|ACTIVITIES|PUBLICATIONS?|ADDITIONAL)[\s:]*$/i;
+
+  var out = '<div style="font-family:'+s.font+';font-size:'+s.sz+';color:'+s.color+';line-height:'+s.lh+';padding:'+s.pad+'">';
   var lines = text.split('\n');
   var li = 0, gotContact = false, previewSection = '';
 
-  for (var i = 0; i < lines.length; i++) {
+  for (var i=0; i<lines.length; i++) {
     var line = lines[i].trim();
-    if (!line) { out += '<div style="height:5px"></div>'; li++; continue; }
+    if (!line) { out+='<div style="height:5px"></div>'; li++; continue; }
 
-    if (li === 0) {
-      out += '<div style="text-align:' + s.nameAlign + ';font-family:' + s.nameFont + ';font-size:' + s.nameSz + ';font-weight:bold;color:' + s.nameColor + ';margin-bottom:4px">' + ex(line) + '</div>';
+    // Name
+    if (li===0) {
+      var nameStyle = 'text-align:'+s.nameAlign+';font-family:'+s.nameFont+';font-size:'+s.nameSz+';font-weight:bold;color:'+s.nameColor+';text-transform:'+s.nameTransform+';letter-spacing:'+s.nameSpacing+';margin-bottom:3px';
+      if (s.nameAccentBorder) nameStyle += ';'+s.nameAccentBorder;
+      out+='<div'+edAttr('name')+' style="'+nameStyle+'">'+ex(line)+'</div>';
       li++; continue;
     }
 
-    if (!gotContact && li <= 4 && (/@|linkedin|\.com|[\d]{5,}/.test(line)) && line.length < 200) {
-      out += '<div style="text-align:' + s.contactAlign + ';font-size:' + s.contactSz + ';color:' + s.contactColor + ';margin-bottom:5px">' + ex(line) + '</div>';
-      out += '<div style="border-bottom:' + (tpl==='classic'?'1.5px solid #000':'1.5px solid '+s.ruleColor) + ';margin-bottom:10px"></div>';
-      gotContact = true; li++; continue;
+    // Contact
+    if (!gotContact && li<=4 && (/@|linkedin|\.com|[\d]{5,}/.test(line)) && line.length<200) {
+      out+='<div'+edAttr('contact')+' style="text-align:'+s.conAlign+';font-size:'+s.conSz+';color:'+s.conColor+';margin-bottom:4px">'+ex(line)+'</div>';
+      // Rule under contact
+      if (s.ruleDouble) {
+        out+='<div style="border-top:1.5px solid '+s.ruleColor+';border-bottom:1.5px solid '+s.ruleColor+';padding:2px 0;margin:4px 0 10px 0"></div>';
+      } else {
+        out+='<div style="border-bottom:1.5px solid '+s.ruleColor+';margin-bottom:10px;margin-top:3px"></div>';
+      }
+      gotContact=true; li++; continue;
     }
 
-    if (HEADING_RE.test(line) || (/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line) && line.length > 3 && line.length < 60)) {
+    // Section headings
+    if (HEADING_RE.test(line) || (/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line) && line.length>3 && line.length<60)) {
       previewSection = line.toUpperCase();
-      if (s.headingBg) {
-        out += '<div style="margin-top:12px;background:' + s.headingBg + ';padding:3px 6px;font-family:' + s.headingFont + ';font-size:' + s.headingSz + ';font-weight:bold;color:' + s.headingColor + ';text-transform:uppercase;margin-bottom:5px">' + ex(line) + '</div>';
+      var hStyle = 'margin-top:13px;margin-bottom:4px;font-family:'+s.hFont+';font-size:'+s.hSz+';font-weight:bold;color:'+s.hColor+';text-transform:'+s.hTransform;
+      if (s.hBg) {
+        hStyle += ';background:'+s.hBg+';padding:'+s.hPad;
+      } else if (s.hDoubleRule) {
+        hStyle += ';border-top:1.5px solid '+s.hColor+';border-bottom:1.5px solid '+s.hColor+';padding:2px 0;letter-spacing:1.5px';
       } else {
-        out += '<div style="margin-top:13px;padding-bottom:3px;border-bottom:' + s.headingBorder + ';font-family:' + s.headingFont + ';font-size:' + s.headingSz + ';font-weight:bold;color:' + s.headingColor + ';text-transform:uppercase;margin-bottom:4px">' + ex(line) + '</div>';
+        hStyle += ';padding-bottom:3px;border-bottom:'+s.hBorder;
       }
+      out+='<div'+edAttr('heading')+' style="'+hStyle+'">'+ex(line)+'</div>';
       li++; continue;
     }
 
-    // Certification bullets bold
-    if (/CERTIF/i.test(previewSection) && /^[•\-\*▸○◦]/.test(line)) {
-      var certContent = line.replace(/^[•\-\*▸○◦]\s*/, '');
-      out += '<div style="display:flex;gap:8px;margin:3px 0;padding-left:8px"><span style="color:' + s.bulletColor + ';flex-shrink:0">•</span><span style="font-weight:bold">' + ex(certContent) + '</span></div>';
-      li++; continue;
-    }
-
+    // Bullets
     if (/^[•\-\*▸○◦]/.test(line)) {
-      var content = line.replace(/^[•\-\*▸○◦]\s*/, '');
-      out += '<div style="display:flex;gap:8px;margin:3px 0;padding-left:8px"><span style="color:' + s.bulletColor + ';flex-shrink:0">•</span><span>' + ex(content) + '</span></div>';
+      var bc = line.replace(/^[•\-\*▸○◦]\s*/,'');
+      var bIsBold = /CERTIF/i.test(previewSection);
+      out+='<div'+edAttr('bullet')+' style="display:flex;gap:8px;margin:3px 0;padding-left:8px">';
+      out+='<span style="color:'+s.bulletColor+';flex-shrink:0;font-weight:700">'+s.bullet+'</span>';
+      out+='<span'+(bIsBold?' style="font-weight:bold"':'')+'>'+ex(bc)+'</span></div>';
       li++; continue;
     }
 
-    var hasDate = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(line);
+    // Role / degree lines with date or pipe
+    var hasDate = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(line);
     var hasPipe = line.includes('|');
-    if ((hasDate || hasPipe) && line.length < 130) {
-      var parts = line.split(/\s{2,}|	/);
-      if (parts.length >= 2) {
-        out += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px"><span style="font-weight:bold;font-size:10.5pt;color:' + s.nameColor + '">' + ex(parts[0].trim()) + '</span><span style="font-size:8.5pt;color:' + LIGHT + ';font-style:italic">' + ex(parts[parts.length-1].trim()) + '</span></div>';
+    if ((hasDate||hasPipe) && line.length<150) {
+      var pts = line.split(/\s{2,}|\t/);
+      if (pts.length>=2) {
+        var lText = pts.slice(0,pts.length-1).join('  ').trim();
+        var rText = pts[pts.length-1].trim();
+        out+='<div'+edAttr('role-entry')+' style="display:flex;justify-content:space-between;align-items:baseline;margin:6px 0 2px"><span data-left style="font-weight:bold;font-size:10.5pt;color:'+s.nameColor+'">'+ex(lText)+'</span><span data-right style="font-size:8.5pt;color:#888;font-style:italic;white-space:nowrap;padding-left:8px">'+ex(rText)+'</span></div>';
       } else {
-        out += '<div style="font-weight:bold;margin:6px 0 2px;color:' + s.nameColor + '">' + ex(line) + '</div>';
+        out+='<div'+edAttr('role-entry')+' style="font-weight:bold;margin:6px 0 2px;color:'+s.nameColor+'">'+ex(line)+'</div>';
       }
       li++; continue;
     }
 
-    // Skills category labels → bold label before colon
+    // Skills labels (Category: items)
     if (/SKILL|INTEREST|AWARD/i.test(previewSection) && line.includes(':')) {
-      var pci = line.indexOf(':');
-      out += '<div style="margin:3px 0"><span style="font-weight:bold;color:' + s.nameColor + '">' + ex(line.substring(0,pci)) + '</span>' + ex(line.substring(pci)) + '</div>';
+      var ci2 = line.indexOf(':');
+      out+='<div'+edAttr('skill-line')+' style="margin:3px 0"><span style="font-weight:bold;color:'+s.nameColor+'">'+ex(line.substring(0,ci2))+'</span>'+ex(line.substring(ci2))+'</div>';
       li++; continue;
     }
 
-    // Project titles → bold
+    // Project titles
     if (/PROJECT/i.test(previewSection) && !line.includes('|') && !/\d{4}/.test(line)) {
-      out += '<div style="font-weight:bold;margin:6px 0 2px;color:' + s.nameColor + '">' + ex(line) + '</div>';
+      out+='<div'+edAttr('project-title')+' style="font-weight:bold;margin:6px 0 2px;color:'+s.nameColor+'">'+ex(line)+'</div>';
       li++; continue;
     }
 
-    out += '<div style="margin:2px 0">' + ex(line) + '</div>';
+    out+='<div'+edAttr('text')+' style="margin:2px 0">'+ex(line)+'</div>';
     li++;
   }
   out += '</div>';
