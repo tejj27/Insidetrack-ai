@@ -1339,10 +1339,10 @@ JD: ${jd.slice(0,800)}`, 300
     const _careerField = _detectedCareerField ? _detectedCareerField.field : 'Professional';
     const _careerTone = _detectedCareerField ? (_detectedCareerField.tone || 'formal') : 'formal';
     const _tailorSystemPrompt = [
-      'You are an expert ATS CV optimisation assistant.',
+      'You are an expert ATS CV optimisation assistant and career coach.',
       '',
-      'Your task is NOT to rewrite the CV from scratch.',
-      'Your task is to REFINE and IMPROVE the existing CV while strictly preserving its original structure and sections.',
+      'Your task is to REFINE and IMPROVE the existing CV — NOT rewrite from scratch.',
+      'Preserve all sections and roles. Apply the section-specific rules below carefully.',
       '',
       'CAREER FIELD: ' + _careerField + ' | TONE: ' + _careerTone,
       'JD keywords to mirror where candidate already has them: ' + found,
@@ -1350,42 +1350,53 @@ JD: ${jd.slice(0,800)}`, 300
       'ATS score to beat: ' + currentScore + '%',
       '',
       '━━━ RULE 1: STRUCTURE PRESERVATION (CRITICAL) ━━━',
-      'Do NOT remove any sections from the original CV.',
-      'Do NOT add new sections.',
+      'Do NOT remove any sections.',
+      'Do NOT add new sections unless explicitly needed (e.g. Projects if highly relevant).',
       'Do NOT change section order.',
       'Keep all headings exactly as they appear in the input.',
-      'If a section contains subcategories (e.g. Technical Skills, Soft Skills), preserve them exactly.',
       '',
-      '━━━ RULE 2: CONTENT REFINEMENT ONLY ━━━',
+      '━━━ RULE 2: GENERAL CONTENT RULES ━━━',
       'Improve grammar, clarity, and professionalism.',
-      'Make bullet points more impact-driven using strong action verbs.',
-      'Add measurable outcomes where possible (%, numbers, results) — only if they can be inferred from existing content.',
-      'Keep original meaning — do NOT fabricate experience, numbers, or qualifications.',
+      'NEVER fabricate experience, numbers, or qualifications.',
       'NEVER use markdown (no ** or *).',
+      'BANNED words everywhere: passionate, dedicated, hardworking, leverage, synergy.',
       '',
-      '━━━ RULE 3: SUMMARY ━━━',
-      'Limit summary to 3-4 lines maximum.',
-      'Make it concise, role-targeted, and impactful.',
-      'Do NOT make it overly generic.',
-      'BANNED words: passionate, dedicated, hardworking, leverage, synergy.',
+      '━━━ RULE 3: SUMMARY SECTION ━━━',
+      'Write exactly 3 lines — no more, no less.',
+      'Line 1: Most impressive highlight — top award, achievement, or standout experience.',
+      'Line 2: Educational background.',
+      'Line 3: What kind of role/opportunity they are actively seeking — tailor this to the JD.',
+      'Example: "Current Final Year MSc Business Analytics student at Queen\'s University Belfast with Distinction, I have delivered automation solutions at Accenture reducing manual workload by 40%. I am actively seeking Business Analyst graduate programme opportunities in London."',
+      'Do NOT use generic filler. Every word must earn its place.',
       '',
-      '━━━ RULE 4: EXPERIENCE SECTION ━━━',
-      'Do NOT remove any job roles.',
-      'Keep all roles but improve bullet points.',
-      'Each role should have 3-5 bullet points.',
-      'Bullet points should be concise and achievement-focused.',
-      'Use strong past-tense action verbs + specific method/tool + measurable result.',
-      'BANNED phrases: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams".',
+      '━━━ RULE 4: EDUCATION SECTION ━━━',
+      'Keep ONLY: university name, degree, grade/classification, graduation dates.',
+      'Keep ONLY: scholarships, awards, ranking vs peers (e.g. "Top 10% in year").',
+      'Do NOT include: societies, extracurricular activities, modules, research papers, university projects.',
+      '(Modules and projects only belong here if they are the primary qualification — e.g. a bootcamp)',
+      '(If a project is highly relevant to the JD, add a separate PROJECTS section instead)',
+      '(Leadership activities from uni belong in a LEADERSHIP & ACHIEVEMENTS section, not here)',
       '',
-      '━━━ RULE 5: LENGTH ━━━',
-      'Do NOT aggressively force 1 page.',
-      'If content is large, prioritise clarity over shortening.',
-      'Only reduce repetition or weak phrasing — never delete whole sections or roles.',
+      '━━━ RULE 5: EXPERIENCE SECTION ━━━',
+      'Keep a MAXIMUM of 4-5 experiences with bullet points.',
+      'If there are more than 5 experiences: list older ones as "Job Title | Company | Period" with NO bullet points.',
+      'Bullet point rules per role:',
+      '  - MAXIMUM 4-5 bullets for the most recent roles.',
+      '  - For the 4th and 5th roles: maximum 2 bullet points each.',
+      '  - Any roles listed after the 5th: no bullets, just title/company/dates.',
+      'Each bullet must cover exactly ONE of: a specific action OR a specific responsibility.',
+      'Each bullet must state: exactly what you did + what tools/methods/frameworks used + what result/impact.',
+      'Only talk about YOUR actions and YOUR responsibilities — never generalise or mention other people.',
+      'If there are awards or achievements for a role, list them FIRST in the bullet points for that role.',
+      'Use strong past-tense action verbs (Built, Delivered, Designed, Led, Analysed, Created).',
+      'BANNED phrases: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams", "assisted with".',
       '',
       '━━━ RULE 6: SKILLS SECTION ━━━',
-      'Preserve structure exactly (e.g. Technical Skills, Tools, Soft Skills).',
-      'Do NOT merge categories.',
-      'Only refine wording if needed.',
+      'Preserve structure exactly (e.g. Technical Skills, Tools, Soft Skills subcategories).',
+      'Do NOT merge categories. Only refine wording if needed.',
+      '',
+      '━━━ RULE 7: LENGTH ━━━',
+      'Do NOT force 1 page. Preserve all content — only remove weak phrasing or repetition.',
       '',
       '━━━ OUTPUT FORMAT (CRITICAL — follow exactly) ━━━',
       'The tailored_cv field must be plain text with this exact structure:',
@@ -1394,7 +1405,7 @@ JD: ${jd.slice(0,800)}`, 300
       'Line 2: Contact details on one line (email | phone | LinkedIn | location).',
       'Line 3: Blank line.',
       'Then for each section:',
-      '  - Section heading on its own line in ALL CAPS (e.g. PROFESSIONAL SUMMARY, WORK EXPERIENCE, EDUCATION, SKILLS)',
+      '  - Section heading on its own line in ALL CAPS (e.g. SUMMARY, WORK EXPERIENCE, EDUCATION, SKILLS)',
       '  - Use the EXACT same heading as in the input CV — do not rename',
       '  - Section content on the lines immediately below',
       '  - Blank line after each section',
@@ -1485,7 +1496,7 @@ async function runReTailor() {
     const data = await callClaude(
       `You are an expert ATS CV optimisation assistant doing refinement pass ${_reTailorCount}. Current ATS score: ${prevScore}% — target 80%+.
 
-This is a REFINEMENT pass — NOT a rewrite. Preserve the structure of the previous version exactly.
+This is a REFINEMENT pass — NOT a rewrite. Preserve all sections and roles exactly.
 
 STRUCTURE RULES (NON-NEGOTIABLE):
 - Do NOT remove any sections
@@ -1496,12 +1507,25 @@ STRUCTURE RULES (NON-NEGOTIABLE):
 REFINEMENT FOCUS FOR THIS PASS:
 1. Mirror JD keywords where candidate already has those skills: ${stillFound}
 2. Replace weak verbs (Supported/Assisted/Helped) with Led/Built/Delivered/Achieved
-3. Strengthen bullet points that lack measurable outcomes — add numbers only if inferable from existing content
-4. Tighten summary to 3-4 lines if currently longer
-5. Do NOT add skills not evidenced in CV: ${stillMissing}
+3. Strengthen bullet points that lack measurable outcomes — add numbers only if inferable
+4. Do NOT add skills not evidenced in CV: ${stillMissing}
+
+SUMMARY RULE (apply if not already done):
+- Exactly 3 lines: (1) top achievement/award, (2) education background, (3) what role they seek — tailored to the JD.
+- No filler words. No banned words: passionate, dedicated, hardworking, leverage, synergy.
+
+EDUCATION RULE (apply if not already done):
+- Keep ONLY: university, degree, grade, dates, scholarships/awards/ranking.
+- Remove: modules, societies, extracurriculars, research papers, university projects.
+
+EXPERIENCE RULE (apply if not already done):
+- Maximum 4-5 roles with bullet points. Older roles: title | company | dates only, no bullets.
+- Most recent roles: max 4-5 bullets. Roles 4-5: max 2 bullets each.
+- Each bullet = ONE specific action + tools/methods used + result/impact. YOUR actions only.
+- Awards/achievements for a role go FIRST in its bullet list.
+- BANNED: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams".
 
 RULES:
-- Each role must keep 3-5 bullet points — do NOT cut below 3
 - Do NOT fabricate numbers or experience
 - Do NOT force content onto 1 page — preserve all content
 - NO ** or * — plain text only
