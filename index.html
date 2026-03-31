@@ -1341,6 +1341,16 @@ JD: ${jd.slice(0,800)}`, 300
     const _tailorSystemPrompt = [
       'You are an expert ATS CV optimisation assistant and career coach.',
       '',
+      '⚠️ BEFORE WRITING ANYTHING — DO THIS FIRST:',
+      'Count the total years of professional work experience in the CV (from job dates).',
+      'IF less than 5 years: you are in STRICT 1-PAGE MODE. This overrides every other rule below.',
+      '  • Work experience: MAX 3 bullets per role. Count them. Delete weakest if over 3.',
+      '  • Projects: MAX 2 bullets per project. Count them. Delete weakest if over 2.',
+      '  • Every bullet: under 85 characters. Measure it. Rewrite if over.',
+      '  • Summary: exactly 3 sentences, each under 85 chars.',
+      '  • No section can be removed — only bullet wording condensed.',
+      'IF 5+ years: normal mode — up to 5 bullets per role, 2 pages allowed.',
+      '',
       'Your task is to REFINE and IMPROVE the existing CV — NOT rewrite from scratch.',
       'Preserve all sections and roles. Apply the section-specific rules below carefully.',
       '',
@@ -1408,10 +1418,13 @@ JD: ${jd.slice(0,800)}`, 300
       '  - If no result is inferable, focus on the specific task and method used.',
       '  - Maximum 2 bullets for minor roles.',
       'Bullet point rules per role — COUNT THE BULLETS BEFORE OUTPUTTING:',
+      '  ⚠️ IF CANDIDATE HAS <5 YEARS EXPERIENCE (1-PAGE MODE):',
+      '  - ALL roles: MAXIMUM 3 bullets each. No exceptions. This overrides everything below.',
+      '  - After writing, count bullets per role. If any role has 4+, delete the weakest ones down to 3.',
+      '  IF CANDIDATE HAS 5+ YEARS EXPERIENCE (2-PAGE MODE):',
       '  - Roles 1-3 (most recent): MAXIMUM 5 bullets. If you write 6+, delete the weakest ones.',
       '  - Roles 4-5: MAXIMUM 2 bullets each. No exceptions.',
       '  - Any role beyond 5th: just "Job Title | Company | Period" — zero bullets.',
-      '  - If there is only 1 role (e.g. 1 job), still cap at 5 bullets maximum.',
       'Each bullet: ONE specific action + tools/methods used + result/impact.',
       'Only YOUR actions and responsibilities — no generalisations or mention of others.',
       'If there are awards/achievements for a role, list them FIRST in the bullet list.',
@@ -1419,7 +1432,7 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.',
       'BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".',
       'Harvard standard: each bullet = action verb + specific task + measurable result. No personal pronouns (no "I", "my", "we").',
-      'ALL BULLETS — LENGTH: Every single bullet point MUST fit on ONE line (under 120 characters printed). Count the characters. If over 120, condense — cut filler words, shorten phrases. Never remove a bullet.',
+      'ALL BULLETS — LENGTH: Every single bullet MUST fit on ONE printed line (under 85 characters). Count the characters. If over 85, condense — cut filler words, shorten. Never remove a bullet entirely.',
       'PROJECT TITLES: REMOVE tool names from project titles. If the original title has tools in parentheses like "HR Attrition Analytics (Tableau, Random Forest)", strip them → "HR Attrition Analytics". Tools go inside the bullet points only.',
       'COMPANY NAMES: Write company names in normal Title Case — never ALL CAPS. Example: "Accenture" not "ACCENTURE", "NHS" is an acronym so stays as-is.',
       '',
@@ -1636,7 +1649,7 @@ AWARDS SECTION RULE (apply always — CRITICAL):
 - Only keep if there are real awards: scholarships, prizes, competitions, employer recognition.
 - COMPANY NAMES: Title Case only — "Accenture" not "ACCENTURE". Acronyms (NHS, IBM) are fine.
 - PROJECT TITLES: Strip tool names from parentheses in titles. "HR Attrition Analytics (Tableau)" → "HR Attrition Analytics". Tools go in bullets.
-- ALL BULLETS must be ONE line max (under 120 chars). Condense if longer — do not remove.
+- ALL BULLETS must be ONE line max (under 85 chars). Condense if longer — do not remove.
 
 DEDUPLICATION RULE (apply always):
 - Degrees belong ONLY in Education. Do NOT list them in Awards or any other section.
@@ -1647,7 +1660,8 @@ DEDUPLICATION RULE (apply always):
 
 RULES:
 - Do NOT fabricate numbers or experience
-- Do NOT force content onto 1 page — preserve all content
+- If candidate has <5 years experience: enforce 1-page — max 3 bullets/role, max 2 bullets/project, all bullets under 85 chars
+- If candidate has 5+ years: preserve detail, 2 pages fine
 - NO ** or * — plain text only
 
 Respond ONLY with valid JSON:
