@@ -1365,12 +1365,15 @@ JD: ${jd.slice(0,800)}`, 300
       'CRITICAL: The summary must contain EXACTLY 3 lines of text. Not 4. Not 5. Exactly 3.',
       'Each line is separated by a single newline. There must be NO blank lines within the summary.',
       'Count your lines before outputting. If you have written 4 or more lines, you must shorten.',
-      'Line 1: ONE sentence — most impressive achievement or standout experience (specific, not generic).',
-      'Line 2: ONE sentence — educational background with grade/distinction.',
-      'Line 3: ONE sentence — the specific type of role they are seeking, tailored to the JD.',
-      'Each line must be a single concise sentence. No sub-sentences. No semicolons splitting into extra lines.',
+      'EACH LINE MUST BE UNDER 100 CHARACTERS. Short, punchy, one sentence. Not a long wrap-around sentence.',
+      'Line 1 (under 100 chars): Top achievement or standout experience with a specific result.',
+      'Line 2 (under 100 chars): Degree, grade, university — one line only.',
+      'Line 3 (under 100 chars): The specific role sought + location, tailored to the JD.',
+      'Example of correct 3-line summary:',
+      '  Delivered 40% manual workload reduction via Automation Anywhere at Accenture.',
+      '  MSc Business Analytics (Distinction), Queen\'s University Belfast, 2024-2025.',
+      '  Actively seeking Business Analyst roles in London within financial services.',
       'BANNED words: passionate, dedicated, hardworking, leverage, synergy, seeking to, looking to.',
-      'Do NOT use generic filler. Every word must earn its place.',
       '',
       '━━━ RULE 4: EDUCATION SECTION ━━━',
       'Format each degree entry EXACTLY like this (with | and tab-separated date on the same line):',
@@ -1390,10 +1393,11 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Rewrite bullets to focus on YOUR specific action, what you built, and the result.',
       '  - If no result is inferable, focus on the specific task and method used.',
       '  - Maximum 2 bullets for minor roles.',
-      'Bullet point rules per role:',
-      '  - MAXIMUM 4-5 bullets for the most recent 1-3 roles.',
-      '  - For the 4th and 5th roles: maximum 2-3 bullet points each.',
-      '  - For any role beyond 5th: just "Job Title | Company | Period" — no bullets.',
+      'Bullet point rules per role — COUNT THE BULLETS BEFORE OUTPUTTING:',
+      '  - Roles 1-3 (most recent): MAXIMUM 5 bullets. If you write 6+, delete the weakest ones.',
+      '  - Roles 4-5: MAXIMUM 2 bullets each. No exceptions.',
+      '  - Any role beyond 5th: just "Job Title | Company | Period" — zero bullets.',
+      '  - If there is only 1 role (e.g. 1 job), still cap at 5 bullets maximum.',
       'Each bullet: ONE specific action + tools/methods used + result/impact.',
       'Only YOUR actions and responsibilities — no generalisations or mention of others.',
       'If there are awards/achievements for a role, list them FIRST in the bullet list.',
@@ -1850,6 +1854,20 @@ function downloadCVasPDF() {
       lineNum++; continue;
     }
     if(inList){bodyHtml+='</ul>';inList=false;}
+    // Role/degree lines: has date or pipe → bold subheading with date right-aligned
+    var _hasDate = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(l);
+    var _hasPipe = l.includes('|');
+    if ((_hasDate || _hasPipe) && l.length < 150) {
+      var _parts = l.split(/\s{2,}|\t/);
+      if (_parts.length >= 2) {
+        var _left = _parts.slice(0, _parts.length-1).join('  ').trim();
+        var _right = _parts[_parts.length-1].trim();
+        bodyHtml+='<p style="display:flex;justify-content:space-between;align-items:baseline;margin:5px 0 2px"><strong>'+_left+'</strong><span style="font-size:8.5pt;color:#888;font-style:italic;white-space:nowrap;padding-left:8px">'+_right+'</span></p>';
+      } else {
+        bodyHtml+='<p style="margin:5px 0 2px"><strong>'+l+'</strong></p>';
+      }
+      lineNum++; continue;
+    }
     bodyHtml+='<p>'+l+'</p>';
     lineNum++;
   }
