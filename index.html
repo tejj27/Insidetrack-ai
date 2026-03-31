@@ -1370,30 +1370,43 @@ JD: ${jd.slice(0,800)}`, 300
       'Do NOT use generic filler. Every word must earn its place.',
       '',
       '━━━ RULE 4: EDUCATION SECTION ━━━',
-      'Keep ONLY: university name, degree, grade/classification, graduation dates.',
-      'Keep ONLY: scholarships, awards, ranking vs peers (e.g. "Top 10% in year").',
-      'Do NOT include: societies, extracurricular activities, modules, research papers, university projects.',
-      '(Modules and projects only belong here if they are the primary qualification — e.g. a bootcamp)',
-      '(If a project is highly relevant to the JD, add a separate PROJECTS section instead)',
-      '(Leadership activities from uni belong in a LEADERSHIP & ACHIEVEMENTS section, not here)',
+      'Format each degree entry EXACTLY like this (with | and tab-separated date on the same line):',
+      '  Degree Title, Grade | University Name     Start Date - End Date',
+      '  • Graduated in the top X% of year-group  (only include if this information is in the CV)',
+      '  • Scholarship or award name  (only if present in CV)',
+      '  • Relevant high-scoring modules: Module Name (XX%), Module Name (XX%)  (only if grades are listed in CV)',
+      'Include ONLY: degree, grade/classification, university, dates, ranking vs peers, scholarships/awards.',
+      'Include modules ONLY if: the grade is listed AND it is relevant to the JD.',
+      'Do NOT include: dissertations, societies, extracurricular activities, generic module lists without grades.',
+      '(If a project is highly relevant to the JD, create a PROJECTS section — do not put it in Education)',
       '',
-      '━━━ RULE 5: EXPERIENCE SECTION ━━━',
-      'Keep a MAXIMUM of 4-5 experiences with bullet points.',
-      'If there are more than 5 experiences: list older ones as "Job Title | Company | Period" with NO bullet points.',
+      '━━━ RULE 5: EXPERIENCE & PROJECTS SECTION ━━━',
+      'NEVER remove any job role or project from the CV. Every entry must remain.',
+      'If a bullet is weak or vague, IMPROVE it — do not delete the entry.',
+      'For entries with weak bullets (e.g. volunteer work, short internships, community projects):',
+      '  - Rewrite bullets to focus on YOUR specific action, what you built, and the result.',
+      '  - If no result is inferable, focus on the specific task and method used.',
+      '  - Maximum 2 bullets for minor roles.',
       'Bullet point rules per role:',
-      '  - MAXIMUM 4-5 bullets for the most recent roles.',
-      '  - For the 4th and 5th roles: maximum 2 bullet points each.',
-      '  - Any roles listed after the 5th: no bullets, just title/company/dates.',
-      'Each bullet must cover exactly ONE of: a specific action OR a specific responsibility.',
-      'Each bullet must state: exactly what you did + what tools/methods/frameworks used + what result/impact.',
-      'Only talk about YOUR actions and YOUR responsibilities — never generalise or mention other people.',
-      'If there are awards or achievements for a role, list them FIRST in the bullet points for that role.',
-      'Use strong past-tense action verbs (Built, Delivered, Designed, Led, Analysed, Created).',
-      'BANNED phrases: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams", "assisted with".',
+      '  - MAXIMUM 4-5 bullets for the most recent 1-3 roles.',
+      '  - For the 4th and 5th roles: maximum 2-3 bullet points each.',
+      '  - For any role beyond 5th: just "Job Title | Company | Period" — no bullets.',
+      'Each bullet: ONE specific action + tools/methods used + result/impact.',
+      'Only YOUR actions and responsibilities — no generalisations or mention of others.',
+      'If there are awards/achievements for a role, list them FIRST in the bullet list.',
+      'Use strong past-tense action verbs: Built, Delivered, Designed, Led, Analysed, Created, Managed, Developed.',
+      'BANNED phrases: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams", "assisted with", "collaborated with".',
+      'Harvard standard: each bullet = action verb + specific task + measurable result. No personal pronouns (no "I", "my", "we").',
       '',
       '━━━ RULE 6: SKILLS SECTION ━━━',
-      'Preserve structure exactly (e.g. Technical Skills, Tools, Soft Skills subcategories).',
-      'Do NOT merge categories. Only refine wording if needed.',
+      'Divide skills into clear labelled categories. Suggested format:',
+      '  Technical: SQL, Python, R, Power BI, Excel (Advanced), ...',
+      '  Tools & Platforms: JIRA, Visio, Automation Anywhere, Tableau, ...',
+      '  Methodologies: Agile/Scrum, BPMN, UAT, Requirements Gathering, ...',
+      '  Languages: English (Fluent), ...',
+      'If the original CV already has categories, preserve them and only refine wording.',
+      'If the original CV has a flat list, reorganise into logical categories based on the skills present.',
+      'Do NOT invent skills not in the original CV.',
       '',
       '━━━ RULE 7: LENGTH ━━━',
       'Do NOT force 1 page. Preserve all content — only remove weak phrasing or repetition.',
@@ -1410,14 +1423,19 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Section content on the lines immediately below',
       '  - Blank line after each section',
       '',
-      'For experience roles use this format:',
+      'For education entries use this format:',
+      '  Degree Title, Grade | University Name     Start Date - End Date',
+      '  • Graduated in the top X% of year-group',
+      '  • Award or scholarship name',
+      '',
+      'For experience/project roles use this format:',
       '  Job Title | Company Name     Start Date - End Date',
       '  • Bullet point starting with • character',
       '  • Bullet point',
       '',
       'For bullet points: start every bullet with the • character.',
       'Never use ** or * or markdown.',
-      'Keep a blank line between each role.',
+      'Keep a blank line between each role/entry.',
       '',
       'IMPORTANT: This is a refinement task, not a rewrite. If unsure, preserve the original content.',
       '',
@@ -1515,15 +1533,21 @@ SUMMARY RULE (apply if not already done):
 - No filler words. No banned words: passionate, dedicated, hardworking, leverage, synergy.
 
 EDUCATION RULE (apply if not already done):
-- Keep ONLY: university, degree, grade, dates, scholarships/awards/ranking.
-- Remove: modules, societies, extracurriculars, research papers, university projects.
+- Format: "Degree, Grade | University     Start - End Date"
+- Sub-bullets (•) for: ranking vs peers (top X%), scholarships/awards, relevant high-scoring modules only.
+- Remove: dissertations, societies, extracurriculars, generic module lists without grades.
 
-EXPERIENCE RULE (apply if not already done):
+EXPERIENCE & PROJECTS RULE (apply if not already done):
+- NEVER remove any role or project — improve weak bullets instead.
 - Maximum 4-5 roles with bullet points. Older roles: title | company | dates only, no bullets.
-- Most recent roles: max 4-5 bullets. Roles 4-5: max 2 bullets each.
-- Each bullet = ONE specific action + tools/methods used + result/impact. YOUR actions only.
+- Most recent roles: max 4-5 bullets. Roles 4-5: max 2-3 bullets each.
+- Each bullet = ONE specific action + tools/methods used + result/impact. No personal pronouns (no I/we/my).
 - Awards/achievements for a role go FIRST in its bullet list.
-- BANNED: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams".
+- BANNED: "coordinated with teams", "supported delivery", "various stakeholders", "cross-functional teams", "collaborated with".
+
+SKILLS RULE (apply if not already done):
+- Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
+- Do NOT add skills not in the original.
 
 RULES:
 - Do NOT fabricate numbers or experience
