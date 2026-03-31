@@ -1349,6 +1349,10 @@ JD: ${jd.slice(0,800)}`, 300
       'Do NOT add skills not evidenced in CV: ' + missing,
       'ATS score to beat: ' + currentScore + '%',
       '',
+      '━━━ APPLY THESE SPECIFIC CHANGES (from ATS analysis) ━━━',
+      'The following before/after edits were identified by the ATS scanner. Apply ALL of them directly:',
+      ...( (_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}:\n    BEFORE: ${s.before}\n    AFTER:  ${s.after}\n    WHY: ${s.reason}`) ),
+      '',
       '━━━ RULE 1: STRUCTURE PRESERVATION (CRITICAL) ━━━',
       'Do NOT remove any sections.',
       'Do NOT add new sections unless explicitly needed (e.g. Projects if highly relevant).',
@@ -1416,6 +1420,8 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.',
       'BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".',
       'Harvard standard: each bullet = action verb + specific task + measurable result. No personal pronouns (no "I", "my", "we").',
+      'PROJECT BULLETS — LENGTH: Each project bullet must fit on ONE line (under 120 characters). If too long, condense wording — do not remove the bullet or project.',
+      'PROJECT TITLES: Never add a date or pipe to the project title line unless the original CV has one.',
       '',
       '━━━ RULE 6: SKILLS SECTION ━━━',
       'Divide skills into clear labelled categories. Suggested format:',
@@ -1589,6 +1595,9 @@ REFINEMENT FOCUS FOR THIS PASS:
 3. Strengthen bullet points that lack measurable outcomes — add numbers only if inferable
 4. Do NOT add skills not evidenced in CV: ${stillMissing}
 
+APPLY THESE SPECIFIC CHANGES (if not already applied from previous pass):
+${(_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}: BEFORE: "${s.before}" → AFTER: "${s.after}"`).join('\n')}
+
 SUMMARY RULE (apply if not already done):
 - EXACTLY 3 lines of text. Count them — if 4+, shorten. No blank lines within the summary.
 - Line 1: ONE sentence — top achievement. Line 2: ONE sentence — education. Line 3: ONE sentence — role sought (tailored to JD).
@@ -1607,6 +1616,7 @@ EXPERIENCE & PROJECTS RULE (apply if not already done):
 - Awards/achievements for a role go FIRST in its bullet list.
 - BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.
 - BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".
+- PROJECT BULLETS: Each project bullet must be ONE line max (under 120 chars). Condense if too long — do not remove the bullet or project.
 
 SKILLS RULE (apply if not already done):
 - Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
