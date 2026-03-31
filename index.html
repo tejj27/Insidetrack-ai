@@ -1368,24 +1368,23 @@ JD: ${jd.slice(0,800)}`, 300
       'BANNED words everywhere: passionate, dedicated, hardworking, leverage, synergy.',
       '',
       '━━━ RULE 3: SUMMARY SECTION ━━━',
-      'Write the summary as ONE short connected paragraph — NOT separate robotic sentences.',
-      'It must flow naturally from one sentence to the next, like a human introduction.',
-      'Maximum 3 SHORT lines when printed. Each sentence under 100 characters.',
+      'Write the summary as EXACTLY 3 sentences in ONE paragraph. No more. No fewer.',
+      'BEFORE outputting the summary: count the sentences. If you wrote 4+, cut to 3.',
+      'Each sentence MUST be under 85 characters — this is critical for 1-page fit.',
       'No blank lines within the summary. No bullet points.',
       '',
-      'Structure (3 sentences flowing together):',
-      '  Sentence 1: Educational background — degree, grade, university.',
-      '  Sentence 2: ONE top achievement/experience with a specific result.',
-      '  Sentence 3: What role they are actively seeking — tailored to the JD and location.',
+      'Structure:',
+      '  Sentence 1 (≤85 chars): Degree + grade + university.',
+      '  Sentence 2 (≤85 chars): ONE specific achievement or experience with a result.',
+      '  Sentence 3 (≤85 chars): Role sought, tailored to this JD.',
       '',
-      'GOOD example — read how it flows:',
-      '  Having recently graduated with MSc Business Analytics (Distinction) from Queen\'s University Belfast, I delivered automation solutions at Accenture reducing manual workload by 40%. I am actively seeking Business Analyst roles in London within digital transformation and technology services.',
+      'GOOD — 3 sentences, each short enough to fit on one printed line:',
+      '  "MSc Business Analytics (Distinction) graduate from Queen\'s University Belfast.',
+      '  Delivered process automation at Accenture, reducing manual workload by 40%.',
+      '  Seeking Business Analyst roles in London in digital transformation."',
       '',
-      'ANOTHER GOOD example:',
-      '  Current MSc TESOL student at University of Edinburgh with predicted 1st, I have completed strategy consulting simulations at BCG and excelled in internships at local consulting firms. I am actively seeking consulting graduate programme opportunities in London.',
-      '',
-      'BAD example (robotic — do NOT do this):',
-      '  Business Analyst delivering 40% workload reduction. MSc Business Analytics (Distinction). Seeking BA roles.',
+      'BAD — too long, wraps to 6 lines on print (DO NOT DO THIS):',
+      '  "IT Business Analyst with experience bridging business needs and technology delivery within managed services environments..."',
       '',
       'BANNED words: passionate, dedicated, hardworking, leverage, synergy.',
       '',
@@ -1435,24 +1434,25 @@ JD: ${jd.slice(0,800)}`, 300
       'Do NOT invent skills not in the original CV.',
       '',
       '━━━ RULE 7: CV LENGTH BASED ON EXPERIENCE ━━━',
-      'First, estimate the candidate\'s total years of professional experience from the CV.',
+      'Step 1: Count total years of professional work experience from the CV dates.',
       '',
-      'IF total experience is LESS THAN 5 years → MUST FIT 1 PAGE:',
-      '  - This is non-negotiable. 1 page only.',
-      '  - Shorten every bullet to 1 line where possible. Remove padding words.',
-      '  - Limit each role to 3-4 concise bullet points maximum.',
-      '  - Keep summary to 3 short sentences (one short paragraph).',
-      '  - Keep ALL sections, roles, and projects — do NOT remove any.',
-      '  - If content is still too long: tighten wording further, do not remove sections.',
+      'IF LESS THAN 5 YEARS EXPERIENCE → STRICT 1-PAGE OUTPUT:',
+      '  Apply ALL of the following — every single one:',
+      '  SUMMARY: exactly 3 sentences, each under 85 chars. Total ≤ 3 printed lines.',
+      '  WORK EXPERIENCE: MAX 3 bullets per role. Each bullet under 85 chars (1 line).',
+      '  PROJECTS: MAX 2 bullets per project. Each bullet under 85 chars (1 line).',
+      '  EDUCATION: degree + university + date on one line. Sub-bullet only if ranking/scholarship.',
+      '  SKILLS: keep as-is (categories already concise).',
+      '  CERTIFICATIONS: keep as-is (short list).',
+      '  AWARDS: remove entirely if only degrees (as per Rule 8).',
+      '  Do NOT remove any role, project, or section — only shorten bullets.',
+      '  Every line in the entire CV must be under 85 characters to prevent wrapping.',
       '',
-      'IF total experience is 5 YEARS OR MORE → Allow 2 PAGES:',
-      '  - Preserve detail and depth. Do NOT aggressively shorten.',
-      '  - Allow 4-6 bullet points per role if needed.',
-      '  - Maintain clear structure and spacing.',
-      '  - Keep all relevant experience and projects.',
+      'IF 5 YEARS OR MORE → Allow 2 PAGES:',
+      '  - Preserve detail. Allow 4-5 bullets per role.',
+      '  - Do NOT aggressively shorten. Maintain depth.',
       '',
-      'CRITICAL: NEVER remove entire sections or job roles to meet page limits.',
-      'NEVER delete important experience or projects.',
+      'NEVER remove entire sections, roles, or projects to meet page limits — only condense wording.',
       '',
       '━━━ RULE 8: DEDUPLICATION & CONTENT QUALITY ━━━',
       '',
@@ -1600,25 +1600,31 @@ REFINEMENT FOCUS FOR THIS PASS:
 APPLY THESE SPECIFIC CHANGES (if not already applied from previous pass):
 ${(_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}: BEFORE: "${s.before}" → AFTER: "${s.after}"`).join('\n')}
 
-SUMMARY RULE (apply if not already done):
-- EXACTLY 3 lines of text. Count them — if 4+, shorten. No blank lines within the summary.
-- Line 1: ONE sentence — top achievement. Line 2: ONE sentence — education. Line 3: ONE sentence — role sought (tailored to JD).
-- BANNED: passionate, dedicated, hardworking, leverage, synergy, seeking to, looking to.
+SUMMARY RULE (apply — CRITICAL):
+- EXACTLY 3 sentences. Count them. If 4+, delete the weakest sentence.
+- Each sentence MUST be under 85 characters — no exceptions. Measure it.
+- All 3 sentences form ONE paragraph. No bullet points, no blank lines within.
+- BANNED: passionate, dedicated, hardworking, leverage, synergy.
 
 EDUCATION RULE (apply if not already done):
 - Format: "Degree, Grade | University     Start - End Date"
 - Sub-bullets ONLY for: scholarships, prizes, peer ranking (top X%). Nothing else.
-- REMOVE ALL: modules (even with grades), dissertations, societies, extracurriculars. No exceptions.
+- REMOVE ALL: modules, dissertations, societies, extracurriculars.
+
+1-PAGE RULE (for <5 years experience — apply strictly):
+- If candidate has less than 5 years work experience, the ENTIRE CV must fit 1 page.
+- SUMMARY: exactly 3 sentences, each under 85 chars.
+- WORK EXPERIENCE: MAX 3 bullets per role, each under 85 chars.
+- PROJECTS: MAX 2 bullets per project, each under 85 chars.
+- Every line in the CV under 85 characters to prevent text wrapping.
+- Do NOT remove any role, project, or section — only shorten bullet wording.
 
 EXPERIENCE & PROJECTS RULE (apply if not already done):
 - NEVER remove any role or project — improve weak bullets instead.
-- Maximum 4-5 roles with bullet points. Older roles: title | company | dates only, no bullets.
-- Most recent roles: max 4-5 bullets. Roles 4-5: max 2-3 bullets each.
-- Each bullet = ONE specific action + tools/methods used + result/impact. No personal pronouns (no I/we/my).
-- Awards/achievements for a role go FIRST in its bullet list.
-- BANNED verbs: Supported, Assisted, Helped, Collaborated. Replace with: Delivered, Built, Led, Drove, Executed.
-- BANNED phrases: "coordinated with teams", "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".
-- PROJECT BULLETS: Each project bullet must be ONE line max (under 120 chars). Condense if too long — do not remove the bullet or project.
+- Each bullet = ONE specific action + tools/methods + result. No personal pronouns.
+- BANNED verbs: Supported, Assisted, Helped, Collaborated → use Delivered, Built, Led, Drove.
+- BANNED phrases: "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".
+- PROJECT TITLES: Remove tool names from parentheses. "Customer Segmentation (Python, K-Means)" → "Customer Segmentation".
 
 SKILLS RULE (apply if not already done):
 - Divide into labelled categories: Technical, Tools & Platforms, Methodologies, Languages (or equivalent).
