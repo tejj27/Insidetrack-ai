@@ -1424,23 +1424,24 @@ JD: ${jd.slice(0,800)}`, 300
       'CRITICAL — it must read like natural human prose, not 2 robotic facts.',
       'Use relative clauses and connecting language. Think: how would a person introduce themselves in 2 sentences?',
       '',
-      'Structure (2 flowing sentences):',
-      '  Sentence 1: Who you are + what you have done — degree/stage + university + grade + ONE best achievement with a specific result/number.',
+      'Structure (2 flowing sentences, max 280 characters total):',
+      '  Sentence 1: Who you are + what you have done — degree + university + grade + ONE specific achievement with a number.',
+      '    Keep this under 160 characters. Be concise.',
       '  Sentence 2: What you are seeking — exact role type from JD, location, sector/company type.',
+      '    Keep this under 120 characters.',
       '',
-      '✅ GOLD STANDARD EXAMPLE (copy this style exactly):',
-      '  "Having recently graduated with MSc Business Analytics (Distinction) from Queen\'s University Belfast, I delivered automation solutions at Accenture that reduced manual workload by 40%.',
-      '  I am actively seeking Business Analyst roles in London within digital transformation and technology services."',
+      '⛔ BANNED summary openers — NEVER start with these:',
+      '  "Having completed..." → use "Having recently graduated..." instead',
+      '  "With experience in..." → passive, do not use',
+      '  "I am a..." → too generic, do not use',
+      '  "Technical Business Analyst with..." → starts with job title, not your story',
       '',
-      '✅ ANOTHER GOOD EXAMPLE:',
-      '  "Currently completing an MSc Business Analytics (Distinction) at Queen\'s University Belfast, I have built Power BI dashboards and automated reporting workflows at Accenture, reducing manual effort by 40%.',
-      '  I am actively seeking Business Analyst opportunities in London within digital transformation."',
+      '✅ GOLD STANDARD EXAMPLE — 2 tight sentences, active voice:',
+      '  "Having recently graduated with MSc Business Analytics (Distinction) from Queen\'s University Belfast, I automated workflows at Accenture reducing manual workload by 40%.',
+      '  I am actively seeking Business Analyst roles in London within digital transformation."',
       '',
-      '❌ BAD — 3 sentences, too long, wraps to 8 lines (DO NOT do this):',
-      '  "Technical Business Analyst with consultancy experience bridging business needs and technology delivery... Skilled in requirements elicitation... MSc in Business Analytics (Distinction)..."',
-      '',
-      '❌ BAD — robotic, staccato (DO NOT do this):',
-      '  "MSc Business Analytics graduate. Seeking BA roles in London."',
+      '❌ BAD — passive opener + sentence 1 wraps to 3 lines (DO NOT do this):',
+      '  "Having completed MSc Business Analytics (Distinction) at Queen\'s University Belfast, I delivered automation solutions at Accenture that reduced manual workload by 40% across enterprise software and digital transformation programmes."',
       '',
       'BANNED words: passionate, dedicated, hardworking, leverage, synergy.',
       '',
@@ -1481,12 +1482,42 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Maximum 2 bullets for minor roles.',
       '',
       'Bullet count rules per role — count roles in the CV first, then apply:',
-      '  1 role only → 4-5 bullets for that role.',
+      '  1 role only → 4 bullets for that role.',
       '  2 roles → 3 bullets each.',
       '  3 or more roles → 2 bullets each (keep the strongest/most recent ones).',
       '  After writing, count bullets per role. Cut weakest bullets if over the limit.',
       '  NEVER remove a role entirely — only reduce its bullets.',
-      'Each bullet: ONE specific action + tools/methods used + result/impact.',
+      '',
+      '⭐ BULLET FORMAT — IMPACT FIRST, ALWAYS:',
+      '  Format: [Strong verb] + [what changed / was achieved] + [using what tool/method] (optional)',
+      '  NEVER: [what you did] + [using what tool]. ALWAYS lead with the outcome or change.',
+      '',
+      '  ❌ BAD (tool-first, reads like job description):',
+      '    "Conducted stakeholder workshops to gather, define, and document business requirements and workflows"',
+      '    "Collaborated with Product Owners, Delivery Managers, developers, testers, architects, and designers"',
+      '    "Supported system integration and automation solutions using Automation Anywhere"',
+      '',
+      '  ✅ GOOD (impact-first, punchy, under 95 chars):',
+      '    "Defined end-to-end requirements across 3 automation programmes via structured stakeholder workshops"',
+      '    "Automated reporting workflows using Automation Anywhere, cutting manual processing time by 40%"',
+      '    "Delivered Power BI dashboards tracking 8 KPIs, enabling real-time performance visibility for clients"',
+      '',
+      '⛔ BANNED bullet openers (too weak / passive): Supported, Collaborated, Conducted, Assisted, Helped.',
+      '  Replace with: Delivered, Built, Led, Drove, Defined, Designed, Automated, Identified, Created, Managed.',
+      '',
+      '⛔ BANNED bullet content: listing all team members ("Product Owners, Delivery Managers, developers, testers, architects, and designers"). Instead: "cross-functional Agile team" or just the action.',
+      '',
+      '📐 BULLET LENGTH: Every bullet MUST fit on ONE printed line — under 95 characters. Count characters.',
+      '  If over 95 chars → cut filler words and rewrite shorter. NEVER wrap a bullet to 2 lines.',
+      '',
+      '🔗 PROJECT BULLETS — analysis → business value connection:',
+      '  NEVER end a project bullet with just the analysis method. Always connect to business impact.',
+      '  ❌ BAD: "Analysed workforce data to identify key drivers of employee attrition using machine learning"',
+      '  ✅ GOOD: "Identified key attrition drivers via ML analysis, enabling targeted HR retention strategies"',
+      '  ❌ BAD: "Conducted data analysis and segmentation to identify customer behaviour patterns"',
+      '  ✅ GOOD: "Segmented customers using K-Means clustering, surfacing 4 actionable engagement opportunities"',
+      '',
+      'Each bullet: ONE specific action + measurable result or business value.',
       'Only the candidate\'s direct actions — no generalisations about team activities.',
       'If there are awards/achievements for a role, list them FIRST in the bullet list.',
       'Use strong past-tense action verbs: Built, Delivered, Designed, Led, Analysed, Created, Managed, Developed.',
@@ -2812,6 +2843,12 @@ function hardCapCV(text) {
         var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
         var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
         var cappedSummary = sents.slice(0, 2).join(' ').trim();
+        // Also hard-cap at 280 chars (~3 printed lines) — find last sentence end before limit
+        if (cappedSummary.length > 280) {
+          var chunk = cappedSummary.substring(0, 280);
+          var lastDot = chunk.lastIndexOf('.');
+          cappedSummary = lastDot > 120 ? chunk.substring(0, lastDot + 1) : chunk.substring(0, chunk.lastIndexOf(' '));
+        }
         out.push(summaryHeadingLine);
         out.push(cappedSummary);
         out.push('');
@@ -2885,6 +2922,15 @@ function hardCapCV(text) {
       if (entryBullets > maxB) continue; // drop excess bullet
     }
 
+    // Bullet length cap: truncate at 95 chars so every bullet fits on one printed line
+    if (applyOnePage && isBullet(lt) && lt.length > 95) {
+      var indent = line.match(/^\s*/)[0];
+      var truncated = lt.substring(0, 95);
+      var lastSp = truncated.lastIndexOf(' ');
+      if (lastSp > 60) truncated = truncated.substring(0, lastSp);
+      line = indent + truncated;
+    }
+
     out.push(line);
   }
 
@@ -2893,6 +2939,11 @@ function hardCapCV(text) {
     var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
     var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
     var cappedSummary = sents.slice(0, 2).join(' ').trim();
+    if (cappedSummary.length > 280) {
+      var chunk = cappedSummary.substring(0, 280);
+      var lastDot = chunk.lastIndexOf('.');
+      cappedSummary = lastDot > 120 ? chunk.substring(0, lastDot + 1) : chunk.substring(0, chunk.lastIndexOf(' '));
+    }
     out.push(summaryHeadingLine);
     out.push(cappedSummary);
   }
