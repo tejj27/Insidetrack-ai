@@ -1388,21 +1388,26 @@ JD: ${jd.slice(0,800)}`, 300
       ...( (_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}:\n    BEFORE: ${s.before}\n    AFTER:  ${s.after}\n    WHY: ${s.reason}`) ),
       '',
       '━━━ PROFESSIONAL SUMMARY ━━━',
-      'Write exactly 3 sentences. Confident, concise. No bullet points. ONE flowing paragraph.',
+      'Max 3 lines. Confident, concise. No bullet points. ONE flowing paragraph.',
       '',
-      '🔒 LOCKED TEMPLATE (fill in brackets from the CV and JD):',
-      '  Sentence 1: "Having recently graduated with [grade] in [degree] from [university], I have [N] previous experience(s) with [company1] and [company2]."',
-      '  Sentence 2: "I am actively seeking opportunities as [role from JD] in [sector/industry from JD]."',
-      '  Sentence 3: Right to work if mentioned in CV ("I have the right to work in the UK.") OR one strong differentiator.',
+      '📌 WHEN TO INCLUDE THE SUMMARY:',
+      '  - ALWAYS include it for candidates with 0–2 work experience roles.',
+      '  - REMOVE IT ENTIRELY for candidates with 3 or more work experience roles — use the space for experience instead.',
       '',
-      '✅ EXAMPLE — copy this format exactly:',
-      '  "Having recently graduated with 1st Class Honours in MSc Business Analytics from Queen\'s University Belfast, I have 1 previous experience with Accenture.',
-      '  I am actively seeking opportunities as a Business Analyst in digital transformation and financial services.',
-      '  I have the right to work in the UK."',
+      '📌 WHAT TO COVER (3 lines, in this order):',
+      '  Line 1: Educational background — degree, grade, university (or current role/title if experienced hire)',
+      '  Line 2: ONE single most impressive achievement, metric, or highlight from their experience',
+      '  Line 3: What job they are seeking — role title from JD + sector/industry (tailor to each application)',
+      '',
+      '✅ GOLD STANDARD EXAMPLE:',
+      '  "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I bring 2 years of experience at Accenture.',
+      '  I delivered automation solutions reducing manual workload by 40% and built Power BI dashboards tracking operational KPIs.',
+      '  I am actively seeking Business Analyst roles in digital transformation consultancy in London."',
       '',
       '⛔ BANNED openers: "Having completed..." / "Technical [Title] with..." / "With experience in..."',
-      '  ALWAYS start with: "Having recently graduated with..."',
-      'Each sentence must fit on one printed line. Keep total summary to 3–4 printed lines.',
+      '  ALWAYS start Line 1 with: "Having recently graduated with..." (for graduates)',
+      '⛔ DO NOT put seeking/job target on Line 1 or Line 2 — it belongs on Line 3 only.',
+      'Keep total summary to exactly 3 printed lines. Each line must fit without wrapping.',
       '',
       '━━━ EDUCATION ━━━',
       'For graduate roles and experienced hires alike, include ONLY:',
@@ -1418,31 +1423,52 @@ JD: ${jd.slice(0,800)}`, 300
       'NEVER invent achievements, tools, metrics, or activities not in the original.',
       'You may REWORD to be stronger — you may NOT invent new content.',
       '',
-      '⭐ PRESERVE METRICS: Any bullet with a specific number, %, or metric MUST survive — never replace with generic text.',
+      '⭐ METRIC BULLETS — HIGHEST PRIORITY:',
+      'Any bullet containing a specific number, %, £, time saving, or named metric from the original MUST appear in the output.',
+      'These are the most valuable bullets — they go FIRST in the list and are NEVER cut.',
+      'NEVER replace a metric bullet with a generic description.',
+      '',
+      '📌 BULLET ORDERING RULE (critical for 1-page CVs):',
+      'For each role, order bullets like this:',
+      '  1st: Any bullet with a metric (%, number, £, time saved) — from the original CV',
+      '  2nd: Technical/tool-specific bullets (SQL, Power BI, automation, etc.)',
+      '  3rd: Process/methodology bullets (requirements, stakeholder workshops, etc.)',
+      '  Last: Generic soft-skill bullets (cut these first if over limit)',
+      'This ordering ensures the strongest bullets survive when the count limit is applied.',
       '',
       'Rewrite bullets using this structure:',
-      '  Action Verb + Task + Tool/Method + Business Impact',
-      'Add measurable outcomes where already present in the CV (%, time saved, efficiency, etc.).',
+      '  Action Verb + Specific Task + Tool/Method + Business Impact',
+      'Add measurable outcomes where already present in the CV — do NOT invent numbers.',
+      '',
+      '📐 BULLET LENGTH — CRITICAL FOR 1-PAGE FIT:',
+      'Every bullet must be SHORT enough to fit on ONE printed line (under 90 characters including the • character).',
+      'Count the characters. If over 90: cut filler words, remove redundant phrases, tighten the sentence.',
+      'Complete sentence still required — but tight and punchy, not verbose.',
+      '  ❌ TOO LONG: "Delivered comprehensive business and functional requirements analysis for automation and digital transformation initiatives across enterprise systems" (147 chars)',
+      '  ✅ TIGHT: "Analysed and documented requirements for automation and digital transformation programmes" (88 chars)',
       '',
       '⛔ BANNED openers: Supported, Collaborated, Conducted, Assisted, Helped, Worked on, Involved in.',
       '  Replace with: Delivered, Built, Led, Defined, Designed, Automated, Identified, Drove, Created, Managed.',
       '⛔ BANNED phrases: "cross-functional teams", "various stakeholders", "strategic relationships", "aligned to business needs".',
-      '⛔ BANNED: listing all team member titles (e.g. "Product Owners, Delivery Managers, developers, architects"). Say the action instead.',
+      '⛔ BANNED: listing all team member titles. Say the action, not who you worked with.',
       '',
       'Bullet count rules (count roles first, then apply):',
       '  1 role → exactly 4 bullets',
       '  2 roles → exactly 3 bullets each',
       '  3+ roles → exactly 2 bullets each',
-      'After writing, COUNT bullets per role. If over the limit → keep the strongest, cut the weakest.',
+      'After writing, COUNT bullets per role. If over the limit → cut from the BOTTOM (lowest priority first).',
       'NEVER remove a role entirely — only reduce its bullets.',
       '',
       '━━━ PROJECTS ━━━',
       'NEVER delete any project. Keep ALL project entries.',
       'ONLY improve bullet wording — same structure: Action Verb + Task + Tool + Business Impact.',
-      'Max 2 bullets per project. If original has more, keep the 2 strongest.',
-      'Project bullets must connect analysis → business value:',
-      '  ❌ BAD: "Analysed workforce data to identify key drivers of attrition using machine learning"',
+      'Max 2 bullets per project. If original has more, keep the 2 with the strongest impact (metric first).',
+      '',
+      'Project bullets must connect analysis → business value (never end on the method alone):',
+      '  ❌ BAD: "Analysed workforce data to identify key drivers of attrition using machine learning" (no impact)',
       '  ✅ GOOD: "Identified key attrition drivers via ML, enabling actionable HR retention strategies"',
+      '',
+      '📐 Same length rule as Work Experience: each project bullet under 90 characters. Tight, complete sentence.',
       'Remove tool names from project titles — tools go inside bullets only.',
       '',
       '━━━ SKILLS ━━━',
@@ -2801,6 +2827,21 @@ function hardCapCV(text) {
       var maxB = /PROJECT/i.test(section) ? maxProjBullets : maxRoleBullets;
       entryBullets++;
       if (entryBullets > maxB) continue; // drop excess bullet
+    }
+
+    // Smart bullet length trim: keep under 92 chars by cutting at a natural boundary
+    // Only trims if the bullet is long — always preserves a complete grammatical clause
+    if (applyOnePage && isBullet(lt) && lt.length > 92) {
+      var indent = line.match(/^\s*/)[0];
+      var chunk = lt.substring(0, 92);
+      // Prefer to cut at: comma, semicolon, or last word boundary — in that priority
+      var cutAt = Math.max(chunk.lastIndexOf(', '), chunk.lastIndexOf('; '));
+      if (cutAt < 55) cutAt = chunk.lastIndexOf(' '); // fallback to word boundary
+      if (cutAt > 55) {
+        lt = lt.substring(0, cutAt); // cut to last natural break
+        line = indent + lt;
+      }
+      // If no good cut point found, leave bullet unchanged (don't mangle it)
     }
 
     out.push(line);
