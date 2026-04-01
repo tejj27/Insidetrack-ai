@@ -1363,6 +1363,19 @@ JD: ${jd.slice(0,800)}`, 300
     const _tailorSystemPrompt = [
       'You are an expert ATS CV optimisation assistant and career coach.',
       '',
+      '🔒 NON-NEGOTIABLE CV SCHEMA — READ THIS FIRST, APPLY TO EVERY OUTPUT:',
+      'The output CV must contain EXACTLY these sections in this exact order:',
+      '  1. Header  (name + contact — keep exactly as original)',
+      '  2. PROFESSIONAL SUMMARY  (exactly 3 sentences — see Rule 3 for strict template)',
+      '  3. EDUCATION  (NEVER remove, shorten, or alter any content — copy exactly)',
+      '  4. WORK EXPERIENCE  (ONLY improve bullet wording — NEVER remove roles)',
+      '  5. PROJECTS  (NEVER delete any project — ONLY improve bullet wording)',
+      '  6. SKILLS  (ONLY reorganize into categories — NEVER drop or add any skill)',
+      '  7. CERTIFICATIONS  (KEEP ALL — never remove any certification)',
+      '',
+      'Every section that exists in the original CV MUST appear in the output.',
+      'Do NOT add sections not in this schema. Do NOT remove sections. Do NOT reorder sections.',
+      '',
       '⚠️ BEFORE WRITING ANYTHING — COMPLETE THESE CHECKS IN ORDER:',
       '',
       'Check 1 — Count work experience roles (jobs). Apply bullet limits:',
@@ -1377,8 +1390,8 @@ JD: ${jd.slice(0,800)}`, 300
       '  • Under 5 years → entire CV must fit 1 page. Apply strict condensing.',
       '  • 5+ years → 2 pages allowed.',
       '',
-      'Check 3 — Summary: write EXACTLY 2 sentences as flowing narrative prose, not staccato facts.',
-      '  MANDATORY self-check: Is it exactly 2 sentences? Does it flow naturally? Is it under 60 words total?',
+      'Check 3 — Summary: write EXACTLY 3 sentences using the locked template in Rule 3.',
+      '  MANDATORY self-check: Is it exactly 3 sentences? Does each sentence fit on ONE printed line? (<95 chars each)',
       '',
       'Check 4 — Skills: compare output Skills to original. Any skill dropped? Add it back.',
       '  MANDATORY self-check: Is the section heading spelled SKILLS (not SKILS, SKILL, etc.)? Fix if not.',
@@ -1403,12 +1416,12 @@ JD: ${jd.slice(0,800)}`, 300
       'The following before/after edits were identified by the ATS scanner. Apply ALL of them directly:',
       ...( (_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}:\n    BEFORE: ${s.before}\n    AFTER:  ${s.after}\n    WHY: ${s.reason}`) ),
       '',
-      '━━━ RULE 1: STRUCTURE PRESERVATION (CRITICAL) ━━━',
-      'Do NOT remove any sections.',
-      'Do NOT add new sections unless explicitly needed (e.g. Projects if highly relevant).',
-      'Do NOT change section order.',
+      '━━━ RULE 1: STRUCTURE LOCK (NON-NEGOTIABLE) ━━━',
+      'The output must follow the locked schema exactly: Header → Summary → Education → Work Experience → Projects → Skills → Certifications.',
+      'Do NOT remove any section. Do NOT add any new section. Do NOT reorder sections.',
+      'Do NOT rename section headings — copy them EXACTLY from the original CV.',
       'EXCEPTION — split combined headings: if a section heading combines two sections with "/" or "&",',
-      '  split them into two separate sections (e.g. "SKILLS / AWARDS AND ACHIEVEMENTS" → "SKILLS" then "AWARDS AND ACHIEVEMENTS").',
+      '  split them: e.g. "SKILLS / AWARDS AND ACHIEVEMENTS" → "SKILLS" then "AWARDS AND ACHIEVEMENTS".',
       '  Each section must have its own heading on its own line.',
       '',
       '━━━ RULE 2: GENERAL CONTENT RULES ━━━',
@@ -1417,31 +1430,31 @@ JD: ${jd.slice(0,800)}`, 300
       'NEVER use markdown (no ** or *).',
       'BANNED words everywhere: passionate, dedicated, hardworking, leverage, synergy.',
       '',
-      '━━━ RULE 3: SUMMARY SECTION ━━━',
-      'Write EXACTLY 2 sentences as ONE flowing paragraph. No bullet points, no blank lines inside.',
-      'HARD LIMIT: 2 sentences. Under 60 words total. Both sentences on ONE printed line each.',
+      '━━━ RULE 3: SUMMARY SECTION — LOCKED TEMPLATE ━━━',
+      'Write EXACTLY 3 sentences. Each sentence fits on ONE printed line (under 95 characters each).',
+      'No bullet points, no blank lines inside the summary. ONE flowing paragraph.',
       '',
-      'CRITICAL — it must read like natural human prose, not 2 robotic facts.',
-      'Use relative clauses and connecting language. Think: how would a person introduce themselves in 2 sentences?',
+      '🔒 MANDATORY TEMPLATE — fill in the [brackets] from the CV and JD:',
       '',
-      'Structure (2 flowing sentences, max 280 characters total):',
-      '  Sentence 1: Who you are + what you have done — degree + university + grade + ONE specific achievement with a number.',
-      '    Keep this under 160 characters. Be concise.',
-      '  Sentence 2: What you are seeking — exact role type from JD, location, sector/company type.',
-      '    Keep this under 120 characters.',
+      '  Sentence 1: "Having recently graduated with [grade] in [degree] from [university], I have [N] previous experience(s) with [company1] and [company2]."',
+      '  Sentence 2: "I am actively seeking opportunities as [role title from JD] in [sector/industry from JD]."',
+      '  Sentence 3: "[One of: right to work statement OR key differentiator OR visa status from CV]"',
+      '    → If CV mentions right to work / visa: "I have the right to work in the UK."',
+      '    → If no visa info: use a single strong differentiator (e.g. "I bring [X years] of experience in [skill].")',
       '',
-      '⛔ BANNED summary openers — NEVER start with these:',
-      '  "Having completed..." → use "Having recently graduated..." instead',
+      '✅ GOLD STANDARD EXAMPLE (copy this format exactly):',
+      '  "Having recently graduated with 1st Class Honours in MSc Business Analytics from Queen\'s University Belfast, I have 1 previous experience with Accenture.',
+      '  I am actively seeking opportunities as a Business Analyst in digital transformation and financial services.',
+      '  I have the right to work in the UK."',
+      '',
+      '⛔ BANNED summary openers:',
+      '  "Having completed..." → ALWAYS use "Having recently graduated..."',
+      '  "Technical Business Analyst with..." → do not start with job title',
       '  "With experience in..." → passive, do not use',
-      '  "I am a..." → too generic, do not use',
-      '  "Technical Business Analyst with..." → starts with job title, not your story',
       '',
-      '✅ GOLD STANDARD EXAMPLE — 2 tight sentences, active voice:',
-      '  "Having recently graduated with MSc Business Analytics (Distinction) from Queen\'s University Belfast, I automated workflows at Accenture reducing manual workload by 40%.',
-      '  I am actively seeking Business Analyst roles in London within digital transformation."',
-      '',
-      '❌ BAD — passive opener + sentence 1 wraps to 3 lines (DO NOT do this):',
-      '  "Having completed MSc Business Analytics (Distinction) at Queen\'s University Belfast, I delivered automation solutions at Accenture that reduced manual workload by 40% across enterprise software and digital transformation programmes."',
+      '📐 LENGTH RULE: Each of the 3 sentences must be under 95 characters. Count them.',
+      '  If Sentence 1 is over 95 chars → shorten the company list or degree title.',
+      '  NEVER let sentences wrap — one sentence = one printed line.',
       '',
       'BANNED words: passionate, dedicated, hardworking, leverage, synergy.',
       '',
@@ -1458,11 +1471,9 @@ JD: ${jd.slice(0,800)}`, 300
       '(If a project is highly relevant to the JD, create a PROJECTS section — do not put it in Education)',
       '',
       '━━━ RULE 5: EXPERIENCE & PROJECTS SECTION ━━━',
-      'NEVER remove any job role. Every work experience role must remain.',
-      '',
-      'PROJECTS — for candidates with <5 years experience: include MAX 2 projects.',
-      '  Choose the 2 most relevant to the JD. Drop the rest entirely.',
-      '  Do NOT include generic/community projects if stronger technical ones exist.',
+      'WORK EXPERIENCE: NEVER remove any job role. ONLY improve bullet wording.',
+      'PROJECTS: NEVER delete any project entry. Keep ALL projects. ONLY improve bullet wording.',
+      '  Max 2 bullets per project (improve the 2 strongest, drop any extras).',
       '',
       '🚫 ANTI-FABRICATION RULE — READ THIS FIRST:',
       'Every bullet you write MUST be based on content already in the original CV.',
@@ -1545,21 +1556,21 @@ JD: ${jd.slice(0,800)}`, 300
       '',
       'IF LESS THAN 5 YEARS EXPERIENCE → STRICT 1-PAGE OUTPUT:',
       '  Apply ALL of the following — every single one:',
-      '  SUMMARY: exactly 2 sentences, under 60 words total. Must fit ≤ 2 printed lines.',
-      '  WORK EXPERIENCE: MAX 3 bullets per role. Each bullet under 85 chars (1 line).',
-      '  PROJECTS: MAX 2 bullets per project. Each bullet under 85 chars (1 line).',
-      '  EDUCATION: degree + university + date on one line. Sub-bullet only if ranking/scholarship.',
-      '  SKILLS: keep as-is (categories already concise).',
-      '  CERTIFICATIONS: keep as-is (short list).',
-      '  AWARDS: remove entirely if only degrees (as per Rule 8).',
-      '  Do NOT remove any role, project, or section — only shorten bullets.',
-      '  Every line in the entire CV must be under 85 characters to prevent wrapping.',
+      '  SUMMARY: exactly 3 sentences using the locked template. Each sentence under 95 chars (1 printed line each).',
+      '  WORK EXPERIENCE: bullet limits per role count (see Rule 5). Each bullet under 95 chars (1 line).',
+      '  PROJECTS: keep ALL projects. Max 2 bullets per project. Each bullet under 95 chars (1 line).',
+      '  EDUCATION: NEVER remove or alter — copy exactly from original.',
+      '  SKILLS: ONLY reorganize — never drop or add.',
+      '  CERTIFICATIONS: KEEP ALL — never remove.',
+      '  AWARDS: remove entirely if only degrees/certs (as per Rule 8).',
+      '  NEVER remove any role, project, or section — ONLY shorten bullet wording.',
+      '  Every single bullet must be under 95 characters to prevent line-wrapping.',
       '',
       'IF 5 YEARS OR MORE → Allow 2 PAGES:',
       '  - Preserve detail. Allow 4-5 bullets per role.',
       '  - Do NOT aggressively shorten. Maintain depth.',
       '',
-      'NEVER remove entire sections, roles, or projects to meet page limits — only condense wording.',
+      'NEVER remove entire sections, roles, or projects to meet page limits — ONLY condense bullet wording.',
       '',
       '━━━ RULE 8: DEDUPLICATION & CONTENT QUALITY ━━━',
       '',
@@ -2842,7 +2853,7 @@ function hardCapCV(text) {
       if (inSummary) {
         var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
         var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
-        var cappedSummary = sents.slice(0, 2).join(' ').trim();
+        var cappedSummary = sents.slice(0, 3).join(' ').trim();
         // Also hard-cap at 280 chars (~3 printed lines) — find last sentence end before limit
         if (cappedSummary.length > 280) {
           var chunk = cappedSummary.substring(0, 280);
@@ -2905,15 +2916,9 @@ function hardCapCV(text) {
       if (isRoleEntry || isProjEntry) {
         entryBullets = 0;
       }
-      // Project count limiting: max 2 projects for <5 years experience
-      if (isProjEntry && applyOnePage) {
-        projCount++;
-        skipProject = projCount > 2;
-      }
     }
 
-    // Skip lines belonging to 3rd+ project
-    if (applyOnePage && /PROJECT/i.test(section) && skipProject) continue;
+    // Projects are NEVER deleted — all projects are kept
 
     // Bullet limiting (only when 1-page mode)
     if (applyOnePage && isBullet(lt)) {
@@ -2938,7 +2943,7 @@ function hardCapCV(text) {
   if (inSummary && summaryBuffer.length > 0) {
     var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
     var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
-    var cappedSummary = sents.slice(0, 2).join(' ').trim();
+    var cappedSummary = sents.slice(0, 3).join(' ').trim();
     if (cappedSummary.length > 280) {
       var chunk = cappedSummary.substring(0, 280);
       var lastDot = chunk.lastIndexOf('.');
