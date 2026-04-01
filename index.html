@@ -1394,10 +1394,10 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Candidate has 0–2 work experience roles → ALWAYS include the summary.',
       '  - Candidate has 3+ work experience roles → REMOVE the summary entirely (use space for experience).',
       '',
-      '📌 3-LINE STRUCTURE (follow this exactly):',
+      '📌 3-LINE STRUCTURE — ALL 3 LINES ARE MANDATORY:',
       '  Line 1: "[Having recently graduated with / Currently studying] [grade] in [degree] from [university], I have [X] year(s) of experience at [company]."',
-      '  Line 2: "I [ONE credible specific achievement — the best metric or highlight from their CV]."',
-      '  Line 3: "I am actively seeking [exact role from JD] in [sector/industry] in [city/location]."',
+      '  Line 2: "I [ONE credible specific achievement — the single best metric or highlight from their CV, e.g. 40% reduction, specific project outcome]."',
+      '  Line 3: "I am actively seeking [exact role from JD] in [sector/industry] in [city/location]." ← THIS LINE IS NON-NEGOTIABLE. Every summary MUST end with this.',
       '',
       '✅ GOLD STANDARD (copy this structure):',
       '  Line 1: "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture."',
@@ -1408,12 +1408,13 @@ JD: ${jd.slice(0,800)}`, 300
       '  "Current MSc Business Analytics student at Queen\'s University Belfast with predicted Distinction, I have completed 2 years at Accenture delivering automation and analytics solutions.',
       '  I am actively seeking Business Analyst opportunities in digital transformation in London."',
       '',
-      '⛔ HARD BANNED — if output starts with any of these, rewrite it:',
+      '⛔ HARD BANNED — if output starts with any of these, rewrite the entire summary:',
       '  "Technical Business Analyst with..." — BANNED',
       '  "Having completed..." — BANNED (use "Having recently graduated...")',
       '  "With experience in..." — BANNED',
       '  "A results-driven..." — BANNED',
-      '  Any generic job description opener — BANNED',
+      '  Any opener that does NOT start with "Having recently graduated" or "Currently studying" — BANNED',
+      '⛔ HARD BANNED — if Line 3 is missing or does not say "I am actively seeking..." → add it.',
       '',
       '━━━ EDUCATION ━━━',
       'Keep education entries EXACTLY as in the original. DO NOT remove any entry.',
@@ -1476,18 +1477,24 @@ JD: ${jd.slice(0,800)}`, 300
       'Remove tool names from project titles — tools belong inside bullet text only.',
       '',
       '━━━ SKILLS ━━━',
+      '⚠️ The section heading MUST be spelled "SKILLS" — not "SKILS", not "SKILL". Check this.',
       'ONLY reorganise into categories. DO NOT remove any skill from the original. DO NOT add any skill not in the original.',
-      '⚠️ STRICT: Copy skills verbatim from the original — do not rename, rephrase, or substitute.',
+      '⚠️ STRICT: Copy skill names verbatim from the original — do not rename, rephrase, or substitute.',
       '',
-      'Use these categories (split methodologies to keep lines short — each category line must fit without wrapping):',
-      '  Technical: [programming languages, data tools, BI tools]',
-      '  Tools & Platforms: [software tools, platforms, diagramming tools]',
-      '  Business Analysis: [BA-specific skills: requirements gathering, BRD, process mapping, etc.]',
-      '  Methodologies: [Agile/Scrum, UAT, BPMN, ETL, etc.]',
+      '📐 CRITICAL FOR PAGE FIT: Every category line must fit on ONE printed line (under 95 chars).',
+      '  If a category line would be too long → split into two sub-categories.',
+      '  Never let a Skills line wrap to 2 lines — this pushes content off the page.',
+      '',
+      'Use these categories:',
+      '  Technical: [programming: SQL, Python, R] + [BI/data tools: Power BI, Excel]',
+      '  Tools & Platforms: [software: Automation Anywhere, JIRA, Visio, Tableau, BPMN]',
+      '  Business Analysis: [requirements, BRD, process mapping, root cause analysis, stakeholder workshops]',
+      '  Methodologies: [Agile/Scrum, UAT, ETL, Dashboarding, Continuous Improvement, KPI Reporting]',
       '  Languages: [spoken languages]',
       '',
+      'If Business Analysis line exceeds 95 chars → split: put data/reporting skills in Technical or Methodologies.',
       'Every skill from the original must appear in exactly one category. Zero dropped, zero added.',
-      'Validation: after writing Skills, compare against original — if any skill is missing, add it back.',
+      'Validation: after writing Skills section, count skills in output vs original. If any missing → add back.',
       '',
       '━━━ CERTIFICATIONS ━━━',
       'KEEP ALL certifications exactly as in the original. Do not remove, shorten, or alter any entry.',
@@ -1516,10 +1523,12 @@ JD: ${jd.slice(0,800)}`, 300
       '  ✓ No missing sections from original',
       '  ✓ No removed projects, entries, or certifications',
       '  ✓ No vague phrases: "worked on", "involved in", "assisted with"',
-      '  ✓ All skills from original present — compare against original and add any missing ones',
-      '  ✓ No skills added that were NOT in the original',
-      '  ✓ Bullet count per role matches the rules',
-      '  ✓ SKILLS heading spelled correctly (not SKILS)',
+      '  ✓ All skills from original present — compare against original list and add any missing ones',
+      '  ✓ No skills added that were NOT in the original CV',
+      '  ✓ No bullets end with "and" or mid-clause — every bullet is a complete sentence',
+      '  ✓ Bullet count per role matches the rules (1 role=4, 2 roles=3 each, 3+=2 each)',
+      '  ✓ SKILLS heading is spelled exactly "SKILLS" — if it says "SKILS" fix it immediately',
+      '  ✓ Each Skills category line is under 95 characters (does not wrap)',
       '',
       '━━━ OUTPUT FORMAT (CRITICAL — follow exactly) ━━━',
       'The tailored_cv field must be plain text with this exact structure:',
@@ -2845,21 +2854,6 @@ function hardCapCV(text) {
       if (entryBullets > maxB) continue; // drop excess bullet
     }
 
-    // Smart bullet length trim: keep under 92 chars by cutting at a natural boundary
-    // Only trims if the bullet is long — always preserves a complete grammatical clause
-    if (applyOnePage && isBullet(lt) && lt.length > 92) {
-      var indent = line.match(/^\s*/)[0];
-      var chunk = lt.substring(0, 92);
-      // Prefer to cut at: comma, semicolon, or last word boundary — in that priority
-      var cutAt = Math.max(chunk.lastIndexOf(', '), chunk.lastIndexOf('; '));
-      if (cutAt < 55) cutAt = chunk.lastIndexOf(' '); // fallback to word boundary
-      if (cutAt > 55) {
-        lt = lt.substring(0, cutAt); // cut to last natural break
-        line = indent + lt;
-      }
-      // If no good cut point found, leave bullet unchanged (don't mangle it)
-    }
-
     out.push(line);
   }
 
@@ -2886,7 +2880,13 @@ function hardCapCV(text) {
     }
   }
 
-  return out.join('\n');
+  var result = out.join('\n');
+
+  // Fix SKILS typo → SKILLS (AI consistently misspells this)
+  result = result.replace(/^SKILS\s*$/mg, 'SKILLS');
+  result = result.replace(/^SKILS\b/mg, 'SKILLS');
+
+  return result;
 }
 
 function selectTemplate(name) {
