@@ -1601,7 +1601,7 @@ JD: ${jd.slice(0,800)}`, 300
       document.getElementById('tailor-gaps').innerHTML = gaps.map(g=>`<span style="background:#fde8cc;color:#7a4500;border:1px solid #f0c090;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${esc(g)}</span>`).join('');
       gapsSection.style.display = 'block';
     } else { gapsSection.style.display = 'none'; }
-    _tailoredCVText = (data.tailored_cv || '').replace(/\*\*/g, '').replace(/\*/g, '');
+    _tailoredCVText = hardCapCV((data.tailored_cv || '').replace(/\*\*/g, '').replace(/\*/g, ''));
     document.getElementById('tailor-cv-output').value = _tailoredCVText;
     switchCVView('preview');
     renderCVPreview();
@@ -1731,7 +1731,7 @@ ${currentCV.slice(0,6000)}
 
 JOB DESCRIPTION:
 ${jd.slice(0,1800)}`,8000);
-    _tailoredCVText = (data.tailored_cv || currentCV).replace(/\*\*/g, '').replace(/\*/g, '');
+    _tailoredCVText = hardCapCV((data.tailored_cv || currentCV).replace(/\*\*/g, '').replace(/\*/g, ''));
     document.getElementById('tailor-cv-output').value = _tailoredCVText;
     renderCVPreview();
     document.getElementById('tailor-changes').innerHTML = (data.changes_made||[]).map(c=>`<div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5"><span style="color:var(--green);font-size:12px;flex-shrink:0;margin-top:2px">✓</span><span>${esc(c)}</span></div>`).join('');
@@ -2715,6 +2715,142 @@ function renderVisa(data, isUK, country, sector){
 }
 
 
+
+// ── CV Post-Processor: Hard-caps bullets + removes bad awards regardless of AI output ──
+function hardCapCV(text) {
+  if (!text) return text;
+
+  // Count roles in Work Experience to determine max bullets per role
+  function countRoles(txt) {
+    var lines = txt.split('\n'), inExp = false, count = 0;
+    for (var i = 0; i < lines.length; i++) {
+      var lt = lines[i].trim();
+      if (/^(WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT)/i.test(lt)) { inExp = true; continue; }
+      if (inExp && /^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(lt) && lt.length > 3 && lt.length < 55 && !lt.startsWith('•')) { inExp = false; continue; }
+      if (inExp && lt && !lt.startsWith('•') && lt.includes('|') && lt.length < 130) count++;
+    }
+    return Math.max(count, 1);
+  }
+
+  // Estimate total years of work experience from date ranges
+  function expYears(txt) {
+    var now = new Date().getFullYear();
+    var total = 0;
+    // Match "Month YYYY - Month YYYY" or "YYYY - YYYY" patterns
+    var re = /(\d{4})\s*[-–]\s*(\d{4}|Present|Current|Now)/gi;
+    var m, seen = [];
+    while ((m = re.exec(txt)) !== null) {
+      var s = parseInt(m[1]);
+      var e = /present|current|now/i.test(m[2]) ? now : parseInt(m[2]);
+      if (s >= 1990 && s <= now && e >= s) seen.push(e - s);
+    }
+    if (!seen.length) return 2; // default assume <5 yrs → safe
+    return seen.reduce(function(a, b) { return a + b; }, 0);
+  }
+
+  // Is this line a degree or certification? (not a real award)
+  function isDegreeOrCert(l) {
+    return /\bMSc\b|\bBSc\b|\bMA\b|\bBA\b|\bBCA\b|\bPhD\b|Master|Bachelor|Distinction|First Class|Second Class|Upper Second|Lower Second|Honours|AWS |Google Cloud|Microsoft Cert|PRINCE2|Lean |Foundation Cert|PMP|ITIL|Accenture -/i.test(l);
+  }
+
+  function isHeading(l) {
+    var s = l.trim();
+    return s.length > 3 && s.length < 60 &&
+      /^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(s) && !s.startsWith('•') && !s.startsWith('-');
+  }
+
+  function isBullet(l) {
+    var s = l.trim();
+    return s.charAt(0) === '•' || (s.charAt(0) === '-' && s.length > 2 && s.charAt(1) === ' ');
+  }
+
+  var years = expYears(text);
+  // Only hard-cap if clearly <5 years experience
+  var applyOnePage = years < 5;
+
+  var roleCount = countRoles(text);
+  var maxRoleBullets  = roleCount <= 1 ? 4 : roleCount === 2 ? 3 : 2;
+  var maxProjBullets  = 2;
+
+  var lines = text.split('\n');
+  var out = [];
+  var section = '';
+  var entryBullets = 0;
+  var inAwards = false;
+  var awardsHeadingLine = '';
+  var awardsBuffer = [];
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var lt = line.trim();
+
+    // Empty line
+    if (!lt) {
+      if (!inAwards) out.push(line);
+      continue;
+    }
+
+    // Section heading
+    if (isHeading(lt)) {
+      // Flush awards buffer — only output if real awards exist
+      if (inAwards) {
+        var realAwards = awardsBuffer.filter(function(al) { return !isDegreeOrCert(al); });
+        if (realAwards.length > 0) {
+          out.push(awardsHeadingLine);
+          realAwards.forEach(function(al) { out.push(al); });
+        }
+        // else: whole awards section dropped silently
+        inAwards = false;
+        awardsBuffer = [];
+      }
+      section = lt.toUpperCase();
+      entryBullets = 0;
+      if (/AWARD/i.test(section)) {
+        inAwards = true;
+        awardsHeadingLine = line;
+        awardsBuffer = [];
+        continue; // don't push heading yet
+      }
+      out.push(line);
+      continue;
+    }
+
+    // Collecting awards buffer
+    if (inAwards) {
+      awardsBuffer.push(line);
+      continue;
+    }
+
+    // Track new entry (role or project) — reset bullet counter
+    if (!isBullet(lt)) {
+      var isRoleEntry = /EXPERIENCE|EMPLOYMENT/i.test(section) && lt.includes('|') && lt.length < 130;
+      var isProjEntry = /PROJECT/i.test(section); // any non-bullet line in Projects = new project
+      if (isRoleEntry || isProjEntry) {
+        entryBullets = 0;
+      }
+    }
+
+    // Bullet limiting (only when 1-page mode)
+    if (applyOnePage && isBullet(lt)) {
+      var maxB = /PROJECT/i.test(section) ? maxProjBullets : maxRoleBullets;
+      entryBullets++;
+      if (entryBullets > maxB) continue; // drop excess bullet
+    }
+
+    out.push(line);
+  }
+
+  // Flush awards at very end of file
+  if (inAwards && awardsBuffer.length > 0) {
+    var realAwards = awardsBuffer.filter(function(al) { return !isDegreeOrCert(al); });
+    if (realAwards.length > 0) {
+      out.push(awardsHeadingLine);
+      realAwards.forEach(function(al) { out.push(al); });
+    }
+  }
+
+  return out.join('\n');
+}
 
 function selectTemplate(name) {
   _activeTemplate = name;
