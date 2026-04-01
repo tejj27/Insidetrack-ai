@@ -1394,19 +1394,23 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Candidate has 0–2 work experience roles → ALWAYS include the summary.',
       '  - Candidate has 3+ work experience roles → REMOVE the summary entirely (use space for experience).',
       '',
-      '📌 3-LINE STRUCTURE — ALL 3 LINES ARE MANDATORY:',
+      '📌 3-LINE STRUCTURE — ALL 3 LINES ARE MANDATORY. Write EXACTLY 3 sentences, one per line:',
       '  Line 1: "[Having recently graduated with / Currently studying] [grade] in [degree] from [university], I have [X] year(s) of experience at [company]."',
       '  Line 2: "I [ONE credible specific achievement — the single best metric or highlight from their CV, e.g. 40% reduction, specific project outcome]."',
-      '  Line 3: "I am actively seeking [exact role from JD] in [sector/industry] in [city/location]." ← THIS LINE IS NON-NEGOTIABLE. Every summary MUST end with this.',
+      '  Line 3: "I am actively seeking [exact role from JD] in [sector/industry] in [city/location]."',
       '',
-      '✅ GOLD STANDARD (copy this structure):',
+      '⚠️ LINE 3 IS ABSOLUTELY NON-NEGOTIABLE. You MUST write it. Every output MUST end the summary with "I am actively seeking...".',
+      '  Count your sentences before outputting. If you only have 2 sentences → you forgot Line 3 → ADD IT.',
+      '',
+      '⚠️ SENTENCE LENGTH: Each sentence must be SHORT enough to fit on ONE printed line without wrapping.',
+      '  Keep each sentence under 110 characters. Do NOT write one long run-on sentence.',
+      '  ❌ WRONG: "Having recently graduated with Distinction from QUB, I have 2 years at Accenture as a Technical Business Analyst delivering automation and transformation across public and private sector clients."',
+      '  ✅ RIGHT: "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture."',
+      '',
+      '✅ GOLD STANDARD (copy this structure exactly — 3 sentences, each on its own line):',
       '  Line 1: "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture."',
       '  Line 2: "I automated enterprise workflows reducing manual workload by 40% and built Power BI dashboards tracking operational KPIs."',
       '  Line 3: "I am actively seeking Business Analyst roles in digital transformation in London."',
-      '',
-      '✅ ANOTHER EXAMPLE (Edinburgh style):',
-      '  "Current MSc Business Analytics student at Queen\'s University Belfast with predicted Distinction, I have completed 2 years at Accenture delivering automation and analytics solutions.',
-      '  I am actively seeking Business Analyst opportunities in digital transformation in London."',
       '',
       '⛔ HARD BANNED — if output starts with any of these, rewrite the entire summary:',
       '  "Technical Business Analyst with..." — BANNED',
@@ -1414,7 +1418,7 @@ JD: ${jd.slice(0,800)}`, 300
       '  "With experience in..." — BANNED',
       '  "A results-driven..." — BANNED',
       '  Any opener that does NOT start with "Having recently graduated" or "Currently studying" — BANNED',
-      '⛔ HARD BANNED — if Line 3 is missing or does not say "I am actively seeking..." → add it.',
+      '⛔ HARD BANNED — if Line 3 is missing or does not say "I am actively seeking..." → your output is WRONG. Go back and add it.',
       '',
       '━━━ EDUCATION ━━━',
       'Keep education entries EXACTLY as in the original. DO NOT remove any entry.',
@@ -1467,7 +1471,12 @@ JD: ${jd.slice(0,800)}`, 300
       '━━━ PROJECTS ━━━',
       'NEVER delete any project. Keep ALL entries. Shorten if needed but never remove.',
       'ONLY improve bullet wording: Action Verb + Specific Task + Tool + Business Impact.',
-      'Max 2 bullets per project — keep the 2 strongest (metric bullet first if exists).',
+      '',
+      '📌 BULLET COUNT PER PROJECT:',
+      '  Strong/technical projects (ML, automation, data pipeline, significant scope) → MAX 2 bullets.',
+      '  Smaller/simpler projects (process improvement, minor analysis, presentation work) → 1 bullet only.',
+      '  If a project has 2 bullets that overlap → MERGE into 1 bullet.',
+      '  Metric bullet always goes first.',
       '',
       'Each project bullet must connect analysis → business value:',
       '  ❌ "Analysed workforce data to identify attrition drivers using machine learning" (no impact stated)',
@@ -1509,16 +1518,28 @@ JD: ${jd.slice(0,800)}`, 300
       'Remove: degree grades, certifications — these already appear in Education and Certifications.',
       'If nothing real remains after filtering → DELETE the entire Awards section.',
       '',
-      '━━━ DEDUPLICATION ━━━',
-      'Do NOT repeat the same information across sections.',
-      'Merge bullets that convey the same point into one stronger bullet.',
-      'Each bullet must communicate a DISTINCT contribution.',
+      '━━━ DEDUPLICATION & BULLET MERGING ━━━',
+      'Do NOT repeat the same information across sections or within the same role.',
+      '',
+      '⭐ MERGE RULE: If two bullets in the same role/project cover overlapping territory → merge into ONE stronger bullet.',
+      '  Examples of bullets that MUST be merged (they cover the same ground):',
+      '  ❌ Bullet A: "Delivered requirements analysis and documented business processes for automation initiatives."',
+      '  ❌ Bullet B: "Created BPMN process maps and workflow diagrams for digital transformation programmes."',
+      '  ✅ MERGED: "Documented BPMN process flows and requirements for automation and digital transformation, cutting analysis time."',
+      '',
+      '  ❌ Bullet A: "Facilitated stakeholder workshops to gather requirements from business units."',
+      '  ❌ Bullet B: "Collaborated with Product Owners and Delivery Managers to align business and technical needs."',
+      '  ✅ MERGED: "Led stakeholder workshops with POs and Delivery Managers to capture requirements and align delivery."',
+      '',
+      'After merging, use freed-up bullet slots for bullets covering DISTINCT contributions not already covered.',
+      'Each bullet must communicate a DISTINCT contribution — if two bullets say the same thing different ways, they MUST be merged.',
       '',
       '━━━ VALIDATION (run before output — fix any failure) ━━━',
       '  ✓ Summary does NOT start with "Technical [Title] with..." or "Having completed..." or "With experience in..." → if it does, REWRITE it',
-      '  ✓ Summary is max 3 printed lines',
+      '  ✓ Summary has EXACTLY 3 sentences — count them. If only 2 → add "I am actively seeking..." as sentence 3',
+      '  ✓ Summary Line 3 says "I am actively seeking [role] in [sector/location]" — if missing → ADD IT NOW',
+      '  ✓ Each summary sentence fits on one line — none longer than 110 characters',
       '  ✓ Summary Line 2 contains a specific achievement or metric (not generic experience count)',
-      '  ✓ Summary Line 3 says "I am actively seeking [role] in [sector/location]"',
       '  ✓ No incomplete or cut-off sentences anywhere',
       '  ✓ No missing sections from original',
       '  ✓ No removed projects, entries, or certifications',
@@ -1527,6 +1548,7 @@ JD: ${jd.slice(0,800)}`, 300
       '  ✓ No skills added that were NOT in the original CV',
       '  ✓ No bullets end with "and" or mid-clause — every bullet is a complete sentence',
       '  ✓ Bullet count per role matches the rules (1 role=4, 2 roles=3 each, 3+=2 each)',
+      '  ✓ No two bullets within the same role/project cover overlapping content — if they do, merge them',
       '  ✓ SKILLS heading is spelled exactly "SKILLS" — if it says "SKILS" fix it immediately',
       '  ✓ Each Skills category line is under 95 characters (does not wrap)',
       '',
@@ -2781,12 +2803,6 @@ function hardCapCV(text) {
         var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
         var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
         var cappedSummary = sents.slice(0, 3).join(' ').trim();
-        // Also hard-cap at 280 chars (~3 printed lines) — find last sentence end before limit
-        if (cappedSummary.length > 280) {
-          var chunk = cappedSummary.substring(0, 280);
-          var lastDot = chunk.lastIndexOf('.');
-          cappedSummary = lastDot > 120 ? chunk.substring(0, lastDot + 1) : chunk.substring(0, chunk.lastIndexOf(' '));
-        }
         out.push(summaryHeadingLine);
         out.push(cappedSummary);
         out.push('');
@@ -2862,11 +2878,6 @@ function hardCapCV(text) {
     var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
     var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
     var cappedSummary = sents.slice(0, 3).join(' ').trim();
-    if (cappedSummary.length > 280) {
-      var chunk = cappedSummary.substring(0, 280);
-      var lastDot = chunk.lastIndexOf('.');
-      cappedSummary = lastDot > 120 ? chunk.substring(0, lastDot + 1) : chunk.substring(0, chunk.lastIndexOf(' '));
-    }
     out.push(summaryHeadingLine);
     out.push(cappedSummary);
   }
