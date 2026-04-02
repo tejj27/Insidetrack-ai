@@ -1438,6 +1438,13 @@ JD: ${jd.slice(0,800)}`, 300
       'Any bullet with a specific number, %, £, or time saving from the original MUST appear in output.',
       'Write these FIRST. They are never cut regardless of count limit.',
       '',
+      '⭐ FOR ACCENTURE / BA ROLES — these 4 bullet topics MUST all appear (merge if needed to fit count):',
+      '  1. Automation/metric impact (e.g. 40% manual workload reduction)',
+      '  2. Technical tools (SQL, Power BI, dashboards, KPIs)',
+      '  3. Requirements + BPMN process mapping (As-Is/To-Be, functional specs, user stories)',
+      '  4. UAT / Agile delivery (test scripts, defect triage, acceptance criteria, sprint ceremonies)',
+      '  ← These 4 topics cover the core BA skill set. All 4 must appear across the bullets.',
+      '',
       '📌 BULLET ORDER for each role (top = most important, cut from bottom):',
       '  1. Awards or recognition for this specific role (if any) — always first',
       '  2. Bullets with specific metrics (%, numbers, £, time saved)',
@@ -1474,9 +1481,10 @@ JD: ${jd.slice(0,800)}`, 300
       '',
       '📌 BULLET COUNT PER PROJECT:',
       '  Strong/technical projects (ML, automation, data pipeline, significant scope) → MAX 2 bullets.',
-      '  Smaller/simpler projects (process improvement, minor analysis, presentation work) → 1 bullet only.',
+      '  Smaller/simpler projects (hackathons, community projects, minor analysis) → EXACTLY 1 bullet only.',
       '  If a project has 2 bullets that overlap → MERGE into 1 bullet.',
       '  Metric bullet always goes first.',
+      '  ⚠️ Hackathon projects = 1 bullet max. Keep the metric bullet (e.g. 15% forecasting improvement).',
       '',
       'Each project bullet must connect analysis → business value:',
       '  ❌ "Analysed workforce data to identify attrition drivers using machine learning" (no impact stated)',
@@ -2896,6 +2904,25 @@ function hardCapCV(text) {
   // Fix SKILS typo → SKILLS (AI consistently misspells this)
   result = result.replace(/^SKILS\s*$/mg, 'SKILLS');
   result = result.replace(/^SKILS\b/mg, 'SKILLS');
+
+  // ── Mechanical skills line splitter ──────────────────────────────────────
+  // Any skills category line over 95 chars wraps and pushes content to page 2.
+  // Split at the last comma before the 95-char limit.
+  result = result.replace(/^(- [A-Za-z &\/]+:.{85,})$/mg, function(line) {
+    if (line.length <= 95) return line;
+    // Find last comma at or before position 94
+    var cutAt = line.lastIndexOf(',', 94);
+    if (cutAt < 20) cutAt = line.indexOf(','); // fallback: first comma
+    if (cutAt < 0) return line; // no comma found, leave as is
+    var prefix = line.match(/^- ([A-Za-z &\/]+):/);
+    var label = prefix ? '- ' + prefix[1] + ' (cont.):' : '-  ';
+    return line.substring(0, cutAt) + '\n' + label + line.substring(cutAt + 2);
+  });
+
+  // ── Drop bullets with banned openers ─────────────────────────────────────
+  // "Collaborated" is a banned opener — if the AI still writes it, remove the bullet.
+  // The slot will be empty (better than a weak/banned bullet hurting ATS score).
+  result = result.replace(/^[•\-] Collaborated\b[^\n]*/mg, '');
 
   return result;
 }
