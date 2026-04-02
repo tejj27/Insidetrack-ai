@@ -1514,6 +1514,9 @@ JD: ${jd.slice(0,800)}`, 300
       '⚠️ The section heading MUST be spelled "SKILLS" — not "SKILS", not "SKILL". Check this.',
       'ONLY reorganise into categories. DO NOT remove any skill from the original. DO NOT add any skill not in the original.',
       '⚠️ STRICT: Copy skill names verbatim from the original — do not rename, rephrase, or substitute.',
+      '🚫 HARD RULE: DO NOT add any skill, tool, or methodology not present in the original CV.',
+      '  Even if the JD asks for "User-Centred Design", "Figma", "Salesforce" etc — if not in original, DO NOT add it.',
+      '  Adding fake skills = candidate gets caught in interview. Never do this.',
       '',
       '📐 CRITICAL FOR PAGE FIT: Every category line must fit on ONE printed line (under 95 chars).',
       '  If a category line would be too long → split into two sub-categories.',
@@ -2951,18 +2954,18 @@ function hardCapCV(text) {
   result = result.replace(/^([•\-]) *\r?\n([^•\-\n][^\n]*)/mg, '$1 $2');
 
   // ── Mechanical skills line splitter ──────────────────────────────────────
-  // Only targets known skills category labels (1–3 words before colon, comma-separated values after).
-  // SAFE: requires the label before the colon to be short (≤30 chars) AND the content to be
-  // comma-separated (contains at least 2 commas) so we never accidentally match sentences.
+  // Only targets known skills category labels. Splits at last comma before 95 chars.
+  // Continuation line gets the category label prefix so it renders correctly.
   var skillsCategoryRe = /^(-? ?(?:Technical|Tools & Platforms|Tools|Business Analysis|Methodologies|Languages|Certifications|Skills)[^:]{0,20}:.{90,})$/mg;
   result = result.replace(skillsCategoryRe, function(line) {
     if (line.length <= 95) return line;
     var cutAt = line.lastIndexOf(',', 94);
     if (cutAt < 20) cutAt = line.indexOf(',');
     if (cutAt < 0) return line;
-    // Use a clean indented continuation — no repeated label
-    var indent = '  ';
-    return line.substring(0, cutAt) + '\n' + indent + line.substring(cutAt + 2).trim();
+    // Extract just the category label (e.g. "Business Analysis") for the continuation line
+    var labelMatch = line.match(/^(-? ?(?:Technical|Tools & Platforms|Tools|Business Analysis|Methodologies|Languages|Certifications|Skills)[^:]*):/);
+    var contLabel = labelMatch ? labelMatch[1].replace(/^-? ?/, '') + ' (cont.):' : '  ';
+    return line.substring(0, cutAt) + '\n' + contLabel + ' ' + line.substring(cutAt + 2).trim();
   });
 
   // ── Rewrite bullets with banned openers ──────────────────────────────────
