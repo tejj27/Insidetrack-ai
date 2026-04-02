@@ -2924,9 +2924,9 @@ function hardCapCV(text) {
     var cutAt = line.lastIndexOf(',', 94);
     if (cutAt < 20) cutAt = line.indexOf(',');
     if (cutAt < 0) return line;
-    var prefix = line.match(/^(-? ?[A-Za-z &\/]+):/);
-    var label = prefix ? prefix[1] + ' (cont.):' : '  ';
-    return line.substring(0, cutAt) + '\n' + label + ' ' + line.substring(cutAt + 2).trim();
+    // Use a clean indented continuation — no repeated label
+    var indent = '  ';
+    return line.substring(0, cutAt) + '\n' + indent + line.substring(cutAt + 2).trim();
   });
 
   // ── Rewrite bullets with banned openers ──────────────────────────────────
