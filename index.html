@@ -1460,8 +1460,10 @@ JD: ${jd.slice(0,800)}`, 300
       '  ❌ TOO LONG (147 chars): "Delivered comprehensive business and functional requirements analysis for automation and digital transformation initiatives"',
       '  ✅ TIGHT (88 chars): "Analysed and documented requirements for automation and digital transformation programmes"',
       '',
-      '⛔ BANNED openers: Supported, Collaborated, Conducted, Assisted, Helped, Worked on, Involved in.',
-      '  Use instead: Delivered, Built, Led, Defined, Designed, Automated, Identified, Drove, Created, Managed.',
+      '⛔ BANNED openers — if you start a bullet with any of these words, rewrite it immediately:',
+      '  Supported, Collaborated, Conducted, Assisted, Helped, Worked on, Involved in, Contributed to',
+      '  ✅ Use instead: Delivered, Built, Led, Defined, Designed, Automated, Identified, Drove, Created, Managed, Developed.',
+      '  ❌ "Supported system integration using Automation Anywhere..." → ✅ "Automated system integrations using Automation Anywhere..."',
       '⛔ BANNED: listing team members by title. BANNED: "cross-functional teams", "various stakeholders".',
       '',
       '📌 BULLET COUNT per role — based on recency (most recent = most bullets):',
@@ -1503,11 +1505,12 @@ JD: ${jd.slice(0,800)}`, 300
       '  Never let a Skills line wrap to 2 lines — this pushes content off the page.',
       '',
       'Use these categories:',
-      '  Technical: [programming: SQL, Python, R] + [BI/data tools: Power BI, Excel]',
-      '  Tools & Platforms: [software: Automation Anywhere, JIRA, Visio, Tableau, BPMN]',
-      '  Business Analysis: [requirements, BRD, process mapping, root cause analysis, stakeholder workshops]',
-      '  Methodologies: [Agile/Scrum, UAT, ETL, Dashboarding, Continuous Improvement, KPI Reporting]',
-      '  Languages: [spoken languages]',
+      '  Technical: SQL, Python, R, Excel, Power BI, Data Validation — programming languages and BI/data tools ONLY',
+      '  Tools & Platforms: Automation Anywhere, JIRA, Visio, Tableau, BPMN — specific software and platforms ONLY',
+      '  Business Analysis: Requirements Gathering, BRD, Process Mapping, Workflow Analysis, Root Cause Analysis, Stakeholder Workshops',
+      '  Methodologies: Agile/Scrum, UAT, ETL, Dashboarding, Continuous Improvement, KPI Reporting — methods and practices ONLY',
+      '  Languages: spoken languages only',
+      '  ⚠️ ETL goes in Methodologies — NOT in Tools & Platforms.',
       '',
       'If Business Analysis line exceeds 95 chars → split: put data/reporting skills in Technical or Methodologies.',
       'Every skill from the original must appear in exactly one category. Zero dropped, zero added.',
@@ -2913,22 +2916,42 @@ function hardCapCV(text) {
 
   // ── Mechanical skills line splitter ──────────────────────────────────────
   // Any skills category line over 95 chars wraps and pushes content to page 2.
+  // Handles lines with OR without a leading "- " prefix.
   // Split at the last comma before the 95-char limit.
-  result = result.replace(/^(- [A-Za-z &\/]+:.{85,})$/mg, function(line) {
+  result = result.replace(/^(-? ?[A-Za-z &\/]+:.{85,})$/mg, function(line) {
     if (line.length <= 95) return line;
     // Find last comma at or before position 94
     var cutAt = line.lastIndexOf(',', 94);
     if (cutAt < 20) cutAt = line.indexOf(','); // fallback: first comma
     if (cutAt < 0) return line; // no comma found, leave as is
-    var prefix = line.match(/^- ([A-Za-z &\/]+):/);
-    var label = prefix ? '- ' + prefix[1] + ' (cont.):' : '-  ';
-    return line.substring(0, cutAt) + '\n' + label + line.substring(cutAt + 2);
+    // Extract the category label (e.g. "Business Analysis", "- Technical")
+    var prefix = line.match(/^(-? ?[A-Za-z &\/]+):/);
+    var label = prefix ? prefix[1] + ' (cont.):' : '  ';
+    return line.substring(0, cutAt) + '\n' + label + ' ' + line.substring(cutAt + 2).trim();
   });
 
-  // ── Drop bullets with banned openers ─────────────────────────────────────
-  // "Collaborated" is a banned opener — if the AI still writes it, remove the bullet.
-  // The slot will be empty (better than a weak/banned bullet hurting ATS score).
-  result = result.replace(/^[•\-] Collaborated\b[^\n]*/mg, '');
+  // ── Rewrite bullets with banned openers ──────────────────────────────────
+  // "Collaborated" and "Supported" are banned openers.
+  // Remove "Collaborated" bullets entirely (too weak to salvage).
+  // For "Supported" — only remove if there are enough other bullets for that entry.
+  // Simple approach: flag them for removal (the prompt should have already fixed them,
+  // but as a safety net we strip Collaborated; Supported we reword to strip the opener).
+  result = result.replace(/^([•\-] )Collaborated\b([^\n]*)/mg, ''); // remove entirely
+  result = result.replace(/^([•\-] )Supported\b([^\n]*)/mg, function(m, bullet, rest) {
+    // Reword: "Supported X using Y, achieving Z" → "Delivered X using Y, achieving Z"
+    return bullet + 'Delivered' + rest;
+  });
+
+  // ── Protect projects from being left empty ───────────────────────────────
+  // If a project block (non-bullet line followed by no bullets before next non-bullet)
+  // ends up with zero bullets, remove the empty project title line too.
+  result = result.replace(/^([^\n•\-][^\n]*)\n(\n|(?=[^\n•\-]))/mg, function(m, title, after) {
+    // Only apply inside projects: heuristic — short lines without | that aren't headings
+    if (title.trim().length > 5 && !title.includes('|') && !/^[A-Z\s&\/\-\.]{4,}$/.test(title.trim())) {
+      return after; // drop the orphaned project title
+    }
+    return m;
+  });
 
   return result;
 }
