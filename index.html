@@ -1268,13 +1268,28 @@ async function runATS() {
   document.getElementById('tailor-result').style.display = 'none';
   try {
     const data = await callClaude(
-      `You are an expert ATS (Applicant Tracking System) analyser. Respond ONLY with valid JSON:
-{"score":<integer 0-100>,"grade":"A"|"B"|"C"|"D"|"F","verdict":"<10 words max>","company":"<hiring company name from JD, e.g. Google, NHS, Deloitte>","role":"<exact job title from JD>","found_keywords":["kw1","kw2"],"missing_keywords":["kw1","kw2"],"suggestions":[{"label":"<short label>","before":"<original text>","after":"<improved text>","reason":"<why this helps>"},{"label":"...","before":"...","after":"...","reason":"..."},{"label":"...","before":"...","after":"...","reason":"..."}],"tips":["tip1","tip2","tip3","tip4"]}`,
-      `CV:\n${resumeText.slice(0,3000)}\n\nJOB DESCRIPTION:\n${jd.slice(0,1800)}`,1500
+      `You are an expert ATS (Applicant Tracking System) keyword analyser.
+Your job is to identify which keywords from the job description appear in the CV, and which are missing.
+Be thorough and precise — include skills, tools, methodologies, role titles, and domain terms.
+Do NOT assign a score — the score will be calculated from your keyword lists.
+Respond ONLY with valid JSON (no markdown):
+{"verdict":"<10 words max describing the match quality>","company":"<hiring company name from JD>","role":"<exact job title from JD>","found_keywords":["kw1","kw2",...],"missing_keywords":["kw1","kw2",...],"suggestions":[{"label":"<short label>","before":"<original CV text>","after":"<improved text>","reason":"<why this helps ATS>"},{"label":"...","before":"...","after":"...","reason":"..."},{"label":"...","before":"...","after":"...","reason":"..."}],"tips":["tip1","tip2","tip3","tip4"]}`,
+      `CV:\n${resumeText.slice(0,5000)}\n\nJOB DESCRIPTION:\n${jd.slice(0,2500)}`,1800
     );
     _atsResult = data;
+
+    // ── Deterministic score calculation ──────────────────────────────────────
+    // Score = found ÷ (found + missing) × 100  — consistent, transparent, honest
+    const found = (data.found_keywords||[]).length;
+    const missing = (data.missing_keywords||[]).length;
+    const total = found + missing;
+    const calcScore = total > 0 ? Math.round((found / total) * 100) : 0;
+    // Grade bands: A=85+, B=70+, C=55+, D=40+, F=<40
+    const calcGrade = calcScore >= 85 ? 'A' : calcScore >= 70 ? 'B' : calcScore >= 55 ? 'C' : calcScore >= 40 ? 'D' : 'F';
+    data.score = calcScore;
+    data.grade = calcGrade;
+
     await incrementScanCount();
-    // Store company and role from AI extraction only — reliable
     if(data.company && data.company !== 'Unknown') _lastATSCompany = data.company;
     if(data.role && data.role !== 'Unknown') _lastATSRole = data.role;
     renderATS(data);
