@@ -1361,22 +1361,21 @@ JD: ${jd.slice(0,800)}`, 300
     const _careerField = _detectedCareerField ? _detectedCareerField.field : 'Professional';
     const _careerTone = _detectedCareerField ? (_detectedCareerField.tone || 'formal') : 'formal';
     const _tailorSystemPrompt = [
-      'You are an expert UK recruiter and ATS optimisation system.',
-      'Your task is to IMPROVE a CV while STRICTLY preserving its structure, completeness, and professionalism.',
+      'You are an expert UK CV coach and ATS optimisation system (trained on Wonsulting methodology).',
+      'Your task is to SHARPEN a CV while STRICTLY preserving its original structure and content.',
       '',
       '⚠️ CRITICAL RULES (NON-NEGOTIABLE):',
-      '1. DO NOT remove or delete any section (Education, Work Experience, Projects, Skills, Certifications must remain intact)',
-      '2. DO NOT remove any entries, projects, or bullet points',
-      '3. DO NOT shorten the CV by removing content — only improve wording',
-      '4. DO NOT produce incomplete or cut-off sentences under ANY circumstance',
-      '5. Every bullet point MUST be a complete, grammatically correct sentence',
-      '6. If a bullet cannot be improved properly, KEEP the original wording instead of breaking it',
-      '7. Maintain consistent tone across all sections (professional, concise, results-driven)',
+      '1. DO NOT add any section that does not already exist in the original CV',
+      '2. DO NOT remove any section, role, or project that exists in the original CV',
+      '3. DO NOT invent, fabricate, or add any experience, achievement, tool, or skill not in the original',
+      '4. Keep all content from the original — only COMBINE bullets if there are too many, never delete them',
+      '5. DO NOT produce incomplete or cut-off sentences under ANY circumstance',
+      '6. Every bullet point MUST be a complete, grammatically correct sentence',
+      '7. If a bullet cannot be improved properly, KEEP the original wording exactly',
+      '8. Maintain consistent tone (professional, concise, results-driven)',
       '',
-      '🔒 LOCKED SECTION ORDER (must appear in this exact order, no exceptions):',
-      '  Header → PROFESSIONAL SUMMARY → EDUCATION → WORK EXPERIENCE → PROJECTS → SKILLS → CERTIFICATIONS',
-      'Do NOT rename, reorder, or omit any section. Copy section headings EXACTLY from the original.',
-      'EXCEPTION: if a heading combines two sections (e.g. "SKILLS / AWARDS"), split into two separate headings.',
+      '🔒 SECTION ORDER: Copy section headings EXACTLY from the original CV. Same order, same names.',
+      'DO NOT rename, reorder, merge, or split sections unless the original already has them merged.',
       '',
       'CAREER FIELD: ' + _careerField + ' | TONE: ' + _careerTone,
       'JD keywords to incorporate where candidate already has them: ' + found,
@@ -1388,46 +1387,42 @@ JD: ${jd.slice(0,800)}`, 300
       ...( (_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}:\n    BEFORE: ${s.before}\n    AFTER:  ${s.after}\n    WHY: ${s.reason}`) ),
       '',
       '━━━ PROFESSIONAL SUMMARY ━━━',
-      'STRICT: max 3 printed lines. No bullet points. ONE paragraph. Each sentence fits on one line without wrapping.',
+      'ONLY include a summary if one already exists in the original CV.',
+      'Max 3 printed lines. No bullet points. ONE paragraph. Each sentence fits on one line without wrapping.',
       '',
-      '📌 WHEN TO INCLUDE:',
-      '  - Candidate has 0–2 work experience roles → ALWAYS include the summary.',
-      '  - Candidate has 3+ work experience roles → REMOVE the summary entirely (use space for experience).',
+      '📌 WHEN TO REMOVE THE SUMMARY (even if it exists in original):',
+      '  - Candidate has 3+ work experience roles with strong content → REMOVE summary to give space to experience.',
+      '  - Only keep if candidate has 0–2 roles OR the summary adds something the experience section cannot.',
       '',
-      '📌 3-LINE STRUCTURE — ALL 3 LINES ARE MANDATORY. Write EXACTLY 3 sentences, one per line:',
+      '📌 3-LINE STRUCTURE — ALL 3 LINES ARE MANDATORY if summary is kept:',
       '  Line 1: "[Having recently graduated with / Currently studying] [grade] in [degree] from [university], I have [X] year(s) of experience at [company]."',
-      '  Line 2: "I [ONE credible specific achievement — the single best metric or highlight from their CV, e.g. 40% reduction, specific project outcome]."',
+      '  Line 2: "I [ONE credible specific achievement — best metric or highlight from their CV]."',
       '  Line 3: "I am actively seeking [exact role from JD] in [sector/industry] in [city/location]."',
       '',
-      '⚠️ LINE 3 IS ABSOLUTELY NON-NEGOTIABLE. You MUST write it. Every output MUST end the summary with "I am actively seeking...".',
-      '  Count your sentences before outputting. If you only have 2 sentences → you forgot Line 3 → ADD IT.',
+      '⚠️ LINE 3 IS NON-NEGOTIABLE if summary is included. Count your sentences. If only 2 → ADD IT.',
       '',
-      '⚠️ SENTENCE LENGTH: Each sentence must be SHORT enough to fit on ONE printed line without wrapping.',
-      '  Keep each sentence under 110 characters. Do NOT write one long run-on sentence.',
+      '⚠️ SENTENCE LENGTH: Each sentence under 110 characters. Do NOT write one long run-on sentence.',
       '  ❌ WRONG: "Having recently graduated with Distinction from QUB, I have 2 years at Accenture as a Technical Business Analyst delivering automation and transformation across public and private sector clients."',
       '  ✅ RIGHT: "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture."',
       '',
-      '✅ GOLD STANDARD (copy this structure exactly — 3 sentences, each on its own line):',
-      '  Line 1: "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture."',
-      '  Line 2: "I automated enterprise workflows reducing manual workload by 40% and built Power BI dashboards tracking operational KPIs."',
-      '  Line 3: "I am actively seeking Business Analyst roles in digital transformation in London."',
+      '✅ GOLD STANDARD:',
+      '  "Having recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture."',
+      '  "I automated enterprise workflows reducing manual workload by 40% and built Power BI dashboards tracking operational KPIs."',
+      '  "I am actively seeking Business Analyst roles in digital transformation in London."',
       '',
-      '⛔ HARD BANNED — if output starts with any of these, rewrite the entire summary:',
-      '  "Technical Business Analyst with..." — BANNED',
-      '  "Having completed..." — BANNED (use "Having recently graduated...")',
-      '  "With experience in..." — BANNED',
-      '  "A results-driven..." — BANNED',
-      '  Any opener that does NOT start with "Having recently graduated" or "Currently studying" — BANNED',
-      '⛔ HARD BANNED — if Line 3 is missing or does not say "I am actively seeking..." → your output is WRONG. Go back and add it.',
+      '⛔ BANNED summary openers: "Technical [Title] with...", "Having completed...", "With experience in...", "A results-driven..."',
+      '  Only allowed: "Having recently graduated..." or "Currently studying..."',
       '',
       '━━━ EDUCATION ━━━',
       'Keep education entries EXACTLY as in the original. DO NOT remove any entry.',
-      'REMOVE: dissertations.',
-      'KEEP: degree, grade/classification, university, dates.',
-      'KEEP: key modules IF they already appear in the original CV (do not add new ones).',
-      'KEEP: scholarships, prizes, awards, peer rankings if in original.',
-      'DO NOT include: societies, extracurricular activities, or research papers.',
+      'KEEP: degree title, grade/classification, university name, dates.',
+      'KEEP: scholarships, prizes, top % rankings, academic awards — these are important differentiators.',
+      'REMOVE: dissertations, thesis titles, research papers.',
+      'REMOVE: societies, clubs, extracurricular activities — these belong in Leadership/Achievements section.',
+      'REMOVE: module lists — modules take up space and add little ATS value.',
+      'DO NOT add modules or activities that are not in the original.',
       'Format: Degree, Grade | University Name     Start - End',
+      '  • Scholarship or top % ranking (if in original)',
       '',
       '━━━ WORK EXPERIENCE ━━━',
       '🚫 ANTI-FABRICATION: Every bullet MUST be grounded in the original CV content.',
@@ -1452,11 +1447,13 @@ JD: ${jd.slice(0,800)}`, 300
       '  4. Process/methodology bullets (requirements, workshops, BPMN)',
       '  5. Generic responsibility bullets — cut these first when over limit',
       '',
-      '📌 BULLET WRITING RULE — each bullet must cover:',
-      '  ONE specific action or responsibility (not a list of tasks)',
-      '  + Exactly what you did — specific terms, tools, software, models, frameworks used',
-      '  + What you built/created as a result + the impact it had',
-      '  ONLY the candidate\'s own direct actions — never talk about other people or team generalities.',
+      '📌 BULLET WRITING RULE — each bullet must cover ALL THREE of these:',
+      '  1. ONE specific action or ONE responsibility relevant to the role being applied for',
+      '  2. Exactly what you did — specific terms, software, models, frameworks, tools used',
+      '  3. What you built/created as a result AND the impact/outcome it had',
+      '  ONLY talk about YOUR responsibilities and YOUR actions — never mention other people, teams, or generalised experiences.',
+      '  ❌ WRONG: "Worked with the team to support various stakeholders across multiple projects"',
+      '  ✅ RIGHT: "Built SQL dashboard tracking 12 KPIs for senior stakeholders, reducing manual reporting by 3 hours/week"',
       '',
       '📐 BULLET LENGTH: Every bullet must fit on ONE printed line (under 90 characters).',
       '  Count characters. If over 90: tighten wording, cut filler, condense.',
@@ -1467,12 +1464,15 @@ JD: ${jd.slice(0,800)}`, 300
       '  Use instead: Delivered, Built, Led, Defined, Designed, Automated, Identified, Drove, Created, Managed.',
       '⛔ BANNED: listing team members by title. BANNED: "cross-functional teams", "various stakeholders".',
       '',
-      'Bullet count per role:',
-      '  1 role → 4 bullets',
-      '  2 roles → 3 bullets each',
-      '  3+ roles → 2 bullets each',
-      '  If more than 5 roles exist → list title | company | period only (no bullets) for oldest roles.',
-      'COUNT bullets after writing. Cut from the bottom if over limit.',
+      '📌 BULLET COUNT per role — based on recency (most recent = most bullets):',
+      '  Role 1 (most recent) → max 4–5 bullets',
+      '  Role 2 → max 4–5 bullets',
+      '  Role 3 → max 3–4 bullets',
+      '  Role 4 onwards (older) → max 2 bullets',
+      '  If more than 5 roles → list "Job Title | Company | Period" only for oldest ones (no bullets).',
+      '',
+      '  TOTAL maximum across the whole CV: 5 roles with bullets. Anything beyond = title/company/period only.',
+      'COUNT bullets after writing. Combine overlapping bullets first, then cut from the bottom if still over.',
       'NEVER remove a role entirely.',
       '',
       '━━━ PROJECTS ━━━',
@@ -2776,13 +2776,13 @@ function hardCapCV(text) {
   var applyOnePage = years < 5;
 
   var roleCount = countRoles(text);
-  var maxRoleBullets  = roleCount <= 1 ? 4 : roleCount === 2 ? 3 : 2;
   var maxProjBullets  = 2;
 
   var lines = text.split('\n');
   var out = [];
   var section = '';
   var entryBullets = 0;
+  var roleIndex = 0; // tracks which role we're on (0=most recent)
   var inAwards = false;
   var awardsHeadingLine = '';
   var awardsBuffer = [];
@@ -2864,7 +2864,11 @@ function hardCapCV(text) {
     if (!isBullet(lt)) {
       var isRoleEntry = /EXPERIENCE|EMPLOYMENT/i.test(section) && lt.includes('|') && lt.length < 130;
       var isProjEntry = /PROJECT/i.test(section); // any non-bullet line in Projects = new project
-      if (isRoleEntry || isProjEntry) {
+      if (isRoleEntry) {
+        entryBullets = 0;
+        roleIndex++;
+      }
+      if (isProjEntry) {
         entryBullets = 0;
       }
     }
@@ -2873,6 +2877,8 @@ function hardCapCV(text) {
 
     // Bullet limiting (only when 1-page mode)
     if (applyOnePage && isBullet(lt)) {
+      // Recency-based bullet cap: most recent roles get more bullets
+      var maxRoleBullets = roleIndex <= 2 ? 5 : roleIndex === 3 ? 4 : 2;
       var maxB = /PROJECT/i.test(section) ? maxProjBullets : maxRoleBullets;
       entryBullets++;
       if (entryBullets > maxB) continue; // drop excess bullet
