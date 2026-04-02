@@ -1541,6 +1541,7 @@ JD: ${jd.slice(0,800)}`, 300
       '  ❌ Bullet A: "Facilitated stakeholder workshops to gather requirements from business units."',
       '  ❌ Bullet B: "Collaborated with Product Owners and Delivery Managers to align business and technical needs."',
       '  ✅ MERGED: "Led stakeholder workshops with POs and Delivery Managers to capture requirements and align delivery."',
+      '  ← These two bullets are about the SAME activity. ONE bullet covers both. Do NOT write both.',
       '',
       'After merging, use freed-up bullet slots for bullets covering DISTINCT contributions not already covered.',
       'Each bullet must communicate a DISTINCT contribution — if two bullets say the same thing different ways, they MUST be merged.',
@@ -2022,15 +2023,22 @@ function downloadCVasPDF() {
       lineNum++; continue;
     }
     var isBullet = l.charAt(0)==='•' || (l.charAt(0)==='-' && l.length>2);
-    // Certification bullets → bold
-    if (isBullet && /CERTIF/i.test(currentSection)) {
-      if(!inList){bodyHtml+='<ul>';inList=true;}
-      bodyHtml+='<li><strong>'+l.replace(/^[•\-]\s*/,'')+'</strong></li>';
-      lineNum++; continue;
-    }
     if (isBullet) {
+      var bc2 = l.replace(/^[•\-]\s*/,'');
+      // Peek-ahead: bare bullet with no content → consume next non-empty line
+      if (!bc2) {
+        var ni2 = i + 1;
+        while (ni2 < lines.length && !lines[ni2].trim()) ni2++;
+        if (ni2 < lines.length) {
+          var nextL = lines[ni2].trim();
+          var nextIsBullet = nextL.charAt(0)==='•' || (nextL.charAt(0)==='-' && nextL.length>2);
+          var nextIsHeading = nextL.length>=2 && (nextL.match(/[a-z]/g)||[]).length===0 && nextL.length<=60;
+          if (!nextIsBullet && !nextIsHeading) { bc2 = nextL; i = ni2; }
+        }
+      }
+      if (!bc2) { lineNum++; continue; } // truly empty — skip
       if(!inList){bodyHtml+='<ul>';inList=true;}
-      bodyHtml+='<li>'+l.replace(/^[•\-]\s*/,'')+'</li>';
+      bodyHtml+='<li>'+bc2+'</li>';
       lineNum++; continue;
     }
     if(inList){bodyHtml+='</ul>';inList=false;}
@@ -2914,6 +2922,14 @@ function hardCapCV(text) {
   result = result.replace(/^SKILS\s*$/mg, 'SKILLS');
   result = result.replace(/^SKILS\b/mg, 'SKILLS');
 
+  // ── Strip summary if AI used banned opener (original summary slipped through) ──
+  // Banned openers: "Technical [Title] with...", "With experience...", "A results-driven..."
+  // If found, remove the entire summary section so it doesn't mislead recruiters.
+  result = result.replace(
+    /((?:PROFESSIONAL )?SUMMARY\n)(Technical\s+\w+\s+with\b|With experience\b|A results-driven\b|An experienced\b|Experienced\s+\w+\s+with\b)[^\n]*/,
+    function(m, heading) { return heading + ''; }
+  );
+
   // ── Merge bare bullet markers with following text line ────────────────────
   // AI sometimes writes "•\nBullet text" — renders as empty bullet + orphaned text.
   // Merge them: "• \nBuilt SQL..." → "• Built SQL..."
@@ -2937,8 +2953,11 @@ function hardCapCV(text) {
   // ── Rewrite bullets with banned openers ──────────────────────────────────
   // Safety net only — prompt rules should prevent these. Reword rather than delete
   // so no content is ever lost.
+  result = result.replace(/^([•\-] )Collaborated\s+with\b([^\n]*)/mg, function(m, bullet, rest) {
+    return bullet + 'Partnered with' + rest; // "Collaborated with X" → "Partnered with X" (no double "with")
+  });
   result = result.replace(/^([•\-] )Collaborated\b([^\n]*)/mg, function(m, bullet, rest) {
-    return bullet + 'Partnered with' + rest; // reword, don't delete
+    return bullet + 'Partnered' + rest; // "Collaborated on X" → "Partnered on X"
   });
   result = result.replace(/^([•\-] )Supported\b([^\n]*)/mg, function(m, bullet, rest) {
     return bullet + 'Delivered' + rest;
