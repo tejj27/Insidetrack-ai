@@ -2915,42 +2915,28 @@ function hardCapCV(text) {
   result = result.replace(/^SKILS\b/mg, 'SKILLS');
 
   // ── Mechanical skills line splitter ──────────────────────────────────────
-  // Any skills category line over 95 chars wraps and pushes content to page 2.
-  // Handles lines with OR without a leading "- " prefix.
-  // Split at the last comma before the 95-char limit.
-  result = result.replace(/^(-? ?[A-Za-z &\/]+:.{85,})$/mg, function(line) {
+  // Only targets known skills category labels (1–3 words before colon, comma-separated values after).
+  // SAFE: requires the label before the colon to be short (≤30 chars) AND the content to be
+  // comma-separated (contains at least 2 commas) so we never accidentally match sentences.
+  var skillsCategoryRe = /^(-? ?(?:Technical|Tools & Platforms|Tools|Business Analysis|Methodologies|Languages|Certifications|Skills)[^:]{0,20}:.{90,})$/mg;
+  result = result.replace(skillsCategoryRe, function(line) {
     if (line.length <= 95) return line;
-    // Find last comma at or before position 94
     var cutAt = line.lastIndexOf(',', 94);
-    if (cutAt < 20) cutAt = line.indexOf(','); // fallback: first comma
-    if (cutAt < 0) return line; // no comma found, leave as is
-    // Extract the category label (e.g. "Business Analysis", "- Technical")
+    if (cutAt < 20) cutAt = line.indexOf(',');
+    if (cutAt < 0) return line;
     var prefix = line.match(/^(-? ?[A-Za-z &\/]+):/);
     var label = prefix ? prefix[1] + ' (cont.):' : '  ';
     return line.substring(0, cutAt) + '\n' + label + ' ' + line.substring(cutAt + 2).trim();
   });
 
   // ── Rewrite bullets with banned openers ──────────────────────────────────
-  // "Collaborated" and "Supported" are banned openers.
-  // Remove "Collaborated" bullets entirely (too weak to salvage).
-  // For "Supported" — only remove if there are enough other bullets for that entry.
-  // Simple approach: flag them for removal (the prompt should have already fixed them,
-  // but as a safety net we strip Collaborated; Supported we reword to strip the opener).
-  result = result.replace(/^([•\-] )Collaborated\b([^\n]*)/mg, ''); // remove entirely
-  result = result.replace(/^([•\-] )Supported\b([^\n]*)/mg, function(m, bullet, rest) {
-    // Reword: "Supported X using Y, achieving Z" → "Delivered X using Y, achieving Z"
-    return bullet + 'Delivered' + rest;
+  // Safety net only — prompt rules should prevent these. Reword rather than delete
+  // so no content is ever lost.
+  result = result.replace(/^([•\-] )Collaborated\b([^\n]*)/mg, function(m, bullet, rest) {
+    return bullet + 'Partnered with' + rest; // reword, don't delete
   });
-
-  // ── Protect projects from being left empty ───────────────────────────────
-  // If a project block (non-bullet line followed by no bullets before next non-bullet)
-  // ends up with zero bullets, remove the empty project title line too.
-  result = result.replace(/^([^\n•\-][^\n]*)\n(\n|(?=[^\n•\-]))/mg, function(m, title, after) {
-    // Only apply inside projects: heuristic — short lines without | that aren't headings
-    if (title.trim().length > 5 && !title.includes('|') && !/^[A-Z\s&\/\-\.]{4,}$/.test(title.trim())) {
-      return after; // drop the orphaned project title
-    }
-    return m;
+  result = result.replace(/^([•\-] )Supported\b([^\n]*)/mg, function(m, bullet, rest) {
+    return bullet + 'Delivered' + rest;
   });
 
   return result;
