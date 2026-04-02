@@ -2992,9 +2992,7 @@ function toggleWYSIWYG() {
     if (previewPane) previewPane.style.display = 'flex';
     if (editor) editor.style.display = 'none';
     var pb = document.getElementById('view-preview-btn');
-    var eb = document.getElementById('view-edit-btn');
     if (pb) { pb.style.borderBottomColor = 'transparent'; pb.style.color = 'var(--ink4)'; }
-    if (eb) { eb.style.borderBottomColor = 'transparent'; eb.style.color = 'var(--ink4)'; }
   }
   if (btn) {
     btn.style.borderBottomColor = _wysiwygMode ? 'var(--green)' : 'transparent';
@@ -3056,23 +3054,16 @@ function switchCVView(mode) {
   var preview = document.getElementById('cv-preview-pane');
   var editor = document.getElementById('tailor-cv-output');
   var previewBtn = document.getElementById('view-preview-btn');
-  var editBtn = document.getElementById('view-edit-btn');
   if (!preview) return;
   if (mode === 'preview') {
     preview.style.display = 'flex';
     editor.style.display = 'none';
-    previewBtn.style.borderBottomColor = 'var(--green)';
-    previewBtn.style.color = 'var(--green)';
-    editBtn.style.borderBottomColor = 'transparent';
-    editBtn.style.color = 'var(--ink4)';
+    if (previewBtn) { previewBtn.style.borderBottomColor = 'var(--green)'; previewBtn.style.color = 'var(--green)'; }
     renderCVPreview();
   } else {
     preview.style.display = 'none';
     editor.style.display = 'block';
-    editBtn.style.borderBottomColor = 'var(--green)';
-    editBtn.style.color = 'var(--green)';
-    previewBtn.style.borderBottomColor = 'transparent';
-    previewBtn.style.color = 'var(--ink4)';
+    if (previewBtn) { previewBtn.style.borderBottomColor = 'transparent'; previewBtn.style.color = 'var(--ink4)'; }
   }
 }
 
