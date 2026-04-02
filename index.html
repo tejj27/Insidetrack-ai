@@ -546,26 +546,13 @@ select:focus{border-color:var(--green)}
                     <div style="font-size:11px;color:#4a5fa0;margin-top:1px" id="career-field-reason"></div>
                   </div>
                 </div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="font-size:11px;color:#6a6560">Not right?</span>
-                  <select id="career-field-select" onchange="overrideCareerField()" style="font-size:12px;padding:4px 8px;border:1.5px solid #1a4fa0;border-radius:6px;background:white;color:#1a4fa0;font-weight:600;cursor:pointer">
-                    <option value="Technology">💻 Technology</option>
-                    <option value="Business">💼 Business</option>
-                    <option value="Finance">📊 Finance</option>
-                    <option value="Law">⚖️ Law</option>
-                    <option value="Creative">🎨 Creative</option>
-                    <option value="Healthcare">🏥 Healthcare</option>
-                    <option value="Engineering">⚙️ Engineering</option>
-                    <option value="Education">📚 Education</option>
-                    <option value="Other">🌐 Other</option>
-                  </select>
-                </div>
+                <select id="career-field-select" style="display:none"></select>
               </div>
               <div class="tailor-banner" id="tailor-banner" style="display:none;margin-top:20px">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
               <div>
-                <div style="font-weight:700;font-size:15px;margin-bottom:4px">✨ Want a higher score?</div>
-                <div style="font-size:12px;opacity:0.8">AI will rewrite your CV for this role — same facts, stronger presentation. No skills invented.</div>
+                <div style="font-weight:700;font-size:15px;margin-bottom:4px" id="tailor-banner-title">✨ Want a higher score?</div>
+                <div style="font-size:12px;opacity:0.8" id="tailor-banner-sub">AI will rewrite your CV for this role — same facts, stronger presentation. No skills invented.</div>
               </div>
               <button class="btn btn-md" id="tailor-btn" onclick="runTailorCV()" style="background:white;color:#0e6e6e;font-weight:700;flex-shrink:0">✨ Tailor my CV now</button>
             </div>
@@ -1322,7 +1309,20 @@ function renderATS(data) {
     </div>`).join('');
   document.getElementById('ats-tips').innerHTML = (data.tips||[]).map(t=>`<div class="tip-item"><span>→</span><span>${esc(t)}</span></div>`).join('');
   document.getElementById('ats-result').classList.add('visible');
-  document.getElementById('tailor-banner').style.display = 'block';
+  // Show tailor banner — messaging depends on score
+  var tailorBanner = document.getElementById('tailor-banner');
+  var tailorTitle = document.getElementById('tailor-banner-title');
+  var tailorSub = document.getElementById('tailor-banner-sub');
+  tailorBanner.style.display = 'block';
+  if (score >= 75) {
+    tailorTitle.textContent = '🎯 Strong match! Now perfect the structure.';
+    tailorSub.textContent = 'Your keywords are solid. Tailor to tighten bullet phrasing, fix page length, and make it recruiter-ready in one click.';
+    document.getElementById('tailor-btn').textContent = '✨ Tailor CV for best structure';
+  } else {
+    tailorTitle.textContent = '✨ Want a higher score?';
+    tailorSub.textContent = 'AI will rewrite your CV for this role — same facts, stronger presentation. No skills invented.';
+    document.getElementById('tailor-btn').textContent = '✨ Tailor my CV now';
+  }
 }
 
 // ── Tailor CV ──
@@ -2813,10 +2813,9 @@ function hardCapCV(text) {
       if (inSummary) {
         var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
         var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
-        var keptSents = sents.slice(0, 3).map(function(s){ return s.trim(); });
+        var keptSents = sents.slice(0, 3).map(function(s){ return s.trim(); }).filter(Boolean);
         out.push(summaryHeadingLine);
-        // Each sentence on its own line so it renders as 3 clean visual lines
-        keptSents.forEach(function(s){ if(s) out.push(s); });
+        out.push(keptSents.join(' '));
         out.push('');
         inSummary = false;
         summaryBuffer = [];
@@ -2895,9 +2894,9 @@ function hardCapCV(text) {
   if (inSummary && summaryBuffer.length > 0) {
     var summaryFull = summaryBuffer.map(function(l) { return l.trim(); }).filter(Boolean).join(' ');
     var sents = summaryFull.match(/[^.!?]+[.!?]+/g) || [summaryFull];
-    var keptSents2 = sents.slice(0, 3).map(function(s){ return s.trim(); });
+    var keptSents2 = sents.slice(0, 3).map(function(s){ return s.trim(); }).filter(Boolean);
     out.push(summaryHeadingLine);
-    keptSents2.forEach(function(s){ if(s) out.push(s); });
+    out.push(keptSents2.join(' '));
   }
 
   // Flush awards at very end of file
@@ -3235,10 +3234,20 @@ function renderCVPreview() {
     // Bullets
     if (/^[•\-\*▸○◦]/.test(line)) {
       var bc = line.replace(/^[•\-\*▸○◦]\s*/,'');
-      var bIsBold = /CERTIF/i.test(previewSection);
+      // Peek-ahead: if bare bullet (no text after •), consume next non-empty line as content
+      if (!bc) {
+        var ni = i + 1;
+        while (ni < lines.length && !lines[ni].trim()) ni++;
+        if (ni < lines.length && !/^[•\-\*▸○◦]/.test(lines[ni].trim()) && !HEADING_RE.test(lines[ni].trim())) {
+          bc = lines[ni].trim();
+          i = ni; // skip the consumed line
+        }
+      }
+      if (!bc) { li++; continue; } // truly empty bullet — skip it
+      var bIsBold = false; // never bold bullets (certifications are kept as plain text)
       out+='<div'+edAttr('bullet')+' style="display:flex;gap:8px;margin:3px 0;padding-left:8px">';
       out+='<span style="color:'+s.bulletColor+';flex-shrink:0;font-weight:700">'+s.bullet+'</span>';
-      out+='<span'+(bIsBold?' style="font-weight:bold"':'')+'>'+ex(bc)+'</span></div>';
+      out+='<span>'+ex(bc)+'</span></div>';
       li++; continue;
     }
 
