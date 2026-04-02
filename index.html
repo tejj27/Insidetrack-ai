@@ -1397,7 +1397,11 @@ JD: ${jd.slice(0,800)}`, 300
       'ATS score to beat: ' + currentScore + '%',
       '',
       '━━━ APPLY THESE SPECIFIC CHANGES (from ATS analysis) ━━━',
-      'The following before/after edits were identified by the ATS scanner. Apply ALL of them directly:',
+      '⚠️ FILTER RULE: Only apply a suggestion if it REWORDS existing content. SKIP any suggestion that:',
+      '  - Adds a skill, tool, or experience NOT present in the original CV',
+      '  - Invents a new achievement or metric',
+      '  - Adds a keyword that cannot be honestly supported by the candidate\'s real experience',
+      'The following edits were identified by the ATS scanner. Apply only the safe ones:',
       ...( (_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}:\n    BEFORE: ${s.before}\n    AFTER:  ${s.after}\n    WHY: ${s.reason}`) ),
       '',
       '━━━ PROFESSIONAL SUMMARY ━━━',
@@ -1574,10 +1578,11 @@ JD: ${jd.slice(0,800)}`, 300
       '  ✓ No missing sections from original',
       '  ✓ No removed projects, entries, or certifications',
       '  ✓ No vague phrases: "worked on", "involved in", "assisted with"',
-      '  ✓ All skills from original present — compare against original list and add any missing ones',
-      '  ✓ No skills added that were NOT in the original CV',
+      '  ✓ All skills from original present — compare against original list and add any missing ones back',
+      '  ✓ No skills added that were NOT in the original CV — count skills in output vs original; remove any extras',
+      '  ✓ ATS suggestions did not sneak in fabricated skills — if any were applied, remove them now',
       '  ✓ No bullets end with "and" or mid-clause — every bullet is a complete sentence',
-      '  ✓ Bullet count per role matches the rules (1 role=4, 2 roles=3 each, 3+=2 each)',
+      '  ✓ Bullet count per role matches recency rules (most recent role: max 5, role 3: max 4, role 4+: max 2)',
       '  ✓ No two bullets within the same role/project cover overlapping content — if they do, merge them',
       '  ✓ SKILLS heading is spelled exactly "SKILLS" — if it says "SKILS" fix it immediately',
       '  ✓ Each Skills category line is under 95 characters (does not wrap)',
@@ -2962,10 +2967,8 @@ function hardCapCV(text) {
     var cutAt = line.lastIndexOf(',', 94);
     if (cutAt < 20) cutAt = line.indexOf(',');
     if (cutAt < 0) return line;
-    // Extract just the category label (e.g. "Business Analysis") for the continuation line
-    var labelMatch = line.match(/^(-? ?(?:Technical|Tools & Platforms|Tools|Business Analysis|Methodologies|Languages|Certifications|Skills)[^:]*):/);
-    var contLabel = labelMatch ? labelMatch[1].replace(/^-? ?/, '') + ' (cont.):' : '  ';
-    return line.substring(0, cutAt) + '\n' + contLabel + ' ' + line.substring(cutAt + 2).trim();
+    // Simple indented continuation — no repeated label
+    return line.substring(0, cutAt) + '\n  ' + line.substring(cutAt + 2).trim();
   });
 
   // ── Rewrite bullets with banned openers ──────────────────────────────────
