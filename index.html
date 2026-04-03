@@ -1244,7 +1244,32 @@ async function extractPDF(file) {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const tc = await page.getTextContent();
-    text += tc.items.map(s=>s.str).join(' ') + '\n';
+    const items = tc.items.filter(function(it){ return it.str && it.str.trim(); });
+    if (!items.length) continue;
+
+    // Sort top→bottom (highest PDF y = top of page), then left→right
+    items.sort(function(a, b) {
+      var dy = b.transform[5] - a.transform[5]; // higher y = nearer top
+      if (Math.abs(dy) > 3) return dy;
+      return a.transform[4] - b.transform[4];   // same line: left→right
+    });
+
+    // Group items into lines by y-position proximity (tolerance = 3pt)
+    var lines = [], curLine = [], lastY = null;
+    items.forEach(function(it) {
+      var y = it.transform[5];
+      if (lastY === null || Math.abs(y - lastY) <= 3) {
+        curLine.push(it.str);
+        if (lastY === null) lastY = y;
+      } else {
+        if (curLine.length) lines.push(curLine.join('').trim());
+        curLine = [it.str];
+        lastY = y;
+      }
+    });
+    if (curLine.length) lines.push(curLine.join('').trim());
+
+    text += lines.filter(function(l){ return l; }).join('\n') + '\n';
   }
   return text;
 }
