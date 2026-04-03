@@ -980,6 +980,7 @@ select:focus{border-color:var(--green)}
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <button class="copy-btn" onclick="copyText('cl-output',this)">📋 Copy</button>
               <button onclick="clDownload()" style="display:inline-flex;align-items:center;gap:5px;background:var(--green);border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer">⬇ Download .docx</button>
+              <button onclick="clDownloadPDF()" style="display:inline-flex;align-items:center;gap:5px;background:#1a4fa0;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer">⬇ Download .pdf</button>
             </div>
           </div>
           <textarea id="cl-output" style="font-size:13px;color:var(--ink2);line-height:1.9;background:var(--cream);border:1.5px solid var(--cream3);border-radius:10px;padding:20px;width:100%;min-height:420px;resize:vertical;font-family:'Geist',sans-serif;outline:none;box-sizing:border-box"></textarea>
@@ -3985,10 +3986,142 @@ STRICT RULES:
   setLoading('cl-btn', false);
 }
 
+// ── Cover letter template accent colours (matched to CV template) ──
+function _clAccent() {
+  var map = {
+    classic:'1A1814', consulting:'0F1F3D', tech:'0369A1',
+    law:'1A1814', science:'0D6655', creative:'C8A84B',
+    modern:'1A6B3C', minimal:'444444', executive:'1A4FA0'
+  };
+  return map[_activeTemplate] || '1A1814';
+}
+
+// Parse the stored CL output into {name, company, role, manager, source, body}
+function _parseCLOutput() {
+  var raw = (document.getElementById('cl-output').value || '').trim();
+  if (!raw) return null;
+  var lines = raw.split('\n');
+  var meta = { role:'', company:'', source:'', manager:'', name:'' };
+  var bodyStart = 0;
+  // Read the metadata header block
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (/^Job Title:/i.test(l))   { meta.role    = l.replace(/^Job Title:\s*/i,'').trim(); bodyStart=i+1; }
+    else if (/^Company:/i.test(l)) { meta.company = l.replace(/^Company:\s*/i,'').trim();  bodyStart=i+1; }
+    else if (/^Source:/i.test(l))  { meta.source  = l.replace(/^Source:\s*/i,'').trim();   bodyStart=i+1; }
+    else if (/^Hiring Manager:/i.test(l)) { meta.manager = l.replace(/^Hiring Manager:\s*/i,'').trim(); bodyStart=i+1; }
+    else if (i > 6) break; // header block ended
+  }
+  // Skip blank lines after header
+  while (bodyStart < lines.length && !lines[bodyStart].trim()) bodyStart++;
+  // Extract sender name from "Yours Sincerely,\n[name]" at end
+  var body = lines.slice(bodyStart).join('\n');
+  var sigMatch = body.match(/Yours Sincerely[,.]?\s*\n([^\n]+)/i);
+  if (sigMatch) meta.name = sigMatch[1].trim();
+  // Also try from the cl-name field
+  var nameField = document.getElementById('cl-name');
+  if (nameField && nameField.value.trim()) meta.name = nameField.value.trim();
+  return { meta: meta, body: body };
+}
+
+// Build the letter HTML template for both preview and PDF
+function _buildCLHtml(forPrint) {
+  var parsed = _parseCLOutput();
+  if (!parsed) return null;
+  var m = parsed.meta;
+  var body = parsed.body;
+  var accent = '#' + _clAccent();
+  var today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+
+  // Build sender contact line from CV
+  var cvText = _tailoredCVText || resumeText || '';
+  var cvLines = cvText.split('\n');
+  var contactLine = '';
+  for (var i = 1; i < Math.min(5, cvLines.length); i++) {
+    var cl = cvLines[i].trim();
+    if (cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length < 200) { contactLine = cl; break; }
+  }
+
+  var css = `
+    @page { margin: 22mm 22mm 20mm 22mm; size: A4; }
+    body { font-family: 'Calibri', Arial, sans-serif; font-size: 11pt; line-height: 1.6; color: #1a1814; margin: 0; padding: 0; }
+    .sender-name { font-size: 18pt; font-weight: 700; color: ${accent}; margin: 0 0 2px 0; letter-spacing: -0.3px; }
+    .sender-contact { font-size: 9pt; color: #666; margin: 0 0 18px 0; padding-bottom: 10px; border-bottom: 1.5px solid ${accent}; }
+    .date-line { font-size: 10pt; color: #555; margin-bottom: 16px; }
+    .addressee { margin-bottom: 20px; font-size: 10.5pt; line-height: 1.5; }
+    .addressee strong { display: block; }
+    .letter-body p { margin: 0 0 12px 0; }
+    .letter-body p:last-child { margin-bottom: 0; }
+    .sign-off { margin-top: 24px; }
+    .sign-space { height: ${forPrint ? '48px' : '40px'}; }
+  `;
+
+  // Format body paragraphs — split on double newline or "Dear" salutation
+  var paras = body.split(/\n\n+/).map(function(p){ return p.trim(); }).filter(Boolean);
+  var bodyHtml = paras.map(function(p) {
+    // Preserve single newlines within a paragraph (e.g. "Yours Sincerely,\nName")
+    var inner = p.replace(/\n/g, '<br>');
+    if (/^Yours Sincerely|^Yours sincerely|^Kind regards/i.test(p)) {
+      return '<div class="sign-off">' + inner + '</div>';
+    }
+    return '<p>' + inner + '</p>';
+  }).join('');
+
+  var html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style></head><body>`;
+  html += `<div class="sender-name">${m.name || 'Your Name'}</div>`;
+  if (contactLine) html += `<div class="sender-contact">${contactLine}</div>`;
+  html += `<div class="date-line">${today}</div>`;
+  if (m.company || m.manager) {
+    html += '<div class="addressee">';
+    if (m.manager && m.manager !== 'N/A') html += `<strong>${m.manager}</strong>`;
+    if (m.company && m.company !== 'N/A') html += `<strong>${m.company}</strong>`;
+    if (m.role && m.role !== 'N/A') html += `<em>Re: ${m.role}</em>`;
+    html += '</div>';
+  }
+  html += `<div class="letter-body">${bodyHtml}</div>`;
+  html += '</body></html>';
+  return html;
+}
+
+function clDownloadPDF() {
+  var html = _buildCLHtml(true);
+  if (!html) { showDlToast('Generate a cover letter first'); return; }
+  var w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 500);
+}
+
 function clDownload() {
   const text = document.getElementById('cl-output').value;
   if (!text) { alert('Generate a cover letter first.'); return; }
-  const blob = buildDocxBlob(text);
+  // Use the formatted letter template for DOCX too
+  var parsed = _parseCLOutput();
+  if (!parsed) { triggerDownload(buildDocxBlob(text), 'Cover_Letter.docx'); return; }
+  // Build a clean plain-text version preserving the letter structure for DOCX
+  var m = parsed.meta;
+  var today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  var cvText = _tailoredCVText || resumeText || '';
+  var cvLines = cvText.split('\n');
+  var contactLine = '';
+  for (var i = 1; i < Math.min(5, cvLines.length); i++) {
+    var cl = cvLines[i].trim();
+    if (cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length < 200) { contactLine = cl; break; }
+  }
+  // Compose clean text for DOCX with header
+  var parts = [m.name || ''];
+  if (contactLine) parts.push(contactLine);
+  parts.push('');
+  parts.push(today);
+  parts.push('');
+  if (m.manager && m.manager !== 'N/A') parts.push(m.manager);
+  if (m.company && m.company !== 'N/A') parts.push(m.company);
+  if (m.role && m.role !== 'N/A') parts.push('Re: ' + m.role);
+  parts.push('');
+  parts.push(parsed.body);
+  var formatted = parts.join('\n');
+  const blob = buildDocxBlob(formatted);
   triggerDownload(blob, 'Cover_Letter.docx');
   showDlToast('✓ Downloaded — open in Microsoft Word or Google Docs');
 }
