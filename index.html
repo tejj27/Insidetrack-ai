@@ -3959,7 +3959,13 @@ STRICT RULES:
       1600
     );
 
-    const letter = data.letter || '';
+    // Hard post-process: strip em dashes regardless of AI output
+    // Replace " — " or "—" with ", " so prose stays natural
+    let letter = (data.letter || '')
+      .replace(/\s*\u2014\s*/g, ', ')   // em dash (—)
+      .replace(/\s*\u2013\s*/g, ', ')   // en dash (–)
+      .replace(/--/g, ', ')              // double hyphen fallback
+      .replace(/,\s*,/g, ',');           // clean up double commas from above
     const source = document.getElementById('cl-source') ? document.getElementById('cl-source').value.trim() : '';
 
     // Build the Le Careers header block
@@ -3975,7 +3981,7 @@ STRICT RULES:
 
     document.getElementById('cl-output').value = fullOutput;
     const words = letter.trim().split(/\s+/).length;
-    document.getElementById('cl-wordcount').textContent = words + ' words' + (words > 350 ? ' ⚠️ slightly over — consider trimming' : ' ✓');
+    document.getElementById('cl-wordcount').textContent = words + ' words' + (words > 280 ? ' ⚠️ slightly over 280 — consider trimming' : ' ✓');
     document.getElementById('cl-result').classList.add('visible');
   } catch(e) {
     showError('cl-error', e.message);
