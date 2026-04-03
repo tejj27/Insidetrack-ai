@@ -12,7 +12,7 @@
 <style>
 :root {
   --cream:#faf8f4; --cream2:#f2efe8; --cream3:#e4dfd4; --ink:#1a1814; --ink2:#2d2a24;
-  --ink3:#4a4640; --ink4:#7a756a; --green:#1a6b3c; --green-mid:#145a32; --green-bg:#f0f7f3;
+  --ink3:#4a4640; --ink4:#7a756a; --green:#7c3aed; --green-mid:#6d28d9; --green-bg:#f3f0ff;
   --blue:#1a4fa0; --blue-mid:#1544880; --amber:#9a6200; --purple:#5a35a0; --teal:#0e6e6e;
   --shadow-sm:0 1px 4px rgba(0,0,0,0.07); --shadow-md:0 4px 20px rgba(0,0,0,0.10);
 }
@@ -21,7 +21,7 @@ body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);lin
 /* Nav */
 .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--cream3);background:var(--cream);position:sticky;top:0;z-index:100}
 .nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer}
-.brand-mark{width:34px;height:34px;background:linear-gradient(135deg,#1a1814 60%,#1a6b3c);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);flex-shrink:0}
+.brand-mark{width:34px;height:34px;background:linear-gradient(135deg,#1a1814 60%,#7c3aed);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);flex-shrink:0}
 .brand-mark svg{width:18px;height:18px;fill:none;stroke:#faf8f4;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .brand-name{font-family:'Geist',sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.5px;line-height:1}
 .brand-name .it-inside{color:var(--ink)}
@@ -121,7 +121,7 @@ select:focus{border-color:var(--green)}
 .score-grade{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase}
 /* Keyword pills */
 .kw-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.kw-found{background:#e8f5e9;color:#1a6b3c;border:1px solid #b8dec4;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.kw-found{background:#ede9fe;color:#7c3aed;border:1px solid #c4b5fd;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
 .kw-missing{background:#fdecea;color:#8b1c1c;border:1px solid #f5c0c0;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
 /* Suggestions */
 .sug-item{background:var(--cream);border:1.5px solid var(--cream3);border-radius:10px;overflow:hidden;margin-bottom:12px}
@@ -202,15 +202,15 @@ select:focus{border-color:var(--green)}
 
 .tpl-btn{background:var(--cream);border:2px solid var(--cream3);border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:72px}
 .tpl-btn:hover{border-color:var(--green);transform:translateY(-1px)}
-.tpl-active{border-color:var(--green)!important;background:#f0f7f3}
+.tpl-active{border-color:var(--green)!important;background:#f3f0ff}
 .tpl-label{font-size:10px;font-weight:700;color:var(--ink3);font-family:'Geist',sans-serif;text-align:center;letter-spacing:0.03em}
 .tpl-sub{font-size:9px;color:var(--ink4);font-family:'Geist',sans-serif;text-align:center;margin-top:-2px}
 .tpl-thumb{width:52px;height:66px;background:white;border:1px solid var(--cream3);border-radius:3px;padding:5px;display:flex;flex-direction:column;gap:2px;overflow:hidden;position:relative}
 /* WYSIWYG editing styles */
-#cv-preview-doc[contenteditable="true"]{outline:2px solid #1a6b3c;outline-offset:4px;cursor:text}
-#cv-preview-doc[contenteditable="true"] [data-cv-type]:hover{background:rgba(26,107,60,0.06);border-radius:3px;outline:1px dashed rgba(26,107,60,0.3)}
-#cv-preview-doc[contenteditable="true"] [data-cv-type]:focus{background:rgba(26,107,60,0.08);outline:none}
-.wysiwyg-hint{display:none;font-size:11px;color:var(--green);text-align:center;padding:6px;background:#f0f7f3;border-bottom:1px solid #c8dfc8}
+#cv-preview-doc[contenteditable="true"]{outline:2px solid #7c3aed;outline-offset:4px;cursor:text}
+#cv-preview-doc[contenteditable="true"] [data-cv-type]:hover{background:rgba(124,58,237,0.06);border-radius:3px;outline:1px dashed rgba(124,58,237,0.3)}
+#cv-preview-doc[contenteditable="true"] [data-cv-type]:focus{background:rgba(124,58,237,0.08);outline:none}
+.wysiwyg-hint{display:none;font-size:11px;color:var(--green);text-align:center;padding:6px;background:#f3f0ff;border-bottom:1px solid #d8cff8}
 .wysiwyg-hint.visible{display:block}
 </style>
 </head>
@@ -235,8 +235,8 @@ select:focus{border-color:var(--green)}
   </nav>
 
   <div class="hero">
-    <div class="hero-badge">✦ AI-powered · Free to start</div>
-    <h1 class="hero-title">Your unfair advantage<br>in every <span>job application</span></h1>
+    <div class="hero-badge">✦ AI powered · Free to start</div>
+    <h1 class="hero-title">Land more interviews<br>with <span>every application</span></h1>
     <p class="hero-sub">InsideTrack gives you five AI tools to tailor your CV, write cover letters, find visa sponsors, generate outreach messages, and track every application — all in one place.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
@@ -561,7 +561,7 @@ select:focus{border-color:var(--green)}
 
         <!-- Tailor result -->
         <div id="tailor-result" style="display:none;margin-top:16px;animation:fadeUp 0.35s ease">
-          <div id="tailor-score-bump" style="background:var(--green-bg);border:1px solid rgba(26,107,60,0.18);border-radius:12px;padding:16px 20px;margin-bottom:16px">
+          <div id="tailor-score-bump" style="background:var(--green-bg);border:1px solid rgba(124,58,237,0.18);border-radius:12px;padding:16px 20px;margin-bottom:16px">
             <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
               <div style="font-size:28px;font-family:'Instrument Serif',serif;color:var(--green)" id="tailor-old-score"></div>
               <div style="font-size:22px;color:var(--ink4)">&#8594;</div>
@@ -571,7 +571,7 @@ select:focus{border-color:var(--green)}
                 <div style="font-size:12px;color:var(--ink3)" id="tailor-bump-desc"></div>
               </div>
             </div>
-            <div id="tailor-rescan-bar" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(26,107,60,0.15);display:flex;align-items:center;gap:8px">
+            <div id="tailor-rescan-bar" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(124,58,237,0.15);display:flex;align-items:center;gap:8px">
               <div class="loader-ring" style="width:13px;height:13px;border-width:2px;flex-shrink:0;border-top-color:var(--green)"></div>
               <div style="font-size:12px;color:var(--green);font-weight:600">Verifying with a real rescan&#8230;</div>
             </div>
@@ -610,13 +610,13 @@ select:focus{border-color:var(--green)}
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="copy-btn" onclick="copyTailoredCV(this)" style="margin:0">📋 Copy</button>
-                <button id="dl-docx-btn" onclick="downloadCV()" style="display:inline-flex;align-items:center;gap:5px;background:var(--green);border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background='#145a32'" onmouseout="this.style.background='var(--green)'">⬇ Download .docx</button>
+                <button id="dl-docx-btn" onclick="downloadCV()" style="display:inline-flex;align-items:center;gap:5px;background:var(--green);border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='var(--green)'">⬇ Download .docx</button>
                 <button onclick="downloadCVasPDF()" style="display:inline-flex;align-items:center;gap:5px;background:#1a4fa0;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-family:'Geist',sans-serif;color:white;cursor:pointer;transition:all 0.15s" onmouseover="this.style.background='#143d7a'" onmouseout="this.style.background='#1a4fa0'">⬇ Download .pdf</button>
               </div>
             </div>
             <!-- Template picker -->
             <div style="padding:12px 16px;border-bottom:1px solid var(--cream3);background:white">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink4);margin-bottom:10px">Choose template — all ATS-safe</div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink4);margin-bottom:10px">Choose template · all ATS safe</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button onclick="selectTemplate('classic')" id="tpl-classic" class="tpl-btn tpl-active">
                   <div class="tpl-thumb"><div style="height:4px;background:#1a1814;width:55%;margin:0 auto 2px;border-radius:1px"></div><div style="height:1px;background:#1a1814;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#888;width:38%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ddd;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#ddd;width:90%;margin-bottom:1px;border-radius:1px"></div><div style="height:1.5px;background:#ddd;width:85%;margin-bottom:2px;border-radius:1px"></div><div style="display:flex;gap:2px;align-items:center"><div style="width:2.5px;height:2.5px;background:#555;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#eee;flex:1;border-radius:1px"></div></div></div>
@@ -728,12 +728,12 @@ select:focus{border-color:var(--green)}
               </div>
               <button onclick="quickLogFromATS()" style="background:#7c3aed;color:white;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap" onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">Log →</button>
             </div>
-            <div style="flex:1;min-width:200px;padding:14px 18px;background:#f0fdf4;border:1.5px solid #a7d7b5;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:200px;padding:14px 18px;background:#f0fdf4;border:1.5px solid #c4b5fd;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
               <div>
-                <div style="font-weight:700;font-size:13px;color:#1a6b3c">📝 Write Cover Letter</div>
-                <div style="font-size:12px;color:#2d7a4f;margin-top:2px">Auto-filled with your CV and JD.</div>
+                <div style="font-weight:700;font-size:13px;color:#7c3aed">📝 Write Cover Letter</div>
+                <div style="font-size:12px;color:#7c3aed;margin-top:2px">Auto-filled with your CV and JD.</div>
               </div>
-              <button onclick="quickCoverLetter()" style="background:#1a6b3c;color:white;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap" onmouseover="this.style.background='#145a32'" onmouseout="this.style.background='#1a6b3c'">Write →</button>
+              <button onclick="quickCoverLetter()" style="background:#7c3aed;color:white;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap" onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">Write →</button>
             </div>
           </div>
         </div>
@@ -1151,7 +1151,7 @@ function checkAuthReady() {
   if (!email || !password || !btn) return;
   var ready = email.value.trim().length > 0 && password.value.length >= 1;
   btn.disabled = !ready;
-  btn.style.background = ready ? '#1a6b3c' : '#9a9590';
+  btn.style.background = ready ? '#7c3aed' : '#9a9590';
   btn.style.opacity = ready ? '1' : '0.6';
   btn.style.cursor = ready ? 'pointer' : 'not-allowed';
 }
@@ -1179,7 +1179,7 @@ if (DEMO_MODE) {
   document.addEventListener('DOMContentLoaded', function() {
     var banner = document.createElement('div');
     banner.style.cssText = 'position:fixed;bottom:16px;right:16px;background:#1a1814;color:#faf8f4;padding:8px 16px;border-radius:9px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px';
-    banner.innerHTML = '<span style="color:#1a6b3c;font-size:16px">●</span> DEMO MODE — no API calls';
+    banner.innerHTML = '<span style="color:#7c3aed;font-size:16px">●</span> DEMO MODE — no API calls';
     document.body.appendChild(banner);
   });
 }
@@ -1279,9 +1279,9 @@ function _autoFillCV() {
   if (badge) {
     badge.style.display = 'inline-flex';
     badge.textContent = usedTailored ? '✅ Using tailored CV' : '📄 Using original CV';
-    badge.style.background = usedTailored ? '#e8f5e9' : '#fff8e6';
-    badge.style.color = usedTailored ? '#1a6b3c' : '#9a6200';
-    badge.style.borderColor = usedTailored ? '#a7d7b5' : '#f0c040';
+    badge.style.background = usedTailored ? '#ede9fe' : '#fff8e6';
+    badge.style.color = usedTailored ? '#7c3aed' : '#9a6200';
+    badge.style.borderColor = usedTailored ? '#c4b5fd' : '#f0c040';
   }
   var swapBtn = document.getElementById('cl-cv-swap');
   if (swapBtn) swapBtn.style.display = (resumeText && _tailoredCVText) ? 'inline-flex' : 'none';
@@ -1612,7 +1612,7 @@ Respond ONLY with valid JSON (no markdown):
 }
 function renderATS(data) {
   const score = data.score || 0;
-  const gradeColors = {A:'#1a6b3c',B:'#2d7a4f',C:'#9a6200',D:'#c05000',F:'#8b1c1c'};
+  const gradeColors = {A:'#7c3aed',B:'#7c3aed',C:'#9a6200',D:'#c05000',F:'#8b1c1c'};
   const color = gradeColors[data.grade] || '#555';
   const circumference = 326.7;
   const offset = circumference - (score/100)*circumference;
@@ -2156,7 +2156,7 @@ function scrollToRetailorScore() {
   document.getElementById('tailor-score-bump').scrollIntoView({behavior:'smooth',block:'center'});
   const bump = document.getElementById('tailor-score-bump');
   bump.style.transition = 'box-shadow 0.3s';
-  bump.style.boxShadow = '0 0 0 3px rgba(26,107,60,0.4)';
+  bump.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.4)';
   setTimeout(()=>{bump.style.boxShadow='none';},1200);
   document.getElementById('retailor-toast').classList.remove('show');
 }
@@ -2222,7 +2222,7 @@ function renderStrategy(data) {
   const roles = data.ranked_roles||[];
   document.getElementById('strat-list').innerHTML = roles.map((r,i)=>{
     const pct = r.match_pct||0;
-    const color = pct>=70?'#1a6b3c':pct>=50?'#9a6200':'#c05000';
+    const color = pct>=70?'#7c3aed':pct>=50?'#9a6200':'#c05000';
     return `<div class="rank-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px"><div><div style="font-weight:700;font-size:14px">${esc(r.title)}</div><div style="font-size:12px;color:var(--ink4)">${esc(r.company)}</div></div><div style="font-size:22px;font-family:'Instrument Serif',serif;color:${color};font-weight:700">${pct}%</div></div><div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%;background:${color}"></div></div><div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap"><div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--green);margin-bottom:4px">Strengths</div>${(r.strengths||[]).map(s=>`<div style="font-size:12px;color:var(--ink3)">✓ ${esc(s)}</div>`).join('')}</div><div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#c05000;margin-bottom:4px">Gaps</div>${(r.gaps||[]).map(g=>`<div style="font-size:12px;color:var(--ink3)">✗ ${esc(g)}</div>`).join('')}</div></div><div style="margin-top:10px;padding:8px 12px;background:var(--cream2);border-radius:7px;font-size:12px;color:var(--ink2)">→ ${esc(r.action)}</div></div>`;
   }).join('');
   document.getElementById('strat-insight').textContent = (data.insight||'') + (data.sweet_spot?' '+data.sweet_spot:'');
@@ -2295,7 +2295,7 @@ Generate exactly 12-15 realistic roles. Mix difficulty levels.`,
 }
 function renderMatcher(data) {
   document.getElementById('matcher-summary-text').textContent = data.candidate_summary||'';
-  const diffColors = {Easy:'#1a6b3c',Medium:'#9a6200',Competitive:'#c05000'};
+  const diffColors = {Easy:'#7c3aed',Medium:'#9a6200',Competitive:'#c05000'};
   document.getElementById('matcher-tags').innerHTML = (data.profile_tags||[]).map(t=>`<span style="background:var(--cream2);border:1px solid var(--cream3);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${esc(t)}</span>`).join('');
   document.getElementById('matcher-roles-list').innerHTML = (data.roles||[]).map(r=>{
     const dc = diffColors[r.difficulty]||'#555';
@@ -2327,7 +2327,7 @@ function downloadCVasPDF() {
     science:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0d3d38}h2{background:#e8f5f3;color:#0d6655;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0d6655}',
     creative:   '@page{margin:0;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0;display:table;width:100%;table-layout:fixed}#sidebar{display:table-cell;width:160px;background:#1a1814;padding:24px 14px;color:white;vertical-align:top;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}#main{display:table-cell;padding:24px 28px;vertical-align:top}h1{font-size:14pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:white;margin:0 0 10px 0;line-height:1.2}h2{color:#c8a84b;border-bottom:1.5px solid #c8a84b;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}li::marker{color:#c8a84b}.contact-item{display:block;font-size:8pt;color:rgba(255,255,255,0.7);margin-bottom:4px;overflow-wrap:anywhere;word-break:break-word;text-decoration:none}',
     // backwards compatibility
-    modern:     '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #1a6b3c;padding-bottom:5px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
+    modern:     '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #7c3aed;padding-bottom:5px}h2{color:#7c3aed;border-bottom:1.5px solid #7c3aed;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
     minimal:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:left;font-size:16pt;font-weight:700;margin:0 0 3px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:1px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
     executive:  '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:16pt;margin:0 0 3px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
   };
@@ -3105,17 +3105,17 @@ function renderVisa(data, isUK, country, sector){
   sector = sector || '';
   const companies=data.companies||[];
   const list=document.getElementById('visa-strategy');
-  const lColors={High:'#1a6b3c',Medium:'#9a6200'};
-  const lBg={High:'#e8f5e9',Medium:'#fff8e6'};
+  const lColors={High:'#7c3aed',Medium:'#9a6200'};
+  const lBg={High:'#ede9fe',Medium:'#fff8e6'};
 
   // UK register verification banner
   let html = '';
   if(isUK){
-    html += `<div style="background:#e8f5e9;border:1.5px solid #a7d7b5;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
+    html += `<div style="background:#ede9fe;border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
       <div style="font-size:18px;flex-shrink:0">🏛️</div>
       <div>
-        <div style="font-weight:700;font-size:13px;color:#1a6b3c;margin-bottom:3px">Based on the UK Home Office Register of Licensed Sponsors</div>
-        <div style="font-size:12px;color:#2d7a4f;line-height:1.5">These companies hold an A-rated Skilled Worker licence. Always verify on the <a href="https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers" target="_blank" rel="noopener" style="color:#1a6b3c;font-weight:700">official register ↗</a> before applying — licences can change.</div>
+        <div style="font-weight:700;font-size:13px;color:#7c3aed;margin-bottom:3px">Based on the UK Home Office Register of Licensed Sponsors</div>
+        <div style="font-size:12px;color:#7c3aed;line-height:1.5">These companies hold an A-rated Skilled Worker licence. Always verify on the <a href="https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers" target="_blank" rel="noopener" style="color:#7c3aed;font-weight:700">official register ↗</a> before applying — licences can change.</div>
       </div>
     </div>`;
   }
@@ -3893,7 +3893,7 @@ function vtRenderResults(jobs, source){
           <div style="font-size:12px;color:var(--ink4);margin-top:2px">${esc(company||'')} · ${esc(location||'')}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
-          ${salary ? `<span style="font-size:11px;font-weight:700;background:#e8f5e9;color:#1a6b3c;padding:2px 8px;border-radius:12px">${esc(salary)}</span>` : ''}
+          ${salary ? `<span style="font-size:11px;font-weight:700;background:#ede9fe;color:#7c3aed;padding:2px 8px;border-radius:12px">${esc(salary)}</span>` : ''}
           ${posted ? `<span style="font-size:11px;color:var(--ink4)">${esc(posted)}</span>` : ''}
         </div>
       </div>
@@ -4001,7 +4001,7 @@ function clSwapCV() {
   } else if(!currentIsTailored && _tailoredCVText) {
     textarea.value = _tailoredCVText.slice(0, 3000);
     badge.textContent = '✅ Using tailored CV';
-    badge.style.background = '#e8f5e9'; badge.style.color = '#1a6b3c'; badge.style.borderColor = '#a7d7b5';
+    badge.style.background = '#ede9fe'; badge.style.color = '#7c3aed'; badge.style.borderColor = '#c4b5fd';
   }
   clCheckReady();
 }
@@ -4052,9 +4052,9 @@ function clSwapCV() {
   const badge = document.getElementById('cl-cv-badge');
   const nowTailored = !usingTailored;
   badge.textContent = nowTailored ? '✅ Using tailored CV' : '📄 Using original CV';
-  badge.style.background = nowTailored ? '#e8f5e9' : '#fff8e6';
-  badge.style.color = nowTailored ? '#1a6b3c' : '#9a6200';
-  badge.style.borderColor = nowTailored ? '#a7d7b5' : '#f0c040';
+  badge.style.background = nowTailored ? '#ede9fe' : '#fff8e6';
+  badge.style.color = nowTailored ? '#7c3aed' : '#9a6200';
+  badge.style.borderColor = nowTailored ? '#c4b5fd' : '#f0c040';
   clCheckReady();
 }
 
@@ -4608,7 +4608,7 @@ function showUpgradeModal(){
         <button id="auth-submit-btn" onclick="handleAuth()" disabled style="background:#9a9590;color:white;border:none;border-radius:10px;padding:12px;font-family:'Geist',sans-serif;font-size:14px;font-weight:700;cursor:not-allowed;margin-top:4px;transition:all 0.15s;opacity:0.6">Sign In</button>
       </div>
       <div style="text-align:center;margin-top:14px;font-size:12px;color:#9a9590">
-        By continuing you agree to our <span onclick="showModal('terms')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#1a6b3c;cursor:pointer;text-decoration:underline">Privacy Policy</span>
+        By continuing you agree to our <span onclick="showModal('terms')" style="color:#7c3aed;cursor:pointer;text-decoration:underline">Terms</span> and <span onclick="showModal('privacy')" style="color:#7c3aed;cursor:pointer;text-decoration:underline">Privacy Policy</span>
       </div>
     </div>
   </div>
@@ -4616,18 +4616,18 @@ function showUpgradeModal(){
   <!-- USER AVATAR MENU -->
   <div id="user-menu" style="display:none;position:fixed;top:14px;right:16px;z-index:2000;align-items:center;gap:10px">
     <span id="nav-scan-label" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></span>
-    <div id="user-avatar" onclick="toggleUserDropdown()" style="width:36px;height:36px;background:linear-gradient(135deg,#1a6b3c,#2d9d5c);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white;cursor:pointer;box-shadow:0 2px 12px rgba(26,107,60,0.35)"></div>
+    <div id="user-avatar" onclick="toggleUserDropdown()" style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white;cursor:pointer;box-shadow:0 2px 12px rgba(124,58,237,0.35)"></div>
   </div>
 
   <!-- USER DROPDOWN -->
   <div id="user-dropdown" onclick="event.stopPropagation()" style="display:none;position:fixed;top:58px;right:16px;background:white;border-radius:16px;min-width:240px;box-shadow:0 16px 48px rgba(0,0,0,0.18);z-index:3000;overflow:hidden;border:1px solid #e8e3dd">
-    <div style="background:linear-gradient(135deg,#1a6b3c,#2d9d5c);padding:18px 20px 16px">
+    <div style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);padding:18px 20px 16px">
       <div id="user-avatar-name" style="font-size:16px;font-weight:800;color:white;margin-bottom:3px;letter-spacing:-0.3px"></div>
       <div id="user-email-display" style="font-size:12px;color:rgba(255,255,255,0.7)"></div>
     </div>
     <div style="padding:14px 16px">
       <div style="display:flex;align-items:center;justify-content:space-between;background:#f5f0eb;border-radius:10px;padding:10px 14px;margin-bottom:10px">
-        <div id="user-plan-display" style="font-size:13px;font-weight:700;color:#1a6b3c"></div>
+        <div id="user-plan-display" style="font-size:13px;font-weight:700;color:#7c3aed"></div>
         <div id="user-scans-display" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></div>
       </div>
       <button onmousedown="doSignOut()" style="width:100%;padding:10px 14px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;color:#dc2626;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer">
