@@ -1174,19 +1174,20 @@ function _demoCallClaude(system) {
     });
   }
 
-  // CV tailor — pass back the resume text with minor demo tweaks
-  var base = resumeText || 'Jane Smith\njane@email.com | 07700 000000 | London\n\nSUMMARY\nHaving recently graduated with Distinction in MSc Business Analytics from Demo University, I have 2 years of experience at Demo Corp.\nI automated reporting workflows reducing manual workload by 35% and built dashboards tracking key business KPIs.\nI am actively seeking Business Analyst roles in digital transformation in London.\n\nWORK EXPERIENCE\nBusiness Analyst | Demo Corp     Jan 2023 - Present\n• Automated data workflows using SQL, reducing manual reporting time by 35%\n• Built Power BI dashboards tracking operational KPIs for senior stakeholders\n• Documented BPMN process maps and requirements for digital transformation programmes\n• Led UAT cycles reviewing test scripts and managing defect triage within Agile sprints\n• Facilitated requirements workshops with Product Owners to define product backlog\n\nEDUCATION\nMSc Business Analytics, Distinction | Demo University     2020 - 2022\n\nSKILLS\nTechnical: SQL, Python, Excel, Power BI\nTools & Platforms: JIRA, Visio, Automation Anywhere\nBusiness Analysis: Requirements Gathering, Process Mapping, BRD, Stakeholder Workshops\nMethodologies: Agile/Scrum, UAT, KPI Reporting';
-    return Promise.resolve({
+  // CV tailor — return a clean well-structured demo CV
+  // (Raw resumeText may have ligature issues from PDF fonts; demo shows ideal output)
+  var demoCV = 'Tejal Sathe\ntejal3488@gmail.com | +44 7587 262498 | linkedin.com/in/tejal-sathe | London, UK\n\nPROFESSIONAL SUMMARY\nHaving recently graduated with Distinction in MSc Business Analytics from Queen\'s University Belfast, I have 2 years of experience at Accenture.\nI automated enterprise workflows reducing manual workload by 40% and built Power BI dashboards tracking operational KPIs.\nI am actively seeking Business Analyst roles in digital transformation in London.\n\nWORK EXPERIENCE\nAssociate Software Engineer | Accenture     Sept 2022 - Jun 2024\n• Automated system integrations using Automation Anywhere, reducing manual workload by 40%\n• Built SQL queries and Power BI dashboards tracking KPIs for senior stakeholders\n• Documented BPMN process flows and requirements for digital transformation programmes\n• Led UAT cycles reviewing test scripts and managing defect triage within Agile sprints\n• Facilitated requirements workshops with Product Owners to define prioritised product backlogs\n\nEDUCATION\nMSc Business Analytics, Distinction | Queen\'s University Belfast     Sep 2024 - Sep 2025\n\nBachelor of Computer Applications, First Class | SNDT University, India     Jul 2019 - Jul 2022\n\nPROJECTS\nHR Attrition Analytics\n• Identified key attrition drivers via ML models, enabling actionable HR retention strategies\n• Designed interactive Tableau dashboards tracking KPIs and workforce risk trends\n\nSKILLS\nTechnical: SQL, Python, Excel, Power BI, Tableau\nTools & Platforms: Automation Anywhere, JIRA, Visio\nBusiness Analysis: Requirements Gathering, BRD, Process Mapping, Stakeholder Workshops\nMethodologies: Agile/Scrum, UAT, BPMN, KPI Reporting';
+  return Promise.resolve({
     estimated_new_score: 84,
     bump_description: 'CV sharpened with stronger action verbs, quantified metrics, and tighter bullet structure.',
     changes_made: [
-      'Strengthened summary with specific achievement metric',
+      'Strengthened summary with specific achievement metric and "actively seeking" line',
       'Rewrote automation bullet with quantified 40% impact',
-      'Tightened requirements bullet to match JD terminology',
+      'Tightened requirements bullets to match JD terminology',
       'Reorganised skills into clear ATS-friendly categories'
     ],
     gaps: ['Salesforce not in CV — cannot be added honestly', 'Prince2 certification not evidenced — skipped'],
-    tailored_cv: base
+    tailored_cv: demoCV
   });
 }
 
@@ -1262,15 +1263,27 @@ async function extractPDF(file) {
         curLine.push(it.str);
         if (lastY === null) lastY = y;
       } else {
-        if (curLine.length) lines.push(curLine.join('').trim());
+        if (curLine.length) lines.push(curLine.map(function(s){return s.trim();}).filter(Boolean).join(' ').replace(/\s{2,}/g,' ').trim());
         curLine = [it.str];
         lastY = y;
       }
     });
-    if (curLine.length) lines.push(curLine.join('').trim());
+    if (curLine.length) lines.push(curLine.map(function(s){return s.trim();}).filter(Boolean).join(' ').replace(/\s{2,}/g,' ').trim());
 
     text += lines.filter(function(l){ return l; }).join('\n') + '\n';
   }
+
+  // ── Repair PDF ligature mis-encoding ──────────────────────────────────
+  // Some PDFs encode ligature glyphs as wrong ASCII chars (no ToUnicode map).
+  // Common patterns seen: ; = ti ligature, 9 = ft ligature
+  // Only replace when the char is flanked by word-characters (never mid-number or punctuation).
+  text = text.replace(/([A-Za-z]);([A-Za-z])/g, '$1ti$2'); // ; → ti  (automa;on → automation)
+  text = text.replace(/([A-Za-z])9([A-Za-z])/g, '$1ft$2'); // 9 → ft  (so9ware → software)
+  // Unicode standard ligature characters → plain text
+  text = text.replace(/\uFB00/g,'ff').replace(/\uFB01/g,'fi').replace(/\uFB02/g,'fl')
+             .replace(/\uFB03/g,'ffi').replace(/\uFB04/g,'ffl')
+             .replace(/\uFB05/g,'st').replace(/\uFB06/g,'st');
+
   return text;
 }
 async function extractDocx(file) {
