@@ -4719,4 +4719,143 @@ document.addEventListener('click', function(e) {
   }
 });
 </script>
+
+<!-- ── IRIS CHATBOT ── -->
+<button onclick="toggleChatbot()" id="chatbot-fab" title="Ask Iris" style="position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border:none;cursor:pointer;box-shadow:0 4px 24px rgba(124,58,237,0.45);z-index:3500;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">💬</button>
+
+<div id="chatbot-panel" style="display:none;position:fixed;bottom:90px;right:24px;width:360px;height:500px;background:white;border-radius:20px;box-shadow:0 8px 48px rgba(0,0,0,0.18);z-index:3500;flex-direction:column;overflow:hidden;border:1px solid #e4dfd4;animation:fadeUp 0.2s ease">
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#6d28d9,#8b5cf6);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid rgba(255,255,255,0.35)">✨</div>
+      <div>
+        <div style="font-size:14px;font-weight:800;color:white;font-family:'Geist',sans-serif;letter-spacing:-0.3px">Iris</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.7);font-family:'Geist',sans-serif">InsideTrack assistant</div>
+      </div>
+    </div>
+    <button onclick="toggleChatbot()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+  </div>
+  <!-- Messages -->
+  <div id="chatbot-messages" style="flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth"></div>
+  <!-- Quick chips (hidden after first send) -->
+  <div id="chatbot-chips" style="padding:0 12px 10px;display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
+    <button class="chat-chip" onclick="chatChip('How do I tailor my CV?')">Tailor my CV</button>
+    <button class="chat-chip" onclick="chatChip('How does the ATS scanner work?')">ATS scanner</button>
+    <button class="chat-chip" onclick="chatChip('What tools are free?')">What\'s free?</button>
+    <button class="chat-chip" onclick="chatChip('How do I write a cover letter?')">Cover letter</button>
+    <button class="chat-chip" onclick="chatChip('How does visa sponsor finder work?')">Visa finder</button>
+  </div>
+  <!-- Input bar -->
+  <div style="padding:10px 12px 12px;border-top:1px solid #f0ede8;display:flex;gap:8px;align-items:center;flex-shrink:0">
+    <input id="chatbot-input" type="text" placeholder="Ask me anything..." autocomplete="off"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"
+      onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e4dfd4'"
+      style="flex:1;border:1.5px solid #e4dfd4;border-radius:22px;padding:9px 14px;font-size:13px;font-family:'Geist',sans-serif;outline:none;transition:border-color 0.15s">
+    <button id="chatbot-send" onclick="sendChatMessage()" style="width:36px;height:36px;border-radius:50%;background:#7c3aed;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0;transition:opacity 0.15s">→</button>
+  </div>
+</div>
+
+<style>
+.chat-chip{font-size:11px;padding:5px 11px;border-radius:20px;border:1.5px solid #d8cff8;background:#f3f0ff;color:#6d28d9;cursor:pointer;font-family:'Geist',sans-serif;font-weight:600;transition:background 0.15s}
+.chat-chip:hover{background:#ede9fe}
+.chat-bubble-bot{align-self:flex-start;background:#f3f0ff;color:#1a1814;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:13px;max-width:88%;line-height:1.55;font-family:'Geist',sans-serif;word-break:break-word}
+.chat-bubble-user{align-self:flex-end;background:#7c3aed;color:white;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13px;max-width:80%;line-height:1.55;font-family:'Geist',sans-serif;word-break:break-word}
+.chat-typing{align-self:flex-start;background:#f3f0ff;color:#7a756a;padding:9px 13px;border-radius:16px 16px 16px 4px;font-size:20px;letter-spacing:3px;font-family:'Geist',sans-serif}
+</style>
+
+<script>
+var _chatHistory = [];
+var _chatBotSystem = "You are Iris, InsideTrack's friendly AI assistant. InsideTrack is an AI job search copilot with these tools:\n\n1. ATS Scanner: Upload CV + job description. AI scores match 0-100%, finds missing keywords, gives improvement suggestions.\n2. CV Tailor: After scanning, click Tailor to get a fully rewritten CV for the role. Download as DOCX or PDF.\n3. Visa Sponsor Finder: Upload CV + pick a country. Finds top 10 companies likely to sponsor your visa.\n4. Cover Letter AI: Auto-fills from your CV. Writes 4-paragraph cover letter in Le Careers style. Download as DOCX or PDF.\n5. LinkedIn Outreach AI: Generates 5 personalised messages: connection note, recruiter message, 3 follow-ups.\n6. Application Tracker: Log applications, track status, get AI insights.\n\nGetting started: Click Start free, upload your CV (PDF or Word), paste a job description, click Scan now.\n\nFree plan: 3 ATS scans, 1 CV tailor, 3 re-tailor passes, all tools. Pro: 7/month, unlimited.\n\nBe concise, warm and helpful. Max 3 sentences per reply. Use simple language. If they ask about something outside InsideTrack, gently redirect to the tools.";
+
+var _chatOpen = false;
+
+function toggleChatbot() {
+  var panel = document.getElementById('chatbot-panel');
+  if (!panel) return;
+  _chatOpen = !_chatOpen;
+  panel.style.display = _chatOpen ? 'flex' : 'none';
+  if (_chatOpen && _chatHistory.length === 0) {
+    _appendBotMsg("Hi! I'm Iris 👋 I'm here to help you get the most out of InsideTrack. What would you like to know?");
+  }
+  if (_chatOpen) setTimeout(function(){ var i = document.getElementById('chatbot-input'); if(i) i.focus(); }, 150);
+}
+
+function chatChip(text) {
+  var chips = document.getElementById('chatbot-chips');
+  if (chips) chips.style.display = 'none';
+  var input = document.getElementById('chatbot-input');
+  if (input) input.value = text;
+  sendChatMessage();
+}
+
+function _appendBotMsg(text) {
+  var msgs = document.getElementById('chatbot-messages');
+  if (!msgs) return;
+  var d = document.createElement('div');
+  d.className = 'chat-bubble-bot';
+  d.textContent = text;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function _appendUserMsg(text) {
+  var msgs = document.getElementById('chatbot-messages');
+  if (!msgs) return;
+  var d = document.createElement('div');
+  d.className = 'chat-bubble-user';
+  d.textContent = text;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendChatMessage() {
+  var input = document.getElementById('chatbot-input');
+  var sendBtn = document.getElementById('chatbot-send');
+  var chips = document.getElementById('chatbot-chips');
+  if (!input) return;
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  if (chips) chips.style.display = 'none';
+  _appendUserMsg(text);
+  _chatHistory.push({role:'user', content:text});
+
+  // Typing indicator
+  var msgs = document.getElementById('chatbot-messages');
+  var typing = document.createElement('div');
+  var typingId = 'iris-typing-' + Date.now();
+  typing.id = typingId;
+  typing.className = 'chat-typing';
+  typing.textContent = '•••';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  if (sendBtn) sendBtn.disabled = true;
+
+  try {
+    var recentMsgs = _chatHistory.slice(-8);
+    var res = await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-haiku-4-20250514',
+        max_tokens:250,
+        system:_chatBotSystem,
+        messages:recentMsgs
+      })
+    });
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text)
+      ? data.content[0].text.trim()
+      : "I'm not sure about that right now. Try exploring the tools or check the FAQ!";
+    _chatHistory.push({role:'assistant', content:reply});
+    var el = document.getElementById(typingId); if (el) el.remove();
+    _appendBotMsg(reply);
+  } catch(e) {
+    var el = document.getElementById(typingId); if (el) el.remove();
+    _appendBotMsg("Sorry, I can't connect right now. Try refreshing the page!");
+  }
+  if (sendBtn) sendBtn.disabled = false;
+  if (input) input.focus();
+}
+</script>
 </body>
