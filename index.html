@@ -3925,35 +3925,32 @@ async function runCoverLetter() {
 
   try {
     const data = await callClaude(
-      `You are an expert cover letter writer following the Le Careers cover letter formula exactly. Experience level: ${expLevel}.
+      `You are an expert cover letter writer. Write a tight, confident cover letter — 4 paragraphs, under 280 words. Experience level: ${expLevel}.
 
-STRUCTURE — 5 paragraphs + closing. Follow this exactly:
+STRUCTURE — 4 paragraphs + closing. Follow this exactly:
 
-PARAGRAPH 1 — HOOK (2-3 sentences):
+PARAGRAPH 1 — HOOK (2 sentences):
 "${salutation}"
 Sentence 1: "${openingLine}"
-Sentence 2: "I saw the [Role] at [Company]${document.getElementById('cl-source').value.trim() ? ' on ' + document.getElementById('cl-source').value.trim() : ''}, and I absolutely loved it."
-Sentence 3: One specific, genuine reason this company excites the candidate — name a real product, programme, initiative, or mission point from the JD. NOT generic ("great company culture"). Sound like you researched them.
+Sentence 2: "I saw the [Role] at [Company]${document.getElementById('cl-source').value.trim() ? ' on ' + document.getElementById('cl-source').value.trim() : ''}, and I absolutely loved it — [one specific genuine reason based on something real in the JD: a product, programme, mission, or approach. NOT generic praise]."
 
-PARAGRAPH 2 — WHY THIS COMPANY (3-4 sentences):
-This is the most important paragraph. Identify ONE specific thing from the JD (a named initiative, technology, client sector, methodology, or company value) and explain WHY it resonates with the candidate personally. Then connect it directly to their strongest CV achievement — name the tool, metric, or output explicitly. Show you understand what the company does and why you fit into that specifically.
+PARAGRAPH 2 — WHY THIS COMPANY + YOUR PROOF (3-4 sentences):
+Identify ONE specific thing from the JD and explain why it resonates with the candidate. Then immediately connect to their strongest CV achievement — name the tool, metric, or output explicitly. Short and sharp.
 
-PARAGRAPH 3 — WHY YOU (3-4 sentences):
-A second strong achievement from the CV with a concrete result (number, %, ranking, or named output). Link it to a skill or requirement from the JD. Be specific: name tools used and what the outcome was.
+PARAGRAPH 3 — WHY YOU + PERSONALITY (3 sentences):
+Start with a second strong achievement from the CV (concrete result or named output). End with ONE sentence showing character — a non-work achievement, leadership role, or initiative from the CV that shows they are more than just a CV. Keep it brief: one sentence only for this.
 
-PARAGRAPH 4 — PERSONALITY (2-3 sentences):
-One non-work achievement that shows character — leadership, creativity, resilience, or initiative. This could be a society role, competition, personal project, or community contribution from the CV. Shows the candidate is a well-rounded person, not just a CV.
-
-PARAGRAPH 5 — CLOSE (2-3 sentences):
-"[Company] has a special place in my heart — [genuine reason: e.g. having admired their work on X / researched their approach to Y / spoken to people at Z]. I know the [training/opportunity/impact] I will gain at [Company] is irreplaceable. I look forward to speaking with you."
-Then on new lines: "Yours Sincerely," then the candidate's name.
+PARAGRAPH 4 — CLOSE (2 sentences max):
+"[Company] has a special place in my heart — [specific genuine reason]. I look forward to speaking with you."
+Then: "Yours Sincerely," on its own line, then candidate name.
 
 STRICT RULES:
-- Under 350 words total. Count carefully.
-- CRITICAL: Only use facts, numbers, and achievements EXPLICITLY in the CV. Never invent metrics, percentages, or outcomes. If no number exists, describe the impact qualitatively.
-- Sound genuine, humble, and enthusiastic — not corporate or robotic.
+- Under 280 words. Count carefully. Shorter is more confident.
+- CRITICAL: Only use facts and achievements EXPLICITLY in the CV. Never invent numbers, metrics, or outcomes not mentioned.
+- Sound genuine and direct — not corporate or eager-to-please.
+- No filler openers. Every sentence must earn its place.
 - Reference the company name at least 3 times.
-- BANNED words/phrases: passionate, dedicated, leverage, synergy, hardworking, aligned with my values, people-centered, excited to apply, I am eager, I believe I would be a great fit, dynamic, innovative team.
+- BANNED: passionate, dedicated, leverage, synergy, hardworking, aligned with my values, people-centered, excited to apply, I am eager, I believe I would be a great fit, dynamic, innovative team, I am writing to apply.
 - No em dashes (—). Use commas or full stops.
 - No asterisks or markdown.
 - End EXACTLY with: Yours Sincerely,\\n[candidate name]
@@ -4033,13 +4030,24 @@ function _buildCLHtml(forPrint) {
   var accent = '#' + _clAccent();
   var today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
 
-  // Build sender contact line from CV
+  // Build sender contact line — try CV first, then fall back to form inputs
   var cvText = _tailoredCVText || resumeText || '';
   var cvLines = cvText.split('\n');
   var contactLine = '';
   for (var i = 1; i < Math.min(5, cvLines.length); i++) {
     var cl = cvLines[i].trim();
     if (cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length < 200) { contactLine = cl; break; }
+  }
+  // Also try the CL CV textarea
+  if (!contactLine) {
+    var clCvField = document.getElementById('cl-cv');
+    if (clCvField && clCvField.value.trim()) {
+      var clLines = clCvField.value.trim().split('\n');
+      for (var j = 1; j < Math.min(5, clLines.length); j++) {
+        var clj = clLines[j].trim();
+        if (clj && (/@|linkedin|\.com|\d{5,}/.test(clj)) && clj.length < 200) { contactLine = clj; break; }
+      }
+    }
   }
 
   var css = `
@@ -4102,12 +4110,22 @@ function clDownload() {
   // Build a clean plain-text version preserving the letter structure for DOCX
   var m = parsed.meta;
   var today = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
-  var cvText = _tailoredCVText || resumeText || '';
-  var cvLines = cvText.split('\n');
+  var cvText2 = _tailoredCVText || resumeText || '';
+  var cvLines2 = cvText2.split('\n');
   var contactLine = '';
-  for (var i = 1; i < Math.min(5, cvLines.length); i++) {
-    var cl = cvLines[i].trim();
-    if (cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length < 200) { contactLine = cl; break; }
+  for (var i = 1; i < Math.min(5, cvLines2.length); i++) {
+    var cl2 = cvLines2[i].trim();
+    if (cl2 && (/@|linkedin|\.com|\d{5,}/.test(cl2)) && cl2.length < 200) { contactLine = cl2; break; }
+  }
+  if (!contactLine) {
+    var clCvF = document.getElementById('cl-cv');
+    if (clCvF && clCvF.value.trim()) {
+      var clLns = clCvF.value.trim().split('\n');
+      for (var k = 1; k < Math.min(5, clLns.length); k++) {
+        var clk = clLns[k].trim();
+        if (clk && (/@|linkedin|\.com|\d{5,}/.test(clk)) && clk.length < 200) { contactLine = clk; break; }
+      }
+    }
   }
   // Compose clean text for DOCX with header
   var parts = [m.name || ''];
