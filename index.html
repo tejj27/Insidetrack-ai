@@ -659,7 +659,38 @@ select:focus{border-color:var(--green)}
               <button onclick="switchCVView('preview')" id="view-preview-btn" style="flex:1;padding:10px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-bottom:2px solid var(--green);background:var(--cream2);color:var(--green);cursor:pointer">👁 Preview</button>
               <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="flex:1;padding:10px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-bottom:2px solid transparent;background:var(--cream2);color:var(--ink4);cursor:pointer">🖊 Edit inline</button>
             </div>
-            <div class="wysiwyg-hint" id="wysiwyg-hint">✏️ Click any text in the CV to edit it directly. Changes save automatically.</div>
+            <div class="wysiwyg-hint" id="wysiwyg-hint" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+              <span>✏️ Click any text in the CV to edit it directly. Changes save automatically.</span>
+              <button onclick="showAddSection()" style="background:var(--green);color:white;border:none;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap">+ Add section</button>
+            </div>
+            <!-- Add section modal -->
+            <div id="add-section-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center">
+              <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:460px;box-shadow:0 8px 40px rgba(0,0,0,0.2)">
+                <div style="font-size:16px;font-weight:700;margin-bottom:16px">Add new section</div>
+                <div style="margin-bottom:12px">
+                  <label style="font-size:12px;font-weight:600;color:var(--ink3);display:block;margin-bottom:4px">Section name</label>
+                  <input id="add-sec-name" type="text" placeholder="e.g. CERTIFICATIONS, LANGUAGES, VOLUNTEERING" style="width:100%;padding:9px 12px;border:1.5px solid var(--cream3);border-radius:8px;font-size:13px;font-family:'Geist',sans-serif;box-sizing:border-box">
+                </div>
+                <div style="margin-bottom:12px">
+                  <label style="font-size:12px;font-weight:600;color:var(--ink3);display:block;margin-bottom:4px">Content</label>
+                  <textarea id="add-sec-content" placeholder="• AWS Cloud Practitioner&#10;• Google Analytics Certified" style="width:100%;min-height:100px;padding:9px 12px;border:1.5px solid var(--cream3);border-radius:8px;font-size:13px;font-family:'Geist',sans-serif;box-sizing:border-box;resize:vertical"></textarea>
+                </div>
+                <div style="margin-bottom:16px">
+                  <label style="font-size:12px;font-weight:600;color:var(--ink3);display:block;margin-bottom:4px">Insert position</label>
+                  <select id="add-sec-position" style="width:100%;padding:9px 12px;border:1.5px solid var(--cream3);border-radius:8px;font-size:13px;font-family:'Geist',sans-serif;background:white">
+                    <option value="before-skills">Before Skills</option>
+                    <option value="after-skills">After Skills (end)</option>
+                    <option value="after-education">After Education</option>
+                    <option value="after-experience">After Work Experience</option>
+                    <option value="after-projects">After Projects</option>
+                  </select>
+                </div>
+                <div style="display:flex;gap:10px;justify-content:flex-end">
+                  <button onclick="hideAddSection()" style="background:none;border:1.5px solid var(--cream3);border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;color:var(--ink3)">Cancel</button>
+                  <button onclick="doAddSection()" style="background:var(--green);color:white;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer">Add section</button>
+                </div>
+              </div>
+            </div>
             <!-- Preview pane -->
             <div id="cv-preview-pane" style="background:#f0ede8;min-height:400px;display:flex;justify-content:center;align-items:flex-start">
               <div id="cv-preview-doc" style="background:white;width:100%;max-width:680px;margin:20px auto;padding:40px 48px;box-shadow:0 4px 24px rgba(0,0,0,0.12);font-size:11pt;line-height:1.4;color:#000;min-height:500px"></div>
@@ -1304,6 +1335,76 @@ function _autoFillOutreachCV() {
   checkOutreachReady();
 }
 
+// ── Add Section ──
+function showAddSection() {
+  var modal = document.getElementById('add-section-modal');
+  if (modal) { modal.style.display = 'flex'; }
+}
+function hideAddSection() {
+  var modal = document.getElementById('add-section-modal');
+  if (modal) { modal.style.display = 'none'; }
+  document.getElementById('add-sec-name').value = '';
+  document.getElementById('add-sec-content').value = '';
+}
+function doAddSection() {
+  var name = (document.getElementById('add-sec-name').value || '').trim().toUpperCase();
+  var content = (document.getElementById('add-sec-content').value || '').trim();
+  var position = document.getElementById('add-sec-position').value;
+  if (!name) { alert('Please enter a section name.'); return; }
+  if (!content) { alert('Please enter some content for the section.'); return; }
+
+  // Get current CV text
+  var textarea = document.getElementById('tailor-cv-output');
+  var cv = (textarea && textarea.value.trim()) ? textarea.value : (_tailoredCVText || resumeText || '');
+  if (!cv) { alert('No CV found. Please tailor or upload a CV first.'); return; }
+
+  var newBlock = '\n' + name + '\n' + content + '\n';
+
+  // Section heading patterns to search for
+  var anchors = {
+    'before-skills':      /^(SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE SKILLS)/m,
+    'after-skills':       /^(SKILLS|TECHNICAL SKILLS|KEY SKILLS|CORE SKILLS)/m,
+    'after-education':    /^(EDUCATION|ACADEMIC BACKGROUND|QUALIFICATIONS)/m,
+    'after-experience':   /^(WORK EXPERIENCE|EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT)/m,
+    'after-projects':     /^(PROJECTS|PERSONAL PROJECTS|KEY PROJECTS|SELECTED PROJECTS)/m
+  };
+
+  var pattern = anchors[position];
+  var inserted = false;
+
+  if (pattern) {
+    var match = pattern.exec(cv);
+    if (match) {
+      if (position === 'before-skills') {
+        // Insert newBlock right before the matched heading
+        cv = cv.slice(0, match.index) + newBlock + cv.slice(match.index);
+        inserted = true;
+      } else {
+        // Find the end of this section (next all-caps heading or end of string)
+        var sectionStart = match.index;
+        var afterSection = cv.slice(sectionStart + match[0].length);
+        var nextHeading = /\n([A-Z][A-Z\s&\/\-]{2,})\n/.exec(afterSection);
+        if (nextHeading) {
+          var insertPos = sectionStart + match[0].length + nextHeading.index + 1;
+          cv = cv.slice(0, insertPos) + newBlock + cv.slice(insertPos);
+        } else {
+          cv = cv + newBlock;
+        }
+        inserted = true;
+      }
+    }
+  }
+
+  // Fallback: append at end
+  if (!inserted) { cv = cv + newBlock; }
+
+  // Update state and UI
+  _tailoredCVText = cv;
+  if (textarea) textarea.value = cv;
+  renderCVPreview();
+  hideAddSection();
+}
+
 // ── File handling ──
 async function handleFileSelect(e) {
   const file = e.target.files[0];
@@ -1597,9 +1698,7 @@ JD: ${jd.slice(0,800)}`, 300
       'STRICT: EXACTLY 3 SHORT sentences. Each sentence on its OWN line. No bullet points. No long run-ons.',
       'Each sentence MUST be under 100 characters so it fits on ONE printed line without wrapping.',
       '',
-      '📌 WHEN TO REMOVE THE SUMMARY (even if it exists in original):',
-      '  - Candidate has 3+ work experience roles with strong content → REMOVE summary to give space to experience.',
-      '  - Only keep if candidate has 0–2 roles OR the summary adds something the experience section cannot.',
+      '⛔ NEVER remove the PROFESSIONAL SUMMARY section if it exists in the original CV. Always keep it and rewrite it to match the JD.',
       '',
       '📌 3-LINE STRUCTURE — ALL 3 LINES ARE MANDATORY if summary is kept:',
       '  Line 1: "[Having recently graduated with / Currently studying] [grade] in [degree] from [university], I have [X] year(s) of experience at [company]."',
@@ -1834,7 +1933,7 @@ JD: ${jd.slice(0,800)}`, 300
       document.getElementById('tailor-gaps').innerHTML = gaps.map(g=>`<span style="background:#fde8cc;color:#7a4500;border:1px solid #f0c090;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600">${esc(g)}</span>`).join('');
       gapsSection.style.display = 'block';
     } else { gapsSection.style.display = 'none'; }
-    _tailoredCVText = hardCapCV((data.tailored_cv || '').replace(/\*\*/g, '').replace(/\*/g, ''));
+    _tailoredCVText = hardCapCV((data.tailored_cv || '').replace(/\*\*/g, '').replace(/\*/g, ''), resumeText);
     document.getElementById('tailor-cv-output').value = _tailoredCVText;
     switchCVView('preview');
     renderCVPreview();
@@ -1964,7 +2063,7 @@ ${currentCV.slice(0,6000)}
 
 JOB DESCRIPTION:
 ${jd.slice(0,1800)}`,8000);
-    _tailoredCVText = hardCapCV((data.tailored_cv || currentCV).replace(/\*\*/g, '').replace(/\*/g, ''));
+    _tailoredCVText = hardCapCV((data.tailored_cv || currentCV).replace(/\*\*/g, '').replace(/\*/g, ''), resumeText);
     document.getElementById('tailor-cv-output').value = _tailoredCVText;
     renderCVPreview();
     document.getElementById('tailor-changes').innerHTML = (data.changes_made||[]).map(c=>`<div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5"><span style="color:var(--green);font-size:12px;flex-shrink:0;margin-top:2px">✓</span><span>${esc(c)}</span></div>`).join('');
@@ -3028,8 +3127,31 @@ function renderVisa(data, isUK, country, sector){
 
 
 // ── CV Post-Processor: Hard-caps bullets + removes bad awards regardless of AI output ──
-function hardCapCV(text) {
+function hardCapCV(text, originalText) {
   if (!text) return text;
+
+  // ── Safety net: if original had a summary but AI dropped it, re-inject original ──
+  var hasSummaryNow = /\bSUMMARY\b/i.test(text);
+  var origHadSummary = originalText && /\bSUMMARY\b/i.test(originalText);
+  if (!hasSummaryNow && origHadSummary) {
+    // Extract original summary section
+    var origSummaryMatch = originalText.match(/((?:PROFESSIONAL )?SUMMARY\n[\s\S]*?)(?:\n[A-Z][A-Z\s&\/]{2,}\n|$)/);
+    if (origSummaryMatch) {
+      var summaryBlock = origSummaryMatch[1].trim();
+      // Insert after the contact line (first 2-3 lines = name + contact)
+      var textLines = text.split('\n');
+      var insertAt = 1;
+      for (var si = 1; si < Math.min(5, textLines.length); si++) {
+        if (textLines[si].trim() && (/@|linkedin|\.com|\d{5,}/.test(textLines[si]) || textLines[si].includes('|'))) {
+          insertAt = si + 1; break;
+        }
+      }
+      // Skip any blank lines after contact
+      while (insertAt < textLines.length && !textLines[insertAt].trim()) insertAt++;
+      textLines.splice(insertAt, 0, '', summaryBlock, '');
+      text = textLines.join('\n');
+    }
+  }
 
   // Count roles in Work Experience to determine max bullets per role
   function countRoles(txt) {
