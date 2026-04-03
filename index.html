@@ -228,7 +228,7 @@ select:focus{border-color:var(--green)}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">Free · 3 scans</span>
+      <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">3 free scans</span>
       <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
       <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
     </div>
@@ -251,34 +251,34 @@ select:focus{border-color:var(--green)}
 
   <div class="tools-grid" style="grid-template-columns:repeat(2,1fr)">
     <div class="tool-card" onclick="openApp('ats')">
-      <div class="tool-num">01 · ATS SCANNER</div>
+      <div class="tool-num">01  ATS SCANNER</div>
       <div class="tool-icon">📊</div>
       <div class="tool-title">ATS Pass Probability</div>
       <div class="tool-desc">Upload your CV and a job description. AI scores your ATS match, finds missing keywords, and rewrites your CV to pass the filter — using only skills you actually have.</div>
       <div class="tool-cta"><span class="tool-cta-label">Upload CV + JD</span><button class="btn btn-green btn-sm">Scan now →</button></div>
     </div>
     <div class="tool-card" onclick="openApp('visa')">
-      <div class="tool-num">02 · VISA SPONSOR FINDER</div>
+      <div class="tool-num">02  VISA SPONSOR FINDER</div>
       <div class="tool-icon">🌍</div>
       <div class="tool-title">Visa Sponsor Finder</div>
       <div class="tool-desc">Upload your CV and select a country. AI identifies the top 10 companies most likely to sponsor your visa based on your skills, sector, and hiring history.</div>
       <div class="tool-cta"><span class="tool-cta-label">CV + target country</span><button class="btn btn-sm" style="background:#1a4fa0;color:white">Find sponsors →</button></div>
     </div>
     <div class="tool-card" onclick="openApp('outreach')">
-      <div class="tool-num">03 · OUTREACH AI</div>
+      <div class="tool-num">03  OUTREACH AI</div>
       <div class="tool-icon">✉️</div>
       <div class="tool-title">LinkedIn Outreach</div>
       <div class="tool-desc">Generate 5 personalised LinkedIn messages — connection note, recruiter message, and 3 follow-ups. Natural, confident, under 90 words each.</div>
       <div class="tool-cta"><span class="tool-cta-label">CV + company + role</span><button class="btn btn-sm" style="background:#0077b5;color:white">Generate message →</button></div>
     </div>
     <div class="tool-card" onclick="openApp('coverletter')">
-      <div class="tool-eyebrow">05 · COVER LETTER AI</div>
+      <div class="tool-eyebrow">05  COVER LETTER AI</div>
       <div class="tool-title">✉️ Cover Letter Generator</div>
       <div class="tool-desc">Generate a tailored cover letter following the Le Careers template — under 350 words, genuine tone, real achievements. Download as DOCX instantly.</div>
       <div style="font-size:11px;color:var(--ink4);font-family:'Geist Mono',monospace">CV + role + company</div>
     </div>
     <div class="tool-card" onclick="openApp('tracker')">
-      <div class="tool-num">04 · APPLICATION TRACKER</div>
+      <div class="tool-num">04  APPLICATION TRACKER</div>
       <div class="tool-icon">📋</div>
       <div class="tool-title">Track Every Application + AI Insights</div>
       <div class="tool-desc">Log applications in one tap. Track status from Applied → Interview → Offer. Get AI insights on your job search pattern and nudges to follow up at exactly the right time.</div>
@@ -479,7 +479,7 @@ select:focus{border-color:var(--green)}
       <!-- ── ATS PANEL ── -->
       <div class="tool-panel" id="panel-ats">
         <div class="panel-header">
-          <div class="panel-eyebrow" style="color:var(--green)"><div class="panel-eyebrow-dot" style="background:var(--green)"></div>01 · ATS PASS PROBABILITY</div>
+          <div class="panel-eyebrow" style="color:var(--green)"><div class="panel-eyebrow-dot" style="background:var(--green)"></div>01  ATS PASS PROBABILITY</div>
           <h2 class="panel-title">How well does your CV match?</h2>
           <p class="panel-sub">Upload your CV and paste the job description. AI scores your ATS match, finds missing keywords, and rewrites your CV ethically — only using skills you actually have.</p>
         </div>
@@ -951,7 +951,7 @@ select:focus{border-color:var(--green)}
       <!-- ── COVER LETTER PANEL ── -->
       <div class="tool-panel" id="panel-coverletter">
         <div class="panel-header">
-          <div class="panel-eyebrow"><div class="panel-eyebrow-dot"></div>05 · COVER LETTER AI</div>
+          <div class="panel-eyebrow"><div class="panel-eyebrow-dot"></div>05  COVER LETTER AI</div>
           <h2 class="panel-title">Your cover letter, written for you</h2>
           <p class="panel-sub">Nobody enjoys writing cover letters. We do it for you — tailored to the company, role and your actual background. Under 350 words, every time.</p>
         </div>
@@ -1166,6 +1166,54 @@ if (typeof pdfjsLib !== 'undefined') {
 // ── State ──
 let resumeText = '', resumeFileName = '', _atsResult = null;
 let _tailoredCVText = '', _lastVerifiedScore = 0, _reTailorCount = 0;
+let _cvHistory = JSON.parse(localStorage.getItem('cvHistory') || '[]');
+function _saveCVToHistory(cvText, role, company) {
+  if (!cvText || cvText.length < 100) return;
+  var entry = {
+    id: Date.now(),
+    date: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}),
+    role: (role || 'Tailored CV').slice(0, 60),
+    company: (company || '').slice(0, 40),
+    text: cvText
+  };
+  _cvHistory = _cvHistory.filter(function(e){ return e.id !== entry.id; });
+  _cvHistory.unshift(entry);
+  if (_cvHistory.length > 8) _cvHistory = _cvHistory.slice(0, 8);
+  try { localStorage.setItem('cvHistory', JSON.stringify(_cvHistory)); } catch(e){}
+}
+function showCVHistory() {
+  var modal = document.getElementById('cv-history-modal');
+  if (!modal) return;
+  _cvHistory = JSON.parse(localStorage.getItem('cvHistory') || '[]');
+  if (!_cvHistory.length) {
+    modal.querySelector('#cv-history-list').innerHTML = '<div style="text-align:center;color:#9a9590;padding:24px 0;font-size:13px">No saved CVs yet. Tailor a CV to save it here.</div>';
+  } else {
+    modal.querySelector('#cv-history-list').innerHTML = _cvHistory.map(function(e){
+      return '<div onclick="restoreCVFromHistory('+e.id+')" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1.5px solid #e4dfd4;border-radius:10px;margin-bottom:8px;cursor:pointer;background:white;transition:border-color 0.15s" onmouseover="this.style.borderColor=\'#7c3aed\'" onmouseout="this.style.borderColor=\'#e4dfd4\'">'
+        + '<div><div style="font-size:13px;font-weight:700;color:#1a1814">' + (e.role) + '</div>'
+        + '<div style="font-size:11px;color:#7a756a;margin-top:2px">' + (e.company ? e.company + ' · ' : '') + e.date + '</div></div>'
+        + '<span style="font-size:18px">→</span></div>';
+    }).join('');
+  }
+  modal.style.display = 'flex';
+}
+function hideCVHistory() {
+  var modal = document.getElementById('cv-history-modal');
+  if (modal) modal.style.display = 'none';
+}
+function restoreCVFromHistory(id) {
+  var entry = _cvHistory.find(function(e){ return e.id === id; });
+  if (!entry) return;
+  _tailoredCVText = entry.text;
+  var ta = document.getElementById('tailor-cv-output');
+  if (ta) ta.value = entry.text;
+  var result = document.getElementById('tailor-result');
+  if (result) result.style.display = 'block';
+  hideCVHistory();
+  if (typeof renderCVPreview === 'function') renderCVPreview();
+  if (typeof switchTool === 'function') switchTool('ats');
+  showDlToast('✅ CV restored: ' + entry.role);
+}
 let _activeTemplate = 'classic';
 let _cvPhoto = null;       // base64 photo for Creative template
 let _wysiwygMode = false;  // WYSIWYG inline edit toggle
@@ -1958,6 +2006,7 @@ JD: ${jd.slice(0,800)}`, 300
       gapsSection.style.display = 'block';
     } else { gapsSection.style.display = 'none'; }
     _tailoredCVText = hardCapCV((data.tailored_cv || '').replace(/\*\*/g, '').replace(/\*/g, ''), resumeText);
+    _saveCVToHistory(_tailoredCVText, document.getElementById('tailor-jd') ? (document.getElementById('tailor-jd').value||'').split('\n')[0].slice(0,60) : '', '');
     document.getElementById('tailor-cv-output').value = _tailoredCVText;
     switchCVView('preview');
     renderCVPreview();
@@ -4423,7 +4472,9 @@ function showUserMenu() {
   var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = 'none';
   // Update nav label with first name
   var sc = document.getElementById('nav-scan-label');
-  if (sc) sc.textContent = (name.split(' ')[0] || email.split('@')[0] || 'Hi') + ' ·';
+  if (sc) sc.textContent = 'Free plan';
+  var nameEl2 = document.getElementById('nav-user-name');
+  if (nameEl2) nameEl2.textContent = name.split(' ')[0] || email.split('@')[0] || 'Account';
   // Update dropdown
   var nameEl = document.getElementById('user-avatar-name');
   if (nameEl) nameEl.textContent = name || email.split('@')[0] || 'User';
@@ -4436,7 +4487,7 @@ function hideUserMenu() {
   var si = document.getElementById('nav-signin-btn'); if (si) si.style.display = '';
   var su = document.getElementById('nav-signup-btn'); if (su) su.style.display = '';
   var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = '';
-  var sc = document.getElementById('nav-scan-label'); if (sc) sc.textContent = 'Free · 3 scans';
+  var sc = document.getElementById('nav-scan-label'); if (sc) sc.textContent = '3 free scans';
 }
 
 function updateUserMenuDisplay(p){
@@ -4518,7 +4569,7 @@ async function signOut(){
   var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
   hideUserMenu();
   var sc=document.getElementById('nav-scan-label');
-  if(sc) sc.textContent='Free · 3 scans';
+  if(sc) sc.textContent='3 free scans';
   // Go back to landing page
   var landing=document.getElementById('screen-landing');
   var app=document.getElementById('screen-app');
@@ -4614,9 +4665,11 @@ function showUpgradeModal(){
   </div>
 
   <!-- USER AVATAR MENU -->
-  <div id="user-menu" style="display:none;position:fixed;top:14px;right:16px;z-index:2000;align-items:center;gap:10px">
-    <span id="nav-scan-label" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></span>
-    <div id="user-avatar" onclick="toggleUserDropdown()" style="width:36px;height:36px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white;cursor:pointer;box-shadow:0 2px 12px rgba(124,58,237,0.35)"></div>
+  <div id="user-menu" style="display:none;position:fixed;top:12px;right:16px;z-index:2000">
+    <button onclick="toggleUserDropdown()" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #e4dfd4;border-radius:30px;padding:4px 12px 4px 4px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.08);font-family:'Geist',sans-serif">
+      <div id="user-avatar" style="width:28px;height:28px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0"></div>
+      <span id="nav-user-name" style="font-size:13px;font-weight:600;color:#1a1814;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+    </button>
   </div>
 
   <!-- USER DROPDOWN -->
@@ -4630,11 +4683,26 @@ function showUpgradeModal(){
         <div id="user-plan-display" style="font-size:13px;font-weight:700;color:#7c3aed"></div>
         <div id="user-scans-display" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></div>
       </div>
+      <button onclick="hideCVHistory();toggleUserDropdown();showCVHistory();" style="width:100%;padding:10px 14px;background:#f3f0ff;border:1.5px solid #d8cff8;border-radius:10px;color:#6d28d9;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left">
+        📂 Recent CVs
+      </button>
       <button onmousedown="doSignOut()" style="width:100%;padding:10px 14px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;color:#dc2626;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer">
         Sign out
       </button>
     </div>
   </div>
+
+<!-- CV HISTORY MODAL -->
+<div id="cv-history-modal" onclick="hideCVHistory()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:4000;align-items:center;justify-content:center">
+  <div onclick="event.stopPropagation()" style="background:white;border-radius:16px;padding:24px;width:90%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,0.2);max-height:80vh;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:700">📂 Recent CVs</div>
+      <button onclick="hideCVHistory()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#7a756a;line-height:1">✕</button>
+    </div>
+    <div style="font-size:12px;color:#7a756a;margin-bottom:14px">Click any CV to restore it into the editor.</div>
+    <div id="cv-history-list" style="overflow-y:auto;flex:1"></div>
+  </div>
+</div>
 
 <script>
 document.addEventListener('click', function(e) {
