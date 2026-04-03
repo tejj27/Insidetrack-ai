@@ -202,6 +202,11 @@ select:focus{border-color:var(--green)}
 
 .tpl-btn{background:var(--cream);border:2px solid var(--cream3);border-radius:10px;padding:8px 10px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:72px}
 .tpl-btn:hover{border-color:var(--green);transform:translateY(-1px)}
+.outreach-tone-btn{background:var(--cream);border:1.5px solid var(--cream3);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;color:var(--ink3);transition:all 0.15s}
+.outreach-tone-btn:hover{border-color:#0077b5;color:#0077b5}
+.otone-active{background:#e8f0fe;border-color:#0077b5;color:#0077b5}
+.outreach-tone-sm{background:white;border:1.5px solid #c0d0f0;border-radius:16px;padding:5px 12px;font-size:11px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;color:#1a4fa0;transition:all 0.15s}
+.outreach-tone-sm:hover{background:#e8f0fe;border-color:#0077b5}
 .tpl-active{border-color:var(--green)!important;background:#f3f0ff}
 .tpl-label{font-size:10px;font-weight:700;color:var(--ink3);font-family:'Geist',sans-serif;text-align:center;letter-spacing:0.03em}
 .tpl-sub{font-size:9px;color:var(--ink4);font-family:'Geist',sans-serif;text-align:center;margin-top:-2px}
@@ -860,9 +865,29 @@ select:focus{border-color:var(--green)}
             I need visa sponsorship, mention this in the message
           </label>
         </div>
+        <!-- Tone selector -->
+        <div style="margin-top:16px">
+          <label class="field-label" style="margin-bottom:8px;display:block">Tone &amp; style</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px" id="outreach-tone-row">
+            <button class="outreach-tone-btn otone-active" data-tone="natural" onclick="setOutreachTone('natural',this)">💬 Natural</button>
+            <button class="outreach-tone-btn" data-tone="confident" onclick="setOutreachTone('confident',this)">⚡ Confident</button>
+            <button class="outreach-tone-btn" data-tone="formal" onclick="setOutreachTone('formal',this)">🎩 Formal</button>
+            <button class="outreach-tone-btn" data-tone="bold" onclick="setOutreachTone('bold',this)">🔥 Bold</button>
+          </div>
+        </div>
         <div class="error-msg" id="outreach-error"></div>
         <div style="margin-top:18px"><button class="btn btn-md" id="outreach-btn" disabled onclick="runOutreach()" style="background:#0077b5;color:white">✉️ Generate outreach messages</button></div>
         <div class="result-box" id="outreach-result">
+          <!-- Regenerate strip -->
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;background:#f3f0ff;border:1.5px solid #d8cff8;border-radius:10px;padding:10px 14px;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:600;color:#6d28d9">Try a different tone:</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="outreach-tone-sm" onclick="setOutreachTone('natural');runOutreach()">💬 Natural</button>
+              <button class="outreach-tone-sm" onclick="setOutreachTone('confident');runOutreach()">⚡ Confident</button>
+              <button class="outreach-tone-sm" onclick="setOutreachTone('formal');runOutreach()">🎩 Formal</button>
+              <button class="outreach-tone-sm" onclick="setOutreachTone('bold');runOutreach()">🔥 Bold</button>
+            </div>
+          </div>
           <div style="background:#e8f0fe;border:1px solid #c0d0f0;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#1a4fa0">
             💡 <strong>How to use:</strong> Start with the LinkedIn Connection note to someone at the company, then the Recruiter message. Use follow-ups if you hear nothing back.
           </div>
@@ -3031,6 +3056,24 @@ async function handleOutreachFileSelect(e){
     checkOutreachReady();
   }catch(err){showError('outreach-error','Could not read file: '+err.message);document.getElementById('outreach-upload-label').textContent='Upload CV (PDF or DOCX)';}
 }
+var _outreachTone = 'natural';
+var _outreachToneDesc = {
+  natural:   'Sound conversational and warm, like a thoughtful peer. Short sentences, natural rhythm. Friendly but not over-eager.',
+  confident: 'Sound assertive and direct. Lead with value immediately. Minimal pleasantries. Strong, clear asks. No hedging language.',
+  formal:    'Sound professional and polished, suitable for banking, law, or consulting. Complete sentences, no contractions, respectful and precise.',
+  bold:      'Sound punchy and memorable. Ultra-concise, almost headline-style. Every word earns its place. Leave them intrigued.'
+};
+function setOutreachTone(tone, btnEl) {
+  _outreachTone = tone;
+  // Update selector button states
+  var btns = document.querySelectorAll('.outreach-tone-btn');
+  btns.forEach(function(b){ b.classList.remove('otone-active'); });
+  if (btnEl) { btnEl.classList.add('otone-active'); }
+  else {
+    var found = document.querySelector('.outreach-tone-btn[data-tone="'+tone+'"]');
+    if (found) { found.classList.add('otone-active'); }
+  }
+}
 async function runOutreach(){
   const name=document.getElementById('outreach-name').value.trim();
   const company=document.getElementById('outreach-company').value.trim();
@@ -3038,6 +3081,7 @@ async function runOutreach(){
   const recruiter=document.getElementById('outreach-recruiter').value.trim();
   const cv=document.getElementById('outreach-cv').value.trim();
   const visa=document.getElementById('outreach-visa').checked;
+  const toneDesc = _outreachToneDesc[_outreachTone] || _outreachToneDesc.natural;
   hideError('outreach-error');setLoading('outreach-btn',true);
   document.getElementById('outreach-result').classList.remove('visible');
   try{
@@ -3063,11 +3107,12 @@ Structure: "Hi [Name], hope you are well!" + mention you are interviewing for an
 5. follow_up_day25 — Final follow up
 Structure: "Hi [Name], I know you must be really busy, just following up one last time in case my messages got lost." + offer to provide anything else + mention this is final follow-up. Max 50 words. Polite, not pushy.
 
+TONE: ${toneDesc}
+
 RULES FOR ALL:
 - Fill in [Name] with recruiter name if provided, otherwise use a realistic placeholder
 - Fill in [Role] and [Company] with the actual values given
 - Use candidate's real background — degree, company, specific achievement with number
-- Sound human and authentic — NOT corporate
 - NO em dashes (—) anywhere. Use commas, full stops or new sentences instead.
 - NO hyphens used as dashes. NO asterisks. NO bullet points inside messages.
 - NO: passionate, keen, leverage, "I hope this message finds you well", "I came across your profile"
