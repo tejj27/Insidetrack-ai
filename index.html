@@ -859,6 +859,10 @@ select:focus{border-color:var(--green)}
           <input type="file" id="outreach-file-input" accept=".pdf,.docx,.doc" style="display:none" onchange="handleOutreachFileSelect(event)">
           <textarea id="outreach-cv" style="min-height:100px" placeholder="Or paste your CV text / background here..." oninput="checkOutreachReady()"></textarea>
         </div>
+        <div class="form-group" style="margin-top:12px">
+          <label class="field-label">Job post or company research <span style="font-weight:400;color:var(--ink4)">(optional but recommended)</span></label>
+          <textarea id="outreach-jd" style="min-height:90px" placeholder="Paste the job description, or note what you know about the company, e.g. their recent initiatives, mission, tech stack, values..."></textarea>
+        </div>
         <div class="form-group" style="margin-top:4px">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink2)">
             <input type="checkbox" id="outreach-visa" style="width:15px;height:15px;cursor:pointer;accent-color:#0077b5">
@@ -889,39 +893,39 @@ select:focus{border-color:var(--green)}
             </div>
           </div>
           <div style="background:#e8f0fe;border:1px solid #c0d0f0;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#1a4fa0">
-            💡 <strong>How to use:</strong> Start with the LinkedIn Connection note to someone at the company, then the Recruiter message. Use follow-ups if you hear nothing back.
+            💡 <strong>How to use:</strong> Send the Hiring Manager message first to build a warm connection, then follow up with the Recruiter message. Use the Stand-out version if you want to be more direct. Send follow-ups if you hear nothing back.
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#0077b5;border-radius:50%;display:inline-block"></span>1. LinkedIn Connection Note <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">to someone at the company</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#0077b5;border-radius:50%;display:inline-block"></span>💼 1. LinkedIn Message <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">best for hiring managers at the company</span></div>
               <button class="copy-btn" onclick="copyText('outreach-connection',this)">📋 Copy</button>
             </div>
             <div id="outreach-connection" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#7c3aed;border-radius:50%;display:inline-block"></span>2. Recruiter LinkedIn Message <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">direct to recruiter posting the role</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#7c3aed;border-radius:50%;display:inline-block"></span>📨 2. Recruiter Message <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">company-focused, direct to recruiter</span></div>
               <button class="copy-btn" onclick="copyText('outreach-recruiter-msg',this)">📋 Copy</button>
             </div>
             <div id="outreach-recruiter-msg" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#059669;border-radius:50%;display:inline-block"></span>3. Follow-up — Day 10 <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">no reply after 10 days</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#059669;border-radius:50%;display:inline-block"></span>🚀 3. Stand-out Version <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">bolder, achievement-first, higher reward</span></div>
               <button class="copy-btn" onclick="copyText('outreach-day10',this)">📋 Copy</button>
             </div>
             <div id="outreach-day10" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#d97706;border-radius:50%;display:inline-block"></span>4. Follow-up — Day 15 <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">no reply after 15 days</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#d97706;border-radius:50%;display:inline-block"></span>⏰ 4. Follow-up <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">send if no reply after 10 days</span></div>
               <button class="copy-btn" onclick="copyText('outreach-day15',this)">📋 Copy</button>
             </div>
             <div id="outreach-day15" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#dc2626;border-radius:50%;display:inline-block"></span>5. Final Follow-up — Day 25 <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">last message</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#dc2626;border-radius:50%;display:inline-block"></span>🏁 5. Final Follow-up <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">last message, send after 25 days</span></div>
               <button class="copy-btn" onclick="copyText('outreach-day25',this)">📋 Copy</button>
             </div>
             <div id="outreach-day25" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
@@ -3082,46 +3086,47 @@ async function runOutreach(){
   const cv=document.getElementById('outreach-cv').value.trim();
   const visa=document.getElementById('outreach-visa').checked;
   const toneDesc = _outreachToneDesc[_outreachTone] || _outreachToneDesc.natural;
+  const jd = (document.getElementById('outreach-jd')||{value:''}).value.trim();
   hideError('outreach-error');setLoading('outreach-btn',true);
   document.getElementById('outreach-result').classList.remove('visible');
   try{
     const data=await callClaude(
-`You are an expert career coach. Generate personalised outreach messages for this candidate based on proven Le Careers templates. Fill in all placeholders with real details from their background.
+`You are an expert career coach writing hyper-personalised outreach messages. Every message must reference SPECIFIC details about the company and candidate — never generic.
 
-OUTPUT 5 messages as JSON. Personalise every single one — no generic placeholders left unfilled.
+COMPANY CONTEXT: Extract from the job post/research provided: the company's specific initiatives, products, values, team focus, or recent news. Weave 1-2 of these into messages 1, 2 and 3.
+CANDIDATE: Use their REAL degree (with grade if given), real employer, and their BEST specific achievement with a number/metric.
 
-1. linkedin_connection — LinkedIn connection note to someone at the company (NOT the recruiter)
-Structure: "Hi [Name]," + mention you are applying for [Role] at [Company] + note something specific about their tenure/team + ask if they can spare 2 mins to share their experience. Max 60 words. Friendly, human, direct.
-Example: "Hi Jake, I recently started applying for the Business Analyst role at Monzo and it has been really interesting so far. I saw you have been at Monzo for 3 years — I was wondering if you could spare 2 minutes to share your experience? Best, [Name]"
+OUTPUT 5 messages as JSON. Zero unfilled placeholders.
 
-2. recruiter_linkedin — LinkedIn message directly to a recruiter about the role
-Structure: "Hi [Recruiter Name]," + their most impressive experience/degree in one line + "I am actively looking for [Role] roles and would love to jump on a 5 minute call regarding the [Role] at [Company] you recently posted." + ask for call. Max 80 words. Attach CV reminder.
-Example: "Hi Jake, I am a former Software Engineer at Accenture with 2 years in BA and automation — looking for new Business Analyst opportunities and would love to learn more about the role you posted. I have also sent my CV by email. Would you be available for a quick call?"
+1. linkedin_connection — LinkedIn message to a hiring manager or team member (NOT the recruiter)
+Structure: "Hi [Name]," + reference ONE specific thing about the company's work (from context) that genuinely interests you + your most relevant background in 1-2 sentences + ask for a quick 10-min chat. Max 80 words. Personal, specific, not salesy.
 
-3. follow_up_day10 — Follow up message 10 days after no reply
-Structure: "Hi [Name], quickly following up on my previous message." + one specific thing researched about the company (growth, news, expansion, product) + "Would love to chat about the [Role] and how I could add value — do any times this week work for you?" Max 70 words.
+2. recruiter_linkedin — LinkedIn message directly to a recruiter
+Structure: "Hi [Name]," + 1-line summary of strongest credential + express interest in [Role] at [Company] referencing something specific from the company context + ask for a call or to share CV. Max 90 words.
 
-4. follow_up_day15 — Follow up 15 days after no reply
-Structure: "Hi [Name], hope you are well!" + mention you are interviewing for another role but [Company] is preferred + ask for updates + offer to provide anything else needed. Max 60 words.
+3. follow_up_day10 — Stand-out version (bolder, achievement-first)
+Lead with the company's specific focus area from the context. Then immediately tie it to candidate's strongest achievement with number. Show you understand what they're trying to do and how you fit. End with a clear ask. Max 100 words.
 
-5. follow_up_day25 — Final follow up
-Structure: "Hi [Name], I know you must be really busy, just following up one last time in case my messages got lost." + offer to provide anything else + mention this is final follow-up. Max 50 words. Polite, not pushy.
+4. follow_up_day15 — Follow-up if no reply after 10 days
+Brief, warm. "Hi [Name], following up on my earlier message." + mention you are also speaking to other companies but [Company] is the one you are most excited about and why (1 specific reason from context). Ask for a quick update. Max 65 words.
+
+5. follow_up_day25 — Final follow-up after 25 days
+Short, polite, closes the loop. Acknowledge they are busy. One final ask. Max 50 words.
 
 TONE: ${toneDesc}
 
-RULES FOR ALL:
-- Fill in [Name] with recruiter name if provided, otherwise use a realistic placeholder
-- Fill in [Role] and [Company] with the actual values given
-- Use candidate's real background — degree, company, specific achievement with number
-- NO em dashes (—) anywhere. Use commas, full stops or new sentences instead.
-- NO hyphens used as dashes. NO asterisks. NO bullet points inside messages.
-- NO: passionate, keen, leverage, "I hope this message finds you well", "I came across your profile"
-- If visa sponsorship needed: mention it honestly in recruiter message only
+RULES:
+- Use ACTUAL company details from the job post/research — not made-up facts
+- [Name] = recruiter name if given, else use "there" or a realistic placeholder
+- NO em dashes, NO asterisks, NO bullet points inside messages
+- NO: passionate, keen, leverage, "I hope this message finds you well", "I came across your profile", "I wanted to reach out"
+- Visa sponsorship: mention once, briefly, in recruiter message only if needed
+- Sign off with candidate's first name
 
 Respond ONLY with valid JSON:
 {"linkedin_connection":"<message>","recruiter_linkedin":"<message>","follow_up_day10":"<message>","follow_up_day15":"<message>","follow_up_day25":"<message>"}`
       ,
-      `Sender:${name}|Company:${company}|Role:${role}|Recruiter:${recruiter||'unknown'}|Visa:${visa?'Yes':'No'}\nBackground:\n${cv.slice(0,1500)}`,2000);
+      `Candidate: ${name} | Role: ${role} | Company: ${company} | Recruiter: ${recruiter||'not provided'} | Visa needed: ${visa?'Yes':'No'}\n\nCANDIDATE BACKGROUND:\n${cv.slice(0,1500)}\n\nJOB POST / COMPANY RESEARCH:\n${jd ? jd.slice(0,1000) : 'Not provided — use general knowledge about '+company}`,2000);
     document.getElementById('outreach-connection').textContent=data.linkedin_connection||'';
     document.getElementById('outreach-recruiter-msg').textContent=data.recruiter_linkedin||'';
     document.getElementById('outreach-day10').textContent=data.follow_up_day10||'';
