@@ -4837,16 +4837,21 @@ async function sendChatMessage() {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-haiku-4-20250514',
-        max_tokens:250,
+        model:'claude-sonnet-4-20250514',
+        max_tokens:300,
         system:_chatBotSystem,
         messages:recentMsgs
       })
     });
     var data = await res.json();
-    var reply = (data.content && data.content[0] && data.content[0].text)
-      ? data.content[0].text.trim()
-      : "I'm not sure about that right now. Try exploring the tools or check the FAQ!";
+    var reply = '';
+    if (data.content && data.content[0] && data.content[0].text) {
+      reply = data.content[0].text.trim();
+    } else if (data.error && data.error.message) {
+      reply = "Sorry, something went wrong: " + data.error.message;
+    } else {
+      reply = "Sorry, I couldn't get a response. Please try again!";
+    }
     _chatHistory.push({role:'assistant', content:reply});
     var el = document.getElementById(typingId); if (el) el.remove();
     _appendBotMsg(reply);
