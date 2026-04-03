@@ -3287,7 +3287,7 @@ function renderCVPreview() {
       if (!fc && cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length<200) { contactLine=cl; fc=true; }
       else bodyLines.push(allLines[ci]);
     }
-    var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|EXTRACURRICULARS?|INTERESTS?|ACTIVITIES|PUBLICATIONS?|ADDITIONAL)[\s:]*$/i;
+    var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|CAREER OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|EDUCATION|EDUCATIONAL BACKGROUND|ACADEMIC BACKGROUND|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|SOFT SKILLS?|ACHIEVEMENTS?|AWARDS? & ACHIEVEMENTS?|HONOURS? & AWARDS?|CERTIFICATIONS?|LICENSES? & CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|PERSONAL PROJECTS?|SIDE PROJECTS?|REFERENCES?|VOLUNTEERING|VOLUNTEER EXPERIENCE|LEADERSHIP|LEADERSHIP EXPERIENCE|EXTRACURRICULARS?|EXTRACURRICULAR ACTIVITIES?|INTERESTS?|HOBBIES & INTERESTS?|HOBBIES|ACTIVITIES|PUBLICATIONS?|ADDITIONAL|ADDITIONAL INFORMATION|PROFESSIONAL DEVELOPMENT|COMMUNITY INVOLVEMENT|MEMBERSHIPS?|AFFILIATIONS?|TRAINING|COURSES?|RESEARCH|RESEARCH EXPERIENCE|TEACHING EXPERIENCE|INTERNSHIPS?)[\s:]*$/i;
     var out = '<div style="display:flex;min-height:600px;font-family:'+s.font+';font-size:'+s.sz+';line-height:'+s.lh+'">';
     // Sidebar
     out += '<div style="width:'+s.sidebarW+';background:'+s.sidebarBg+';padding:24px 14px;flex-shrink:0;color:white">';
@@ -3309,7 +3309,7 @@ function renderCVPreview() {
     bodyLines.forEach(function(raw) {
       var line = raw.trim();
       if (!line) { out+='<div style="height:4px"></div>'; return; }
-      if (HEADING_RE.test(line)||(/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line)&&line.length>3&&line.length<60)) {
+      if (HEADING_RE.test(line)||(/^[A-Z][A-Z\s&\/\.]{2,}$/.test(line)&&line.length>3&&line.length<35&&line.split(/\s+/).length<=2)) {
         out+='<div'+edAttr('heading')+' style="margin-top:12px;padding-bottom:2px;border-bottom:'+s.hBorder+';font-family:'+s.hFont+';font-size:'+s.hSz+';font-weight:800;color:'+s.hColor+';text-transform:'+s.hTransform+';margin-bottom:4px;letter-spacing:0.5px">'+ex(line)+'</div>'; return;
       }
       if (/^[•\-\*▸○◦]/.test(line)) {
@@ -3333,7 +3333,7 @@ function renderCVPreview() {
   }
 
   // ── Standard (non-sidebar) templates ──
-  var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT|EDUCATION|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|ACHIEVEMENTS?|CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|REFERENCES?|VOLUNTEERING|LEADERSHIP|EXTRACURRICULARS?|INTERESTS?|ACTIVITIES|PUBLICATIONS?|ADDITIONAL)[\s:]*$/i;
+  var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|CAREER OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|EDUCATION|EDUCATIONAL BACKGROUND|ACADEMIC BACKGROUND|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|SOFT SKILLS?|ACHIEVEMENTS?|AWARDS? & ACHIEVEMENTS?|HONOURS? & AWARDS?|CERTIFICATIONS?|LICENSES? & CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|PERSONAL PROJECTS?|SIDE PROJECTS?|REFERENCES?|VOLUNTEERING|VOLUNTEER EXPERIENCE|LEADERSHIP|LEADERSHIP EXPERIENCE|EXTRACURRICULARS?|EXTRACURRICULAR ACTIVITIES?|INTERESTS?|HOBBIES & INTERESTS?|HOBBIES|ACTIVITIES|PUBLICATIONS?|ADDITIONAL|ADDITIONAL INFORMATION|PROFESSIONAL DEVELOPMENT|COMMUNITY INVOLVEMENT|MEMBERSHIPS?|AFFILIATIONS?|TRAINING|COURSES?|RESEARCH|RESEARCH EXPERIENCE|TEACHING EXPERIENCE|INTERNSHIPS?)[\s:]*$/i;
 
   var out = '<div style="font-family:'+s.font+';font-size:'+s.sz+';color:'+s.color+';line-height:'+s.lh+';padding:'+s.pad+'">';
   var lines = text.split('\n');
@@ -3364,7 +3364,7 @@ function renderCVPreview() {
     }
 
     // Section headings
-    if (HEADING_RE.test(line) || (/^[A-Z][A-Z\s&\/\-\.]{2,}$/.test(line) && line.length>3 && line.length<60)) {
+    if (HEADING_RE.test(line) || (/^[A-Z][A-Z\s&\/\.]{2,}$/.test(line) && line.length>3 && line.length<35 && line.split(/\s+/).length<=2)) {
       previewSection = line.toUpperCase();
       var hStyle = 'margin-top:13px;margin-bottom:4px;font-family:'+s.hFont+';font-size:'+s.hSz+';font-weight:bold;color:'+s.hColor+';text-transform:'+s.hTransform;
       if (s.hBg) {
