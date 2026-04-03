@@ -247,15 +247,14 @@ select:focus{border-color:var(--green)}
   <div class="hero">
     <div class="hero-badge">✦ AI powered · Free to start</div>
     <h1 class="hero-title">Land more interviews<br>with <span>every application</span></h1>
-    <p class="hero-sub">InsideTrack gives you five AI tools to tailor your CV, write cover letters, find visa sponsors, generate outreach messages, and track every application, all in one place.</p>
+    <p class="hero-sub">InsideTrack gives you four AI tools to tailor your CV, write cover letters, generate outreach messages, and track every application, all in one place.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
       <button id="hero-signin-btn" class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">60s</div><div class="stat-lbl">To scan your CV<br>against any job</div></div>
-      <div style="text-align:center"><div class="stat-num">10</div><div class="stat-lbl">Visa sponsors found<br>for your profile</div></div>
-      <div style="text-align:center"><div class="stat-num">5×</div><div class="stat-lbl">Tools in one place<br>free to start</div></div>
+      <div style="text-align:center"><div class="stat-num">4×</div><div class="stat-lbl">Tools in one place<br>free to start</div></div>
     </div>
   </div>
 
@@ -267,22 +266,15 @@ select:focus{border-color:var(--green)}
       <div class="tool-desc">Upload your CV and a job description. AI scores your ATS match, finds missing keywords, and rewrites your CV to pass the filter, using only skills you actually have.</div>
       <div class="tool-cta"><span class="tool-cta-label">Upload CV + JD</span><button class="btn btn-green btn-sm">Scan now →</button></div>
     </div>
-    <div class="tool-card" onclick="openApp('visa')">
-      <div class="tool-num">02  VISA SPONSOR FINDER</div>
-      <div class="tool-icon">🌍</div>
-      <div class="tool-title">Visa Sponsor Finder</div>
-      <div class="tool-desc">Upload your CV and select a country. AI identifies the top 10 companies most likely to sponsor your visa based on your skills, sector, and hiring history.</div>
-      <div class="tool-cta"><span class="tool-cta-label">CV + target country</span><button class="btn btn-sm" style="background:#1a4fa0;color:white">Find sponsors →</button></div>
-    </div>
     <div class="tool-card" onclick="openApp('outreach')">
-      <div class="tool-num">03  OUTREACH AI</div>
+      <div class="tool-num">02  OUTREACH AI</div>
       <div class="tool-icon">✉️</div>
       <div class="tool-title">LinkedIn Outreach</div>
       <div class="tool-desc">Generate 5 personalised LinkedIn messages: connection note, recruiter message, and 3 follow-ups. Natural, confident, under 90 words each.</div>
       <div class="tool-cta"><span class="tool-cta-label">CV + company + role</span><button class="btn btn-sm" style="background:#0077b5;color:white">Generate message →</button></div>
     </div>
     <div class="tool-card" onclick="openApp('coverletter')">
-      <div class="tool-eyebrow">05  COVER LETTER AI</div>
+      <div class="tool-eyebrow">03  COVER LETTER AI</div>
       <div class="tool-title">✉️ Cover Letter Generator</div>
       <div class="tool-desc">Generate a tailored cover letter following the Le Careers template, under 350 words, genuine tone, real achievements. Download as DOCX instantly.</div>
       <div style="font-size:11px;color:var(--ink4);font-family:'Geist Mono',monospace">CV + role + company</div>
@@ -305,7 +297,7 @@ select:focus{border-color:var(--green)}
         <li><span class="chk">✓</span> 3 ATS scans</li>
         <li><span class="chk">✓</span> 1 CV tailor</li>
         <li><span class="chk">✓</span> 1 job search kit</li>
-        <li><span class="chk">✓</span> All 5 tools</li>
+        <li><span class="chk">✓</span> All 4 tools</li>
       </ul>
       <button class="btn btn-ghost btn-md" style="width:100%" onclick="openApp('ats')">Get started</button>
     </div>
@@ -365,24 +357,17 @@ select:focus{border-color:var(--green)}
     </div>
     <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
       <button onclick="toggleFAQ(5)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
-        <span style="font-size:14px;font-weight:600;color:var(--ink)">Does the Visa Sponsor Finder guarantee sponsorship?</span>
+        <span style="font-size:14px;font-weight:600;color:var(--ink)">Is InsideTrack free to use?</span>
         <span id="faq-icon-5" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-5" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">No — it identifies companies with a strong track record of sponsoring visas in your target country based on your background. Actual sponsorship decisions are always made by the employer.</div>
+      <div id="faq-body-5" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI.</div>
     </div>
     <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
       <button onclick="toggleFAQ(6)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
-        <span style="font-size:14px;font-weight:600;color:var(--ink)">Is InsideTrack free to use?</span>
+        <span style="font-size:14px;font-weight:600;color:var(--ink)">Can I use InsideTrack on mobile?</span>
         <span id="faq-icon-6" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-6" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI.</div>
-    </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(7)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
-        <span style="font-size:14px;font-weight:600;color:var(--ink)">Can I use InsideTrack on mobile?</span>
-        <span id="faq-icon-7" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
-      </button>
-      <div id="faq-body-7" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Yes. InsideTrack is fully responsive and works on any device. Uploading a CV works best on desktop.</div>
+      <div id="faq-body-6" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Yes. InsideTrack is fully responsive and works on any device. Uploading a CV works best on desktop.</div>
     </div>
     </div>
   </div>
@@ -402,7 +387,6 @@ select:focus{border-color:var(--green)}
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('ats')">ATS Scanner</span>
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('outreach')">Outreach AI</span>
-          <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('visa')">Visa Sponsor Finder</span>
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('tracker')">Application Tracker</span>
         </div>
       </div>
@@ -453,7 +437,6 @@ select:focus{border-color:var(--green)}
 
   <div class="mobile-tabs">
     <div class="mobile-tab" id="mtab-ats" onclick="switchTool('ats')">📊 ATS</div>
-    <div class="mobile-tab" id="mtab-visa" onclick="switchTool('visa')">🌍 Visa</div>
     <div class="mobile-tab" id="mtab-outreach" onclick="switchTool('outreach')">✉️ Outreach</div>
     <div class="mobile-tab" id="mtab-tracker" onclick="switchTool('tracker')">📋 Tracker</div>
     <div class="mobile-tab" id="mtab-coverletter" onclick="switchTool('coverletter')">📝 Cover Letter</div>
@@ -464,10 +447,6 @@ select:focus{border-color:var(--green)}
       <button class="sidebar-btn" id="sbtn-ats" onclick="switchTool('ats')">
         <span class="sb-icon">📊</span>
         <div><span class="sb-name">ATS Scanner</span><span class="sb-sub">Score + tailor CV</span></div>
-      </button>
-      <button class="sidebar-btn" id="sbtn-visa" onclick="switchTool('visa')">
-        <span class="sb-icon">🌍</span>
-        <div><span class="sb-name">Visa Sponsor Finder</span><span class="sb-sub">Companies that sponsor</span></div>
       </button>
       <button class="sidebar-btn" id="sbtn-outreach" onclick="switchTool('outreach')">
         <span class="sb-icon">✉️</span>
@@ -933,54 +912,6 @@ select:focus{border-color:var(--green)}
         </div>
       </div><!-- /panel-outreach -->
 
-      <!-- ── VISA PANEL ── -->
-      <div class="tool-panel" id="panel-visa">
-        <div class="panel-header">
-          <div class="panel-eyebrow" style="color:#1a4fa0"><div class="panel-eyebrow-dot" style="background:#1a4fa0"></div>VISA SPONSOR FINDER</div>
-          <h2 class="panel-title">Who will sponsor your visa?</h2>
-          <p class="panel-sub">Upload your CV and select a target country. AI identifies the top 10 companies most likely to sponsor your visa based on your skills and industry.</p>
-        </div>
-        <div class="form-group">
-          <label class="field-label">Upload your CV &nbsp;<button class="inline-example" onclick="useVisaExample()">↳ use example</button></label>
-          <div class="upload-zone" id="visa-upload-zone" onclick="document.getElementById('visa-file-input').click()">
-            <div style="font-size:28px;margin-bottom:8px">🌍</div>
-            <div class="upload-label" id="visa-upload-label">Click to upload CV (PDF or DOCX)</div>
-            <div class="upload-hint">or drag and drop</div>
-          </div>
-          <input type="file" id="visa-file-input" accept=".pdf,.docx,.doc" style="display:none" onchange="handleVisaFileSelect(event)">
-        </div>
-        <div class="form-group">
-          <label class="field-label">Or paste your CV / background</label>
-          <textarea id="visa-cv" style="min-height:120px" placeholder="Paste your CV text, skills, education, and experience here..." oninput="checkVisaReady()"></textarea>
-        </div>
-        <div class="form-row">
-          <div class="form-group" style="margin:0">
-            <label class="field-label">Target Country</label>
-            <select id="visa-country" onchange="checkVisaReady()">
-              <option value="">Select country...</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="United States">United States</option>
-              <option value="Canada">Canada</option>
-              <option value="Australia">Australia</option>
-              <option value="Germany">Germany</option>
-              <option value="Netherlands">Netherlands</option>
-              <option value="Ireland">Ireland</option>
-              <option value="Singapore">Singapore</option>
-              <option value="UAE">UAE</option>
-            </select>
-          </div>
-          <div class="form-group" style="margin:0">
-            <label class="field-label">Your Sector <span style="font-weight:400;color:var(--ink4)">(optional)</span></label>
-            <input type="text" id="visa-sector" placeholder="e.g. Fintech, Consulting, Healthcare">
-          </div>
-        </div>
-        <div class="error-msg" id="visa-error"></div>
-        <div style="margin-top:18px"><button class="btn btn-md" id="visa-btn" disabled onclick="runVisa()" style="background:#1a4fa0;color:white">🌍 Find visa sponsors</button></div>
-        <div class="result-box" id="visa-result">
-          <div class="result-section-title">Top companies likely to sponsor your visa</div>
-          <div id="visa-strategy" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-      </div><!-- /panel-visa -->
 
       <!-- ── COVER LETTER PANEL ── -->
       <div class="tool-panel" id="panel-coverletter">
@@ -1058,62 +989,6 @@ select:focus{border-color:var(--green)}
         </div>
       </div><!-- /panel-coverletter -->
 
-      <!-- ── VISA TEST PANEL (hidden, dev only) ── -->
-      <div class="tool-panel" id="panel-visatest" style="display:none">
-        <div class="panel-header">
-          <div class="panel-eyebrow" style="color:#7c3aed"><div class="panel-eyebrow-dot" style="background:#7c3aed"></div>🧪 VISA FINDER — API TEST</div>
-          <h2 class="panel-title">Visa Sponsor Test (Adzuna + JSearch)</h2>
-          <p class="panel-sub">Testing real job APIs. Enter API keys below — they stay in your browser only. Results show real live jobs from companies sponsoring visas.</p>
-        </div>
-
-        <!-- API Keys -->
-        <div style="background:#fff8e6;border:1.5px solid #f0c040;border-radius:12px;padding:16px 18px;margin-bottom:20px">
-          <div style="font-weight:700;font-size:13px;color:#7a4500;margin-bottom:12px">🔑 API Keys (stored in browser only, never sent anywhere)</div>
-          <div class="form-row">
-            <div class="form-group" style="margin:0">
-              <label class="field-label">Adzuna App ID <span style="font-weight:400;color:var(--ink4)">(free at adzuna.com/api)</span></label>
-              <input type="text" id="vt-adzuna-id" placeholder="e.g. a1b2c3d4" oninput="vtSaveKeys()">
-            </div>
-            <div class="form-group" style="margin:0">
-              <label class="field-label">Adzuna App Key</label>
-              <input type="text" id="vt-adzuna-key" placeholder="e.g. abc123xyz..." oninput="vtSaveKeys()">
-            </div>
-          </div>
-          <div class="form-group" style="margin-top:10px;margin-bottom:0">
-            <label class="field-label">JSearch API Key <span style="font-weight:400;color:var(--ink4)">(free at rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch)</span></label>
-            <input type="text" id="vt-jsearch-key" placeholder="e.g. abc123..." oninput="vtSaveKeys()">
-          </div>
-        </div>
-
-        <!-- Search inputs -->
-        <div class="form-row">
-          <div class="form-group" style="margin:0">
-            <label class="field-label">Job Role</label>
-            <input type="text" id="vt-role" placeholder="e.g. Business Analyst" oninput="vtCheckReady()">
-          </div>
-          <div class="form-group" style="margin:0">
-            <label class="field-label">Country</label>
-            <select id="vt-country" onchange="vtCheckReady()">
-              <option value="gb">United Kingdom</option>
-              <option value="us">United States</option>
-              <option value="ca">Canada</option>
-              <option value="au">Australia</option>
-              <option value="de">Germany</option>
-            </select>
-          </div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-          <button id="vt-adzuna-btn" onclick="vtRunAdzuna()" disabled class="btn btn-md" style="background:#e05a00;color:white">⚡ Test Adzuna (UK jobs)</button>
-          <button id="vt-jsearch-btn" onclick="vtRunJSearch()" disabled class="btn btn-md" style="background:#7c3aed;color:white">⚡ Test JSearch (global)</button>
-        </div>
-
-        <div class="error-msg" id="vt-error"></div>
-
-        <div id="vt-result" style="margin-top:20px;display:none">
-          <div style="font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink4);margin-bottom:12px" id="vt-result-label">Results</div>
-          <div id="vt-jobs-list" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-      </div><!-- /panel-visatest -->
 
 
 
@@ -1333,10 +1208,9 @@ function backToLanding() {
 }
 function switchTool(tool) {
   if (tool === 'tracker') setTimeout(renderTracker, 0);
-  if (tool === 'visatest') setTimeout(vtLoadKeys, 0);
   if (tool === 'coverletter') setTimeout(_autoFillCV, 0);
   if (tool === 'outreach') setTimeout(_autoFillOutreachCV, 0);
-  ['ats','visa','outreach','tracker','coverletter'].forEach(t => {
+  ['ats','outreach','tracker','coverletter'].forEach(t => {
     document.getElementById('panel-'+t).classList.remove('active');
     const sb = document.getElementById('sbtn-'+t);
     if (sb) sb.classList.remove('active');
@@ -3137,15 +3011,6 @@ Respond ONLY with valid JSON:
   setLoading('outreach-btn',false);
 }
 
-// ── Visa Sponsor Finder ──
-function checkVisaReady(){
-  const country=document.getElementById('visa-country').value;
-  const cv=document.getElementById('visa-cv').value.trim().length;
-  document.getElementById('visa-btn').disabled=!(country&&cv>=30);
-}
-
-
-
 // ── Outreach AI ──
 
 function useOutreachExample(){
@@ -3156,101 +3021,6 @@ function useOutreachExample(){
   checkOutreachReady();
 }
 
-// ── Visa Sponsor Finder ──
-
-function useVisaExample(){
-  document.getElementById('visa-cv').value="MSc Business Analytics (Distinction), Queen's University Belfast. 2 years as Associate Software Engineer at Accenture. Skills: SQL, Power BI, BPMN, Agile, Requirements Gathering, Stakeholder Management, Process Improvement, Automation Anywhere. AWS Certified. SC clearance eligible.";
-  document.getElementById('visa-country').value='United Kingdom';
-  document.getElementById('visa-sector').value='Fintech, Consulting, Digital Government';
-  checkVisaReady();
-}
-async function handleVisaFileSelect(e){
-  const file=e.target.files[0];if(!file)return;
-  const ext=file.name.split('.').pop().toLowerCase();
-  document.getElementById('visa-upload-label').textContent='⏳ Reading '+file.name+'...';
-  try{
-    const text=ext==='pdf'?await extractPDF(file):await extractDocx(file);
-    document.getElementById('visa-cv').value=text;
-    document.getElementById('visa-upload-zone').classList.add('has-file');
-    document.getElementById('visa-upload-label').textContent='✅ '+file.name;
-    checkVisaReady();
-  }catch(err){document.getElementById('visa-upload-label').textContent='Click to upload CV (PDF or DOCX)';}
-}
-async function runVisa(){
-  const country=document.getElementById('visa-country').value;
-  const cv=document.getElementById('visa-cv').value.trim();
-  const sector=document.getElementById('visa-sector').value.trim();
-  hideError('visa-error');setLoading('visa-btn',true);
-  document.getElementById('visa-result').classList.remove('visible');
-  try{
-    const isUK = country === 'United Kingdom';
-    const systemPrompt = isUK
-      ? `You are a UK Skilled Worker visa expert. Identify the 10 best A-rated UK sponsor companies for this candidate. Only A-rated sponsors on the Home Office register can issue new Certificates of Sponsorship. Match companies closely to the candidate's skills and sector. Respond ONLY with valid JSON, no extra text:
-{"companies":[{"name":"<company>","sector":"<sector>","why":"<one sentence>","likelihood":"High|Medium","route":"Skilled Worker","careers_slug":"<just the domain e.g. careers.company.com>"}],"strategy":"<3 sentences of specific advice for this candidate>"}`
-      : `You are a visa sponsorship expert. Identify the 10 companies most likely to sponsor this candidate in ${country}. Match to their skills and sector. Respond ONLY with valid JSON, no extra text:
-{"companies":[{"name":"<company>","sector":"<sector>","why":"<one sentence>","likelihood":"High|Medium","route":"<visa type>","careers_slug":"<careers.company.com>"}],"strategy":"<3 sentences of advice>"}`;
-
-    const data=await callClaude(systemPrompt,
-      `Country: ${country}\nSector: ${sector||'open'}\nCandidate:\n${cv.slice(0,2500)}`
-      ,3000);
-
-    renderVisa(data, country === 'United Kingdom', country, sector);
-  }catch(e){
-    if(e.message && e.message.includes('JSON')) {
-      showError('visa-error','Response error — please try again.');
-    } else {
-      showError('visa-error',e.message);
-    }
-  }
-  setLoading('visa-btn',false);
-}
-function renderVisa(data, isUK, country, sector){
-  country = country || 'United Kingdom';
-  sector = sector || '';
-  const companies=data.companies||[];
-  const list=document.getElementById('visa-strategy');
-  const lColors={High:'#7c3aed',Medium:'#9a6200'};
-  const lBg={High:'#ede9fe',Medium:'#fff8e6'};
-
-  // UK register verification banner
-  let html = '';
-  if(isUK){
-    html += `<div style="background:#ede9fe;border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
-      <div style="font-size:18px;flex-shrink:0">🏛️</div>
-      <div>
-        <div style="font-weight:700;font-size:13px;color:#7c3aed;margin-bottom:3px">Based on the UK Home Office Register of Licensed Sponsors</div>
-        <div style="font-size:12px;color:#7c3aed;line-height:1.5">These companies hold an A-rated Skilled Worker licence. Always verify on the <a href="https://www.gov.uk/government/publications/register-of-licensed-sponsors-workers" target="_blank" rel="noopener" style="color:#7c3aed;font-weight:700">official register ↗</a> before applying — licences can change.</div>
-      </div>
-    </div>`;
-  }
-
-  html += companies.map((c,i)=>`
-    <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;padding:16px 18px;margin-bottom:10px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
-        <div>
-          <div style="font-size:15px;font-weight:800;color:var(--ink)">${i+1}. ${esc(c.name)}</div>
-          <div style="font-size:12px;color:var(--ink4);margin-top:2px">${esc(c.sector)} · ${esc(c.visa_type||'Skilled Worker')}${isUK?' · '+esc(c.rating||'A-rated'):''}</div>
-        </div>
-        <span style="font-size:11px;font-weight:700;background:${lBg[c.likelihood]||lBg.Medium};color:${lColors[c.likelihood]||lColors.Medium};padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0">${esc(c.likelihood)} match</span>
-      </div>
-      <div style="font-size:12px;color:var(--ink3);margin-bottom:12px;line-height:1.5">${esc(c.why)}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <a href="${'https://www.google.com/search?q='+encodeURIComponent(c.name+' careers jobs '+country)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:white;background:#1a1814;padding:5px 12px;border-radius:7px;text-decoration:none">🌐 Careers ↗</a>
-        <a href="${'https://www.linkedin.com/jobs/search/?keywords='+encodeURIComponent(c.name)+'&location='+encodeURIComponent(country)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:white;background:#0077b5;padding:5px 12px;border-radius:7px;text-decoration:none">💼 LinkedIn ↗</a>
-
-      </div>
-    </div>`).join('');
-
-  if(data.strategy){
-    html+=`<div style="background:#f0f7ff;border:1.5px solid #c0d8f0;border-radius:12px;padding:16px 18px;margin-top:6px">
-      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:6px">💡 Your sponsorship strategy</div>
-      <div style="font-size:13px;color:var(--ink3);line-height:1.6">${esc(data.strategy)}</div>
-    </div>`;
-  }
-
-  list.innerHTML = html;
-  document.getElementById('visa-result').classList.add('visible');
-}
 
 
 
@@ -3899,113 +3669,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 
-// ── Visa API Test ──
-function vtSaveKeys(){
-  localStorage.setItem('vt_adzuna_id', document.getElementById('vt-adzuna-id').value);
-  localStorage.setItem('vt_adzuna_key', document.getElementById('vt-adzuna-key').value);
-  localStorage.setItem('vt_jsearch_key', document.getElementById('vt-jsearch-key').value);
-  vtCheckReady();
-}
-function vtLoadKeys(){
-  document.getElementById('vt-adzuna-id').value = localStorage.getItem('vt_adzuna_id')||'';
-  document.getElementById('vt-adzuna-key').value = localStorage.getItem('vt_adzuna_key')||'';
-  document.getElementById('vt-jsearch-key').value = localStorage.getItem('vt_jsearch_key')||'';
-}
-function vtCheckReady(){
-  const role = document.getElementById('vt-role').value.trim();
-  const aid = document.getElementById('vt-adzuna-id').value.trim();
-  const akey = document.getElementById('vt-adzuna-key').value.trim();
-  const jkey = document.getElementById('vt-jsearch-key').value.trim();
-  document.getElementById('vt-adzuna-btn').disabled = !(role && aid && akey);
-  document.getElementById('vt-jsearch-btn').disabled = !(role && jkey);
-}
-
-async function vtRunAdzuna(){
-  const role = document.getElementById('vt-role').value.trim();
-  const country = document.getElementById('vt-country').value;
-  const appId = document.getElementById('vt-adzuna-id').value.trim();
-  const appKey = document.getElementById('vt-adzuna-key').value.trim();
-  hideError('vt-error');
-  document.getElementById('vt-result').style.display = 'none';
-  document.getElementById('vt-adzuna-btn').disabled = true;
-  document.getElementById('vt-adzuna-btn').innerHTML = '⏳ Fetching...';
-  try {
-    const q = encodeURIComponent(role + ' visa sponsorship');
-    const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&what=${q}&results_per_page=10&content-type=application/json`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Adzuna error: ${res.status} ${res.statusText}`);
-    const data = await res.json();
-    vtRenderResults(data.results || [], 'adzuna');
-    document.getElementById('vt-result-label').textContent = `Adzuna — ${(data.results||[]).length} results (of ${data.count||'?'} total)`;
-  } catch(e) {
-    showError('vt-error', e.message);
-  }
-  document.getElementById('vt-adzuna-btn').disabled = false;
-  document.getElementById('vt-adzuna-btn').innerHTML = '⚡ Test Adzuna (UK jobs)';
-}
-
-async function vtRunJSearch(){
-  const role = document.getElementById('vt-role').value.trim();
-  const country = document.getElementById('vt-country').value;
-  const jkey = document.getElementById('vt-jsearch-key').value.trim();
-  const countryNames = {gb:'United Kingdom',us:'United States',ca:'Canada',au:'Australia',de:'Germany'};
-  hideError('vt-error');
-  document.getElementById('vt-result').style.display = 'none';
-  document.getElementById('vt-jsearch-btn').disabled = true;
-  document.getElementById('vt-jsearch-btn').innerHTML = '⏳ Fetching...';
-  try {
-    const q = encodeURIComponent(role + ' visa sponsorship ' + (countryNames[country]||''));
-    const url = `https://jsearch.p.rapidapi.com/search?query=${q}&num_pages=1&date_posted=month`;
-    const res = await fetch(url, {
-      headers: {
-        'X-RapidAPI-Key': jkey,
-        'X-RapidAPI-Host': 'jsearch.p.rapidapi.com'
-      }
-    });
-    if (!res.ok) throw new Error(`JSearch error: ${res.status} ${res.statusText}`);
-    const data = await res.json();
-    vtRenderResults(data.data || [], 'jsearch');
-    document.getElementById('vt-result-label').textContent = `JSearch — ${(data.data||[]).length} results`;
-  } catch(e) {
-    showError('vt-error', e.message);
-  }
-  document.getElementById('vt-jsearch-btn').disabled = false;
-  document.getElementById('vt-jsearch-btn').innerHTML = '⚡ Test JSearch (global)';
-}
-
-function vtRenderResults(jobs, source){
-  const list = document.getElementById('vt-jobs-list');
-  if (!jobs.length) {
-    list.innerHTML = '<div style="color:var(--ink4);font-size:13px">No results found. Try a different role or check your API key.</div>';
-    document.getElementById('vt-result').style.display = 'block';
-    return;
-  }
-  list.innerHTML = jobs.map(j => {
-    const isAdzuna = source === 'adzuna';
-    const title = isAdzuna ? j.title : j.job_title;
-    const company = isAdzuna ? (j.company && j.company.display_name) : j.employer_name;
-    const location = isAdzuna ? (j.location && j.location.display_name) : (j.job_city || j.job_country);
-    const salary = isAdzuna
-      ? (j.salary_min ? `£${Math.round(j.salary_min/1000)}k–£${Math.round(j.salary_max/1000)}k` : '')
-      : (j.job_min_salary ? `$${Math.round(j.job_min_salary/1000)}k` : '');
-    const url = isAdzuna ? j.redirect_url : j.job_apply_link;
-    const posted = isAdzuna ? new Date(j.created).toLocaleDateString() : (j.job_posted_at_datetime_utc ? new Date(j.job_posted_at_datetime_utc).toLocaleDateString() : '');
-    return `<div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;padding:14px 16px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-        <div>
-          <div style="font-weight:700;font-size:14px;color:var(--ink)">${esc(title||'')}</div>
-          <div style="font-size:12px;color:var(--ink4);margin-top:2px">${esc(company||'')} · ${esc(location||'')}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
-          ${salary ? `<span style="font-size:11px;font-weight:700;background:#ede9fe;color:#7c3aed;padding:2px 8px;border-radius:12px">${esc(salary)}</span>` : ''}
-          ${posted ? `<span style="font-size:11px;color:var(--ink4)">${esc(posted)}</span>` : ''}
-        </div>
-      </div>
-      ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--blue);text-decoration:none">View job ↗</a>` : ''}
-    </div>`;
-  }).join('');
-  document.getElementById('vt-result').style.display = 'block';
-}
 
 
 // ── FAQ ──
@@ -4015,7 +3678,6 @@ const faqs = [
   {q:"What file formats are supported?", a:"We support PDF and DOCX (Microsoft Word) files. Most CVs are in one of these formats. If yours isn't, copy-paste the text directly into the editor."},
   {q:"How does the ATS score work?", a:"Our AI analyses your CV against the job description and scores keyword match, relevance and structure — the same way a real ATS (Applicant Tracking System) would. A score of 75%+ significantly improves your chances of getting through."},
   {q:"How many times can I re-tailor my CV?", a:"Free users get 1 tailor and up to 3 re-tailor passes. Pro users get unlimited tailoring. Each re-tailor pass refines the presentation further without adding new content."},
-  {q:"Does the Visa Sponsor Finder guarantee sponsorship?", a:"No — it identifies companies with a strong history of sponsoring visas in your target country based on your background. Actual sponsorship decisions are always made by the employer."},
   {q:"Is InsideTrack free to use?", a:"Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI."},
   {q:"Can I use InsideTrack on mobile?", a:"Yes. InsideTrack is fully responsive and works on any device. The mobile tab bar gives you access to all tools. Uploading a CV works best on desktop."}
 ];
@@ -4794,7 +4456,6 @@ document.addEventListener('click', function(e) {
     <button class="chat-chip" onclick="chatChip('How does the ATS scanner work?')">ATS scanner</button>
     <button class="chat-chip" onclick="chatChip('What tools are free?')">What\'s free?</button>
     <button class="chat-chip" onclick="chatChip('How do I write a cover letter?')">Cover letter</button>
-    <button class="chat-chip" onclick="chatChip('How does visa sponsor finder work?')">Visa finder</button>
   </div>
   <!-- Input bar -->
   <div style="padding:10px 12px 12px;border-top:1px solid #f0ede8;display:flex;gap:8px;align-items:center;flex-shrink:0">
@@ -4816,7 +4477,7 @@ document.addEventListener('click', function(e) {
 
 <script>
 var _chatHistory = [];
-var _chatBotSystem = "You are Iris, InsideTrack's friendly AI assistant. InsideTrack is an AI job search copilot with these tools:\n\n1. ATS Scanner: Upload CV + job description. AI scores match 0-100%, finds missing keywords, gives improvement suggestions.\n2. CV Tailor: After scanning, click Tailor to get a fully rewritten CV for the role. Download as DOCX or PDF.\n3. Visa Sponsor Finder: Upload CV + pick a country. Finds top 10 companies likely to sponsor your visa.\n4. Cover Letter AI: Auto-fills from your CV. Writes 4-paragraph cover letter in Le Careers style. Download as DOCX or PDF.\n5. LinkedIn Outreach AI: Generates 5 personalised messages: connection note, recruiter message, 3 follow-ups.\n6. Application Tracker: Log applications, track status, get AI insights.\n\nGetting started: Click Start free, upload your CV (PDF or Word), paste a job description, click Scan now.\n\nFree plan: 3 ATS scans, 1 CV tailor, 3 re-tailor passes, all tools. Pro: 7/month, unlimited.\n\nBe concise, warm and helpful. Max 3 sentences per reply. Use simple language. If they ask about something outside InsideTrack, gently redirect to the tools.";
+var _chatBotSystem = "You are Iris, InsideTrack's friendly AI assistant. InsideTrack is an AI job search copilot with these tools:\n\n1. ATS Scanner: Upload CV + job description. AI scores match 0-100%, finds missing keywords, gives improvement suggestions.\n2. CV Tailor: After scanning, click Tailor to get a fully rewritten CV for the role. Download as DOCX or PDF.\n3. Cover Letter AI: Auto-fills from your CV. Writes 4-paragraph cover letter in Le Careers style. Download as DOCX or PDF.\n4. LinkedIn Outreach AI: Generates 5 personalised messages: connection note, recruiter message, 3 follow-ups.\n5. Application Tracker: Log applications, track status, get AI insights.\n\nGetting started: Click Start free, upload your CV (PDF or Word), paste a job description, click Scan now.\n\nFree plan: 3 ATS scans, 1 CV tailor, 3 re-tailor passes, all tools. Pro: 7/month, unlimited.\n\nBe concise, warm and helpful. Max 3 sentences per reply. Use simple language. If they ask about something outside InsideTrack, gently redirect to the tools.";
 
 var _chatOpen = false;
 
