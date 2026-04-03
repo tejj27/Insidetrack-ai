@@ -27,7 +27,7 @@ body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);lin
 .brand-name .it-inside{color:var(--ink)}
 .brand-name .it-track{color:var(--green)}
 .brand-name .it-dot{color:var(--ink);font-weight:400;font-size:15px}
-.brand-tag{font-size:10px;color:var(--ink4);font-family:'Geist Mono',monospace;letter-spacing:0.04em;margin-top:2px}
+.brand-tag{font-size:10px;font-family:'Instrument Serif',serif;font-style:italic;color:var(--green);margin-top:1px;letter-spacing:0.01em;opacity:0.85}
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;transition:all 0.15s}
 .btn-primary{background:var(--ink);color:var(--cream)} .btn-primary:hover{background:var(--ink2)}
@@ -237,7 +237,7 @@ select:focus{border-color:var(--green)}
   <div class="hero">
     <div class="hero-badge">✦ AI powered · Free to start</div>
     <h1 class="hero-title">Land more interviews<br>with <span>every application</span></h1>
-    <p class="hero-sub">InsideTrack gives you five AI tools to tailor your CV, write cover letters, find visa sponsors, generate outreach messages, and track every application — all in one place.</p>
+    <p class="hero-sub">InsideTrack gives you five AI tools to tailor your CV, write cover letters, find visa sponsors, generate outreach messages, and track every application, all in one place.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
       <button id="hero-signin-btn" class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
@@ -606,7 +606,7 @@ select:focus{border-color:var(--green)}
             <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--cream3);background:var(--cream2)">
               <div style="font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px">
                 <span style="width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block"></span>
-                Tailored CV — same facts, stronger presentation
+                Tailored CV · same facts, stronger presentation
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <button class="copy-btn" onclick="copyTailoredCV(this)" style="margin:0">📋 Copy</button>
@@ -852,7 +852,7 @@ select:focus{border-color:var(--green)}
         <div class="form-group" style="margin-top:4px">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink2)">
             <input type="checkbox" id="outreach-visa" style="width:15px;height:15px;cursor:pointer;accent-color:#0077b5">
-            I need visa sponsorship — mention this in the message
+            I need visa sponsorship, mention this in the message
           </label>
         </div>
         <div class="error-msg" id="outreach-error"></div>
@@ -968,7 +968,7 @@ select:focus{border-color:var(--green)}
           </div>
           <div class="form-group">
             <label class="field-label">Hiring Manager Name <span style="font-weight:400;color:var(--ink4)">(optional)</span></label>
-            <input type="text" id="cl-manager" placeholder="e.g. Sarah Johnson — or leave blank">
+            <input type="text" id="cl-manager" placeholder="e.g. Sarah Johnson (or leave blank)">
           </div>
           <div class="form-group">
             <label class="field-label">Where did you find this job? <span style="font-weight:400;color:var(--ink4)">(optional)</span></label>
@@ -4668,7 +4668,8 @@ function showUpgradeModal(){
   <div id="user-menu" style="display:none;position:fixed;top:12px;right:16px;z-index:2000">
     <button onclick="toggleUserDropdown()" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #e4dfd4;border-radius:30px;padding:4px 12px 4px 4px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.08);font-family:'Geist',sans-serif">
       <div id="user-avatar" style="width:28px;height:28px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0"></div>
-      <span id="nav-user-name" style="font-size:13px;font-weight:600;color:#1a1814;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <span id="nav-user-name" style="font-size:13px;font-weight:700;color:#7c3aed;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Geist',sans-serif"></span>
+      <span style="font-size:10px;color:#9a9590;margin-left:-2px">▾</span>
     </button>
   </div>
 
