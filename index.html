@@ -658,10 +658,10 @@ select:focus{border-color:var(--green)}
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--cream3);background:var(--cream2)">
               <div style="display:inline-flex;background:#dbd7d0;border-radius:10px;padding:3px;gap:2px">
                 <button onclick="switchCVView('preview')" id="view-preview-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:white;color:var(--ink);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.13);transition:all 0.15s">👁 Preview</button>
-                <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:transparent;color:var(--ink3);cursor:pointer;box-shadow:none;transition:all 0.15s">🖊 Edit inline</button>
+                <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:transparent;color:var(--ink3);cursor:pointer;box-shadow:none;transition:all 0.15s">🖊 Edit</button>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
-                <span id="wysiwyg-hint-text" style="display:none;font-size:11px;color:var(--green);font-family:'Geist',sans-serif">✏️ Click any text to edit</span>
+                <span id="wysiwyg-hint-text" style="display:none;font-size:11px;color:var(--ink3);font-family:'Geist',sans-serif">✏️ Click any text to edit</span>
                 <button onclick="showAddSection()" id="add-section-btn" style="display:none;background:var(--green);color:white;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap">+ Add section</button>
               </div>
             </div>
@@ -3450,8 +3450,8 @@ function toggleWYSIWYG() {
   var hintText = document.getElementById('wysiwyg-hint-text');
   var addSecBtn = document.getElementById('add-section-btn');
   if (_wysiwygMode) {
-    // Edit inline segment → active (green pill)
-    if (btn) { btn.style.background = 'var(--green)'; btn.style.color = 'white'; btn.style.boxShadow = '0 1px 4px rgba(26,107,60,0.3)'; btn.textContent = '✅ Done editing'; }
+    // Edit segment → active (dark ink pill)
+    if (btn) { btn.style.background = 'var(--ink)'; btn.style.color = 'var(--cream)'; btn.style.boxShadow = '0 1px 4px rgba(0,0,0,0.18)'; }
     // Preview segment → inactive
     if (pb) { pb.style.background = 'transparent'; pb.style.color = 'var(--ink3)'; pb.style.boxShadow = 'none'; }
     if (hintText) hintText.style.display = 'inline';
@@ -3459,8 +3459,8 @@ function toggleWYSIWYG() {
   } else {
     // Preview segment → active (white pill)
     if (pb) { pb.style.background = 'white'; pb.style.color = 'var(--ink)'; pb.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
-    // Edit inline segment → inactive
-    if (btn) { btn.style.background = 'transparent'; btn.style.color = 'var(--ink3)'; btn.style.boxShadow = 'none'; btn.textContent = '🖊 Edit inline'; }
+    // Edit segment → inactive
+    if (btn) { btn.style.background = 'transparent'; btn.style.color = 'var(--ink3)'; btn.style.boxShadow = 'none'; }
     if (hintText) hintText.style.display = 'none';
     if (addSecBtn) addSecBtn.style.display = 'none';
   }
@@ -3526,7 +3526,7 @@ function switchCVView(mode) {
     // Deactivate WYSIWYG if it was on
     if (_wysiwygMode) { _wysiwygMode = false; var doc2 = document.getElementById('cv-preview-doc'); if (doc2) doc2.removeEventListener('input', _onWYSIWYGInput); }
     if (previewBtn) { previewBtn.style.background = 'white'; previewBtn.style.color = 'var(--ink)'; previewBtn.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
-    if (editBtn) { editBtn.style.background = 'transparent'; editBtn.style.color = 'var(--ink3)'; editBtn.style.boxShadow = 'none'; editBtn.textContent = '🖊 Edit inline'; }
+    if (editBtn) { editBtn.style.background = 'transparent'; editBtn.style.color = 'var(--ink3)'; editBtn.style.boxShadow = 'none'; }
     var ht = document.getElementById('wysiwyg-hint-text'); if (ht) ht.style.display = 'none';
     var ab = document.getElementById('add-section-btn'); if (ab) ab.style.display = 'none';
     renderCVPreview();
