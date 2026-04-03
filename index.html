@@ -1128,6 +1128,68 @@ let _wysiwygMode = false;  // WYSIWYG inline edit toggle
 let _lastATSCompany = '', _lastATSRole = '';
 let matcherText = '';
 
+// ── Demo Mode (no API credits needed) ──
+// Add ?demo to URL to enable: e.g. http://localhost:3000/?demo
+var DEMO_MODE = window.location.search.includes('demo');
+if (DEMO_MODE) {
+  document.addEventListener('DOMContentLoaded', function() {
+    var banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;bottom:16px;right:16px;background:#1a1814;color:#faf8f4;padding:8px 16px;border-radius:9px;font-size:12px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px';
+    banner.innerHTML = '<span style="color:#1a6b3c;font-size:16px">●</span> DEMO MODE — no API calls';
+    document.body.appendChild(banner);
+  });
+}
+
+function _demoCallClaude(system) {
+  // Detect which call this is from the system prompt content
+  var isATS = system.indexOf('ATS (Applicant Tracking System) keyword') !== -1;
+  var isField = system.indexOf('career classification AI') !== -1;
+  // Otherwise it's a tailor call
+
+  if (isField) {
+    return Promise.resolve({
+      field: 'Business', confidence: 85, reason: 'CV shows business analysis and consulting experience.',
+      tone: 'formal', cv_length: '1-page', suggested_template: 'classic'
+    });
+  }
+
+  if (isATS) {
+    return Promise.resolve({
+      verdict: 'Strong match with minor keyword gaps',
+      company: 'Demo Company Ltd',
+      role: 'Business Analyst',
+      found_keywords: ['Business Analysis','Requirements Gathering','Agile','Stakeholder Management','SQL','Power BI','Process Mapping','UAT','BPMN','JIRA','Excel','Data Analysis','KPI Reporting','Workshop Facilitation'],
+      missing_keywords: ['Salesforce','Tableau','Prince2','Six Sigma'],
+      suggestions: [
+        {label:'Strengthen automation bullet',before:'Worked on automation projects using Automation Anywhere',after:'Automated enterprise workflows using Automation Anywhere, reducing manual workload by 40%',reason:'Quantified impact and stronger action verb improves ATS and recruiter appeal'},
+        {label:'Sharpen requirements bullet',before:'Conducted requirements gathering sessions with stakeholders',after:'Led requirements workshops with business stakeholders to define BRD and functional specs',reason:'More specific language aligns with JD terminology'},
+        {label:'Add KPI context to dashboard bullet',before:'Built Power BI dashboards for the team',after:'Built Power BI dashboards tracking operational KPIs, enabling data-driven decision-making',reason:'Adding outcome increases impact score'}
+      ],
+      tips: [
+        'Quantify every achievement — numbers stand out to both ATS and recruiters',
+        'Use exact job title keywords from the JD in your summary',
+        'Keep bullet points under 90 characters so they fit on one printed line',
+        'Move your most recent role\'s strongest bullets to the top of the experience section'
+      ]
+    });
+  }
+
+  // CV tailor — pass back the resume text with minor demo tweaks
+  var base = resumeText || 'Jane Smith\njane@email.com | 07700 000000 | London\n\nSUMMARY\nHaving recently graduated with Distinction in MSc Business Analytics from Demo University, I have 2 years of experience at Demo Corp.\nI automated reporting workflows reducing manual workload by 35% and built dashboards tracking key business KPIs.\nI am actively seeking Business Analyst roles in digital transformation in London.\n\nWORK EXPERIENCE\nBusiness Analyst | Demo Corp     Jan 2023 - Present\n• Automated data workflows using SQL, reducing manual reporting time by 35%\n• Built Power BI dashboards tracking operational KPIs for senior stakeholders\n• Documented BPMN process maps and requirements for digital transformation programmes\n• Led UAT cycles reviewing test scripts and managing defect triage within Agile sprints\n• Facilitated requirements workshops with Product Owners to define product backlog\n\nEDUCATION\nMSc Business Analytics, Distinction | Demo University     2020 - 2022\n\nSKILLS\nTechnical: SQL, Python, Excel, Power BI\nTools & Platforms: JIRA, Visio, Automation Anywhere\nBusiness Analysis: Requirements Gathering, Process Mapping, BRD, Stakeholder Workshops\nMethodologies: Agile/Scrum, UAT, KPI Reporting';
+    return Promise.resolve({
+    estimated_new_score: 84,
+    bump_description: 'CV sharpened with stronger action verbs, quantified metrics, and tighter bullet structure.',
+    changes_made: [
+      'Strengthened summary with specific achievement metric',
+      'Rewrote automation bullet with quantified 40% impact',
+      'Tightened requirements bullet to match JD terminology',
+      'Reorganised skills into clear ATS-friendly categories'
+    ],
+    gaps: ['Salesforce not in CV — cannot be added honestly', 'Prince2 certification not evidenced — skipped'],
+    tailored_cv: base
+  });
+}
+
 // ── Navigation ──
 function openApp(tool) {
   document.getElementById('screen-landing').style.display = 'none';
@@ -1207,6 +1269,11 @@ async function matcherFileSelect(e) {
 
 // ── callClaude ──
 async function callClaude(system, user, maxTokens) {
+  if (DEMO_MODE) {
+    // Simulate a short network delay so the loading spinner shows
+    await new Promise(function(r){ setTimeout(r, 900); });
+    return _demoCallClaude(system);
+  }
   const res = await fetch('/api/chat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -2021,7 +2088,23 @@ function downloadCVasPDF() {
     executive:  '@page{margin:10mm 14mm;size:A4}body{font-family:Georgia,serif;color:#1a1814;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:16pt;margin:0 0 3px 0;color:#1a4fa0}h2{color:#1a4fa0;border-bottom:1.5px solid #1a4fa0;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
   };
 
-  var style = '<style>' + (tplCSS[t] || tplCSS.classic) + '</style>';
+  // Detect short experience → apply compact overrides to fit 1 page
+  var _yearMatch = cvText.match(/\b(20\d\d)\b/g);
+  var _cvYears = 2;
+  if (_yearMatch && _yearMatch.length >= 2) {
+    var _yNums = _yearMatch.map(Number);
+    _cvYears = Math.max(..._yNums) - Math.min(..._yNums);
+  }
+  var compact = _cvYears < 5;
+  var compactOverride = compact ? [
+    'h2{margin-top:7px!important;margin-bottom:3px!important}',
+    'p{margin:1px 0!important}',
+    'ul{margin:1px 0!important;padding-left:13px!important}',
+    'li{margin:0!important;line-height:1.35!important}',
+    'body{line-height:1.35!important;font-size:9.5pt!important}',
+    '@page{margin:8mm 12mm!important}'
+  ].join('') : '';
+  var style = '<style>' + (tplCSS[t] || tplCSS.classic) + compactOverride + '</style>';
   var bodyHtml = '';
   var lines = cvText.split(String.fromCharCode(10));
   var inList = false;
@@ -3132,10 +3215,23 @@ function renderCVPreview() {
   function ex(t){ return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function edAttr(type){ return E ? ' contenteditable="true" data-cv-type="'+type+'"' : ' data-cv-type="'+type+'"'; }
 
+  // Detect short experience → compact spacing to fit 1 page
+  var _previewYears = 2;
+  var _pyMatch = text.match(/\b(20\d\d)\b/g);
+  if (_pyMatch && _pyMatch.length >= 2) {
+    var _pyNums = _pyMatch.map(Number);
+    _previewYears = Math.max.apply(null,_pyNums) - Math.min.apply(null,_pyNums);
+  }
+  var _compact = _previewYears < 5;
+
   // ── Template style configs ──
   var T = {
     classic: {
-      pad:'36px 48px', font:"'Times New Roman',Georgia,serif", sz:'10pt', color:'#1a1814', lh:'1.45',
+      pad: _compact ? '20px 36px' : '36px 48px',
+      font:"'Times New Roman',Georgia,serif",
+      sz: _compact ? '9.5pt' : '10pt',
+      color:'#1a1814',
+      lh: _compact ? '1.35' : '1.45',
       nameAlign:'center', nameSz:'20pt', nameFont:"'Times New Roman',Georgia,serif", nameColor:'#1a1814', nameTransform:'uppercase', nameSpacing:'1.5px',
       conAlign:'center', conSz:'9pt', conColor:'#888',
       hColor:'#1a1814', hSz:'9.5pt', hFont:"'Times New Roman',Georgia,serif", hBorder:'1.5px solid #1a1814', hBg:'', hPad:'0 0 2px 0', hTransform:'uppercase',
@@ -3917,6 +4013,7 @@ async function signOut(){
 }
 function doSignOut(){ signOut(); }
 async function checkScanLimit(){
+  if(DEMO_MODE) return true; // demo mode: unlimited scans, no Supabase needed
   if(_currentUser){
     try {
       var r = await supaGetProfile(_currentUser.id);
@@ -3941,6 +4038,7 @@ async function checkScanLimit(){
   return true;
 }
 async function incrementScanCount(){
+  if(DEMO_MODE) return; // demo mode: don't touch Supabase
   if(_currentUser){
     try {
       var profile = await supaGetProfile(_currentUser.id);
