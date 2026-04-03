@@ -1248,6 +1248,41 @@ function _autoFillCV() {
   clCheckReady();
 }
 
+// Build a clean href from a contact item that may have a label prefix ("LinkedIn: ...")
+// and PDF-extracted spaces inside the URL path ("tejal - sathe" → "tejal-sathe")
+function _contactHref(text) {
+  // Strip label prefix: "LinkedIn: ", "Website: ", etc.
+  var url = text.replace(/^[A-Za-z\s]+:\s*/, '').trim();
+  // Remove spaces around hyphens inside URL paths (PDF artifact: "tejal - sathe" → "tejal-sathe")
+  url = url.replace(/\s*-\s*/g, '-');
+  // Remove any remaining spaces (PDF sometimes adds spaces in URLs)
+  url = url.replace(/\s+/g, '');
+  if (url && !/^https?:\/\//.test(url)) url = 'https://' + url;
+  return url;
+}
+
+// Join contact items where PDF has split a URL across multiple items
+// e.g. ["linkedin.com/in/", "tejal-sathe"] → ["linkedin.com/in/tejal-sathe"]
+function _joinContactParts(parts) {
+  var out = [];
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i].trim();
+    if (!p) continue;
+    // If previous item was a URL ending in "/" and this item looks like a path fragment (no @, not a location)
+    if (out.length > 0) {
+      var prev = out[out.length - 1];
+      var prevIsUrlFragment = /\/$/.test(prev) && /linkedin|\.com|\/in\//.test(prev);
+      var currLooksLikePath = !/[@|•]/.test(p) && !/^[A-Z][a-z]+,\s*[A-Z]/.test(p) && p.length < 50 && !/\d{4,}/.test(p);
+      if (prevIsUrlFragment && currLooksLikePath) {
+        out[out.length - 1] = prev + p.replace(/\s*-\s*/g, '-').replace(/\s+/g, '');
+        continue;
+      }
+    }
+    out.push(p);
+  }
+  return out;
+}
+
 function _autoFillOutreachCV() {
   var cv = _tailoredCVText || resumeText;
   if (!cv) return;
@@ -2161,7 +2196,7 @@ function downloadCVasPDF() {
     tech:       '@page{margin:10mm 13mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0f172a}h2{color:#0369a1;border-bottom:1.5px solid #0369a1;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0369a1}',
     law:        '@page{margin:12mm 16mm;size:A4}body{font-family:"Times New Roman",Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.6;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:17pt;margin:0 0 2px 0;color:#1a1814}h2{text-align:left;text-transform:uppercase;letter-spacing:1.5px;font-size:9.5pt;font-weight:700;border-top:1.5px solid #1a1814;border-bottom:1.5px solid #1a1814;padding:2px 0;margin:14px 0 6px 0;color:#1a1814}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:2px 0}',
     science:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0d3d38}h2{background:#e8f5f3;color:#0d6655;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0d6655}',
-    creative:   '@page{margin:0;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0}#sidebar{width:150px;min-height:100vh;background:#1a1814;padding:24px 14px;float:left;color:white;box-sizing:border-box}#main{margin-left:150px;padding:24px 28px}h1{font-size:14pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:white;margin:0 0 10px 0;line-height:1.2}h2{color:#c8a84b;border-bottom:1.5px solid #c8a84b;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}li::marker{color:#c8a84b}.contact-item{font-size:8pt;color:rgba(255,255,255,0.7);margin-bottom:4px;word-break:break-all}',
+    creative:   '@page{margin:0;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0;display:table;width:100%;table-layout:fixed}#sidebar{display:table-cell;width:160px;background:#1a1814;padding:24px 14px;color:white;vertical-align:top;box-sizing:border-box}#main{display:table-cell;padding:24px 28px;vertical-align:top}h1{font-size:14pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:white;margin:0 0 10px 0;line-height:1.2}h2{color:#c8a84b;border-bottom:1.5px solid #c8a84b;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}li::marker{color:#c8a84b}.contact-item{display:block;font-size:8pt;color:rgba(255,255,255,0.7);margin-bottom:4px;overflow-wrap:anywhere;word-break:break-word;text-decoration:none}',
     // backwards compatibility
     modern:     '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #1a6b3c;padding-bottom:5px}h2{color:#1a6b3c;border-bottom:1.5px solid #1a6b3c;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
     minimal:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:left;font-size:16pt;font-weight:700;margin:0 0 3px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:1px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
@@ -2200,11 +2235,14 @@ function downloadCVasPDF() {
     if (_cvPhoto) sHtml += '<div style="width:72px;height:72px;border-radius:50%;overflow:hidden;border:2.5px solid #c8a84b;margin:0 auto 14px"><img src="'+_cvPhoto+'" style="width:100%;height:100%;object-fit:cover;display:block"></div>';
     sHtml += '<h1>'+cName+'</h1>';
     if (cContact) {
-      cContact.split(/[|•]/).forEach(function(p){
+      var cParts = _joinContactParts(cContact.split(/[|•]/));
+      cParts.forEach(function(p){
         var pt=p.trim(); if(!pt) return;
         var isUrl=/linkedin|http|\.com\//.test(pt), isEmail=/@/.test(pt);
-        if(isUrl||isEmail){ var href=(isUrl&&!/^https?:\/\//.test(pt)?'https://':'')+pt; sHtml+='<a href="'+href+'" class="contact-item" style="display:block;text-decoration:none;color:rgba(255,255,255,0.7);overflow-wrap:anywhere;word-break:break-word">'+pt+'</a>'; }
-        else { sHtml+='<p class="contact-item">'+pt+'</p>'; }
+        if(isUrl||isEmail){
+          var href=isEmail?('mailto:'+pt.replace(/^[A-Za-z\s]+:\s*/,'').trim()):_contactHref(pt);
+          sHtml+='<a href="'+href+'" class="contact-item">'+pt+'</a>';
+        } else { sHtml+='<p class="contact-item">'+pt+'</p>'; }
       });
     }
     var mHtml = ''; var inUl=false;
@@ -3432,12 +3470,13 @@ function renderCVPreview() {
     if (contactLine) {
       var cparts = contactLine.split(/[|•]/);
       out += '<div'+edAttr('contact')+'>';
-      cparts.forEach(function(p){
+      var cpartsMerged = _joinContactParts(cparts);
+      cpartsMerged.forEach(function(p){
         var pt=p.trim(); if(!pt) return;
         var isUrl=/linkedin|http|\.com\//.test(pt);
         var isEmail=/@/.test(pt);
         if(isUrl||isEmail){
-          var href=(isUrl&&!/^https?:\/\//.test(pt)?'https://':'')+pt;
+          var href=isEmail?('mailto:'+pt.replace(/^[A-Za-z\s]+:\s*/,'').trim()):_contactHref(pt);
           out+='<a href="'+href+'" style="display:block;font-size:'+s.conSz+';color:'+s.conColor+';margin-bottom:4px;line-height:1.4;overflow-wrap:anywhere;word-break:break-word;text-decoration:none">'+ex(pt)+'</a>';
         } else {
           out+='<div style="font-size:'+s.conSz+';color:'+s.conColor+';margin-bottom:4px;line-height:1.4">'+ex(pt)+'</div>';
