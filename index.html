@@ -654,14 +654,16 @@ select:focus{border-color:var(--green)}
                 </div>
               </div>
             </div>
-            <!-- View tabs -->
-            <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--cream3);background:var(--cream2)">
-              <button onclick="switchCVView('preview')" id="view-preview-btn" style="flex:1;padding:8px 10px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-bottom:2px solid var(--green);background:transparent;color:var(--green);cursor:pointer">👁 Preview</button>
-              <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="padding:7px 14px;font-size:12px;font-weight:700;font-family:'Geist',sans-serif;border:1.5px solid var(--green);border-radius:8px;background:white;color:var(--green);cursor:pointer;white-space:nowrap;transition:all 0.15s">🖊 Edit inline</button>
-            </div>
-            <div class="wysiwyg-hint" id="wysiwyg-hint" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-              <span>✏️ Click any text in the CV to edit it directly. Changes save automatically.</span>
-              <button onclick="showAddSection()" style="background:var(--green);color:white;border:none;border-radius:7px;padding:5px 12px;font-size:11px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap">+ Add section</button>
+            <!-- Toolbar -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--cream3);background:var(--cream2)">
+              <div style="display:inline-flex;background:#dbd7d0;border-radius:10px;padding:3px;gap:2px">
+                <button onclick="switchCVView('preview')" id="view-preview-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:white;color:var(--ink);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.13);transition:all 0.15s">👁 Preview</button>
+                <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:transparent;color:var(--ink3);cursor:pointer;box-shadow:none;transition:all 0.15s">🖊 Edit inline</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span id="wysiwyg-hint-text" style="display:none;font-size:11px;color:var(--green);font-family:'Geist',sans-serif">✏️ Click any text to edit</span>
+                <button onclick="showAddSection()" id="add-section-btn" style="display:none;background:var(--green);color:white;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap">+ Add section</button>
+              </div>
             </div>
             <!-- Add section modal -->
             <div id="add-section-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center">
@@ -3437,32 +3439,31 @@ function toggleWYSIWYG() {
   _wysiwygMode = !_wysiwygMode;
   var doc = document.getElementById('cv-preview-doc');
   var btn = document.getElementById('wysiwyg-btn');
-  var hint = document.getElementById('wysiwyg-hint');
   var previewPane = document.getElementById('cv-preview-pane');
   var editor = document.getElementById('tailor-cv-output');
   // Always show preview pane in WYSIWYG mode
   if (_wysiwygMode) {
     if (previewPane) previewPane.style.display = 'flex';
     if (editor) editor.style.display = 'none';
-    var pb = document.getElementById('view-preview-btn');
-    if (pb) { pb.style.borderBottomColor = 'transparent'; pb.style.color = 'var(--ink4)'; }
   }
-  if (btn) {
-    if (_wysiwygMode) {
-      btn.style.background = 'var(--green)';
-      btn.style.color = 'white';
-      btn.style.border = 'none';
-      btn.style.boxShadow = '0 2px 8px rgba(26,107,60,0.25)';
-      btn.textContent = '✅ Done editing';
-    } else {
-      btn.style.background = 'white';
-      btn.style.color = 'var(--green)';
-      btn.style.border = '1.5px solid var(--green)';
-      btn.style.boxShadow = 'none';
-      btn.textContent = '🖊 Edit inline';
-    }
+  var pb = document.getElementById('view-preview-btn');
+  var hintText = document.getElementById('wysiwyg-hint-text');
+  var addSecBtn = document.getElementById('add-section-btn');
+  if (_wysiwygMode) {
+    // Edit inline segment → active (green pill)
+    if (btn) { btn.style.background = 'var(--green)'; btn.style.color = 'white'; btn.style.boxShadow = '0 1px 4px rgba(26,107,60,0.3)'; btn.textContent = '✅ Done editing'; }
+    // Preview segment → inactive
+    if (pb) { pb.style.background = 'transparent'; pb.style.color = 'var(--ink3)'; pb.style.boxShadow = 'none'; }
+    if (hintText) hintText.style.display = 'inline';
+    if (addSecBtn) addSecBtn.style.display = 'inline-flex';
+  } else {
+    // Preview segment → active (white pill)
+    if (pb) { pb.style.background = 'white'; pb.style.color = 'var(--ink)'; pb.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
+    // Edit inline segment → inactive
+    if (btn) { btn.style.background = 'transparent'; btn.style.color = 'var(--ink3)'; btn.style.boxShadow = 'none'; btn.textContent = '🖊 Edit inline'; }
+    if (hintText) hintText.style.display = 'none';
+    if (addSecBtn) addSecBtn.style.display = 'none';
   }
-  if (hint) hint.className = _wysiwygMode ? 'wysiwyg-hint visible' : 'wysiwyg-hint';
   if (doc) {
     renderCVPreview();
     if (_wysiwygMode) {
@@ -3517,16 +3518,22 @@ function switchCVView(mode) {
   var preview = document.getElementById('cv-preview-pane');
   var editor = document.getElementById('tailor-cv-output');
   var previewBtn = document.getElementById('view-preview-btn');
+  var editBtn = document.getElementById('wysiwyg-btn');
   if (!preview) return;
   if (mode === 'preview') {
     preview.style.display = 'flex';
     editor.style.display = 'none';
-    if (previewBtn) { previewBtn.style.borderBottomColor = 'var(--green)'; previewBtn.style.color = 'var(--green)'; }
+    // Deactivate WYSIWYG if it was on
+    if (_wysiwygMode) { _wysiwygMode = false; var doc2 = document.getElementById('cv-preview-doc'); if (doc2) doc2.removeEventListener('input', _onWYSIWYGInput); }
+    if (previewBtn) { previewBtn.style.background = 'white'; previewBtn.style.color = 'var(--ink)'; previewBtn.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
+    if (editBtn) { editBtn.style.background = 'transparent'; editBtn.style.color = 'var(--ink3)'; editBtn.style.boxShadow = 'none'; editBtn.textContent = '🖊 Edit inline'; }
+    var ht = document.getElementById('wysiwyg-hint-text'); if (ht) ht.style.display = 'none';
+    var ab = document.getElementById('add-section-btn'); if (ab) ab.style.display = 'none';
     renderCVPreview();
   } else {
     preview.style.display = 'none';
     editor.style.display = 'block';
-    if (previewBtn) { previewBtn.style.borderBottomColor = 'transparent'; previewBtn.style.color = 'var(--ink4)'; }
+    if (previewBtn) { previewBtn.style.background = 'transparent'; previewBtn.style.color = 'var(--ink3)'; previewBtn.style.boxShadow = 'none'; }
   }
 }
 
