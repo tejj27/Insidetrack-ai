@@ -4679,7 +4679,7 @@ function showUpgradeModal(){
   </div>
 
   <!-- USER DROPDOWN -->
-  <div id="user-dropdown" onclick="event.stopPropagation()" style="display:none;position:fixed;top:58px;right:16px;background:white;border-radius:16px;min-width:240px;box-shadow:0 16px 48px rgba(0,0,0,0.18);z-index:3000;overflow:hidden;border:1px solid #e8e3dd">
+  <div id="user-dropdown" onclick="event.stopPropagation()" style="display:none;position:fixed;top:62px;right:16px;background:white;border-radius:16px;min-width:260px;box-shadow:0 16px 48px rgba(0,0,0,0.18);z-index:9999;overflow:hidden;border:1px solid #e8e3dd">
     <div style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);padding:18px 20px 16px">
       <div id="user-avatar-name" style="font-size:16px;font-weight:800;color:white;margin-bottom:3px;letter-spacing:-0.3px"></div>
       <div id="user-email-display" style="font-size:12px;color:rgba(255,255,255,0.7)"></div>
@@ -4714,7 +4714,8 @@ function showUpgradeModal(){
 document.addEventListener('click', function(e) {
   var dd = document.getElementById('user-dropdown');
   var av = document.getElementById('user-avatar');
-  if (dd && av && !dd.contains(e.target) && !av.contains(e.target)) {
+  var menu = document.getElementById('user-menu');
+  if (dd && !dd.contains(e.target) && menu && !menu.contains(e.target)) {
     dd.style.display = 'none';
   }
 });
