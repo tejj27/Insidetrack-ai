@@ -227,6 +227,11 @@ select:focus{border-color:var(--green)}
         <div class="brand-tag">AI Job Search Copilot</div>
       </div>
     </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <a onclick="document.getElementById('section-tools')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">Tools</a>
+      <a onclick="document.getElementById('section-pricing')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">Pricing</a>
+      <a onclick="document.getElementById('faq-list')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">FAQ</a>
+    </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">3 free scans</span>
       <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
@@ -249,7 +254,7 @@ select:focus{border-color:var(--green)}
     </div>
   </div>
 
-  <div class="tools-grid" style="grid-template-columns:repeat(2,1fr)">
+  <div id="section-tools" class="tools-grid" style="grid-template-columns:repeat(2,1fr)">
     <div class="tool-card" onclick="openApp('ats')">
       <div class="tool-num">01  ATS SCANNER</div>
       <div class="tool-icon">📊</div>
@@ -286,7 +291,7 @@ select:focus{border-color:var(--green)}
     </div>
   </div>
 
-  <div style="text-align:center;padding:0 28px 24px"><h2 style="font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.3px;margin-bottom:4px">Simple pricing</h2><p style="font-size:13px;color:var(--ink4)">No card needed to start</p></div>
+  <div id="section-pricing" style="text-align:center;padding:0 28px 24px"><h2 style="font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.3px;margin-bottom:4px">Simple pricing</h2><p style="font-size:13px;color:var(--ink4)">No card needed to start</p></div>
   <div class="pricing">
     <div class="price-card">
       <div class="price-name">Free</div>
