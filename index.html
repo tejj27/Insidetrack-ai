@@ -915,6 +915,11 @@ select:focus{border-color:var(--green)}
           <p class="panel-sub">Nobody enjoys writing cover letters. We do it for you — tailored to the company, role and your actual background. Under 350 words, every time.</p>
         </div>
 
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <button id="cl-exp-grad" onclick="clSetExp('graduate')" data-active="true" style="padding:7px 18px;border-radius:20px;border:1.5px solid var(--green);background:var(--green);color:white;font-size:13px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer">🎓 Graduate</button>
+          <button id="cl-exp-exp" onclick="clSetExp('experienced')" data-active="false" style="padding:7px 18px;border-radius:20px;border:1.5px solid var(--cream3);background:var(--cream);color:var(--ink3);font-size:13px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer">💼 Experienced hire</button>
+        </div>
+
         <div class="form-grid">
           <div class="form-group">
             <label class="field-label">Your Name</label>
@@ -944,19 +949,16 @@ select:focus{border-color:var(--green)}
         </div>
 
         <div class="form-group">
-          <label class="field-label">Your CV <span style="font-weight:400;color:var(--ink4)">(paste or upload)</span>
-            <span id="cl-cv-badge" style="display:none;margin-left:8px;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;border:1.5px solid;vertical-align:middle"></span>
-            <button id="cl-cv-swap" onclick="clSwapCV()" style="display:none;margin-left:6px;background:none;border:1px solid var(--cream3);border-radius:7px;padding:2px 8px;font-size:11px;cursor:pointer;font-family:'Geist',sans-serif;vertical-align:middle">↔ Swap version</button>
-          </label>
+          <label class="field-label">Your CV <span style="font-weight:400;color:var(--ink4)">(paste or upload)</span></label>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+            <span id="cl-cv-badge" style="display:none;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid transparent"></span>
+            <button id="cl-cv-swap" onclick="clSwapCV()" style="display:none;background:none;border:1px solid var(--cream3);border-radius:7px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--ink4);cursor:pointer;font-family:'Geist',sans-serif">🔄 Switch version</button>
+          </div>
           <div class="upload-zone" id="cl-upload-zone" onclick="document.getElementById('cl-file-input').click()" style="margin-bottom:8px">
             <div style="font-size:20px;margin-bottom:4px">📄</div>
             <div class="upload-label" id="cl-upload-label">Click to upload CV (PDF or DOCX)</div>
           </div>
           <input type="file" id="cl-file-input" accept=".pdf,.docx,.doc" style="display:none" onchange="clHandleFile(event)">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
-            <span id="cl-cv-badge" style="display:none;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid transparent"></span>
-            <button id="cl-cv-swap" onclick="clSwapCV()" style="display:none;background:none;border:1px solid var(--cream3);border-radius:7px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--ink4);cursor:pointer;font-family:'Geist',sans-serif;align-items:center;gap:4px">🔄 Switch version</button>
-          </div>
           <textarea id="cl-cv" style="min-height:100px" placeholder="Or paste your CV text here..." oninput="clCheckReady()"></textarea>
         </div>
 
@@ -1208,6 +1210,8 @@ function backToLanding() {
 function switchTool(tool) {
   if (tool === 'tracker') setTimeout(renderTracker, 0);
   if (tool === 'visatest') setTimeout(vtLoadKeys, 0);
+  if (tool === 'coverletter') setTimeout(_autoFillCV, 0);
+  if (tool === 'outreach') setTimeout(_autoFillOutreachCV, 0);
   ['ats','visa','outreach','tracker','coverletter'].forEach(t => {
     document.getElementById('panel-'+t).classList.remove('active');
     const sb = document.getElementById('sbtn-'+t);
@@ -1220,6 +1224,43 @@ function switchTool(tool) {
   if (sb) sb.classList.add('active');
   const mt = document.getElementById('mtab-'+tool);
   if (mt) mt.classList.add('active');
+}
+
+function _autoFillCV() {
+  var cv = _tailoredCVText || resumeText;
+  if (!cv) return;
+  var field = document.getElementById('cl-cv');
+  if (!field || field.value.trim()) return; // don't overwrite if already filled
+  field.value = cv.slice(0, 3000);
+  var usedTailored = !!_tailoredCVText;
+  var badge = document.getElementById('cl-cv-badge');
+  if (badge) {
+    badge.style.display = 'inline-flex';
+    badge.textContent = usedTailored ? '✅ Using tailored CV' : '📄 Using original CV';
+    badge.style.background = usedTailored ? '#e8f5e9' : '#fff8e6';
+    badge.style.color = usedTailored ? '#1a6b3c' : '#9a6200';
+    badge.style.borderColor = usedTailored ? '#a7d7b5' : '#f0c040';
+  }
+  var swapBtn = document.getElementById('cl-cv-swap');
+  if (swapBtn) swapBtn.style.display = (resumeText && _tailoredCVText) ? 'inline-flex' : 'none';
+  var uploadZone = document.getElementById('cl-upload-zone');
+  if (uploadZone) uploadZone.style.display = 'none';
+  clCheckReady();
+}
+
+function _autoFillOutreachCV() {
+  var cv = _tailoredCVText || resumeText;
+  if (!cv) return;
+  var field = document.getElementById('outreach-cv');
+  if (!field || field.value.trim()) return;
+  field.value = cv.slice(0, 2000);
+  var zone = document.getElementById('outreach-upload-zone');
+  if (zone) {
+    zone.classList.add('has-file');
+    var lbl = document.getElementById('outreach-upload-label');
+    if (lbl) lbl.textContent = _tailoredCVText ? '✅ Tailored CV loaded' : '✅ CV loaded from upload';
+  }
+  checkOutreachReady();
 }
 
 // ── File handling ──
@@ -3650,33 +3691,33 @@ function hideModal() {
 }
 
 
+function clSetExp(level) {
+  var gradBtn = document.getElementById('cl-exp-grad');
+  var expBtn  = document.getElementById('cl-exp-exp');
+  if (!gradBtn || !expBtn) return;
+  if (level === 'graduate') {
+    gradBtn.style.background = 'var(--green)'; gradBtn.style.color = 'white'; gradBtn.style.borderColor = 'var(--green)'; gradBtn.dataset.active = 'true';
+    expBtn.style.background  = 'var(--cream)'; expBtn.style.color  = 'var(--ink3)'; expBtn.style.borderColor = 'var(--cream3)'; expBtn.dataset.active = 'false';
+  } else {
+    expBtn.style.background  = 'var(--green)'; expBtn.style.color  = 'white'; expBtn.style.borderColor = 'var(--green)'; expBtn.dataset.active = 'true';
+    gradBtn.style.background = 'var(--cream)'; gradBtn.style.color = 'var(--ink3)'; gradBtn.style.borderColor = 'var(--cream3)'; gradBtn.dataset.active = 'false';
+  }
+}
+// init toggle state
+document.addEventListener('DOMContentLoaded', function() { clSetExp('graduate'); });
+
 function quickCoverLetter() {
-  const jd = document.getElementById('ats-jd') ? document.getElementById('ats-jd').value.trim() : '';
-  const usedTailored = !!_tailoredCVText;
-  const cv = _tailoredCVText || resumeText || '';
+  const jd      = document.getElementById('ats-jd') ? document.getElementById('ats-jd').value.trim() : '';
   const company = _lastATSCompany || '';
-  const role = _lastATSRole || '';
-  switchTool('coverletter');
+  const role    = _lastATSRole || '';
+  switchTool('coverletter'); // _autoFillCV runs inside switchTool
   setTimeout(function() {
-    if(company) document.getElementById('cl-company').value = company;
-    if(role) document.getElementById('cl-role').value = role;
-    if(jd) document.getElementById('cl-jd').value = jd;
-    if(cv) document.getElementById('cl-cv').value = cv.slice(0, 3000);
-    // Show which CV version was used
-    var badge = document.getElementById('cl-cv-badge');
-    if(badge) {
-      badge.style.display = 'inline-flex';
-      badge.textContent = usedTailored ? '✅ Using tailored CV' : '📄 Using original CV';
-      badge.style.background = usedTailored ? '#e8f5e9' : '#fff8e6';
-      badge.style.color = usedTailored ? '#1a6b3c' : '#9a6200';
-      badge.style.borderColor = usedTailored ? '#a7d7b5' : '#f0c040';
-    }
-    // Show swap button only if both versions exist
-    var swapBtn = document.getElementById('cl-cv-swap');
-    if(swapBtn) swapBtn.style.display = (resumeText && _tailoredCVText) ? 'inline-flex' : 'none';
+    if (company) document.getElementById('cl-company').value = company;
+    if (role)    document.getElementById('cl-role').value    = role;
+    if (jd)      document.getElementById('cl-jd').value      = jd;
     clCheckReady();
-    showDlToast(usedTailored ? '✅ Pre-filled with tailored CV — just add your name!' : '📄 Pre-filled with original CV — just add your name!');
-  }, 150);
+    showDlToast('✅ Pre-filled — just add your name and generate!');
+  }, 200);
 }
 
 function clSwapCV() {
@@ -3770,39 +3811,48 @@ async function runCoverLetter() {
 
   const salutation = manager ? 'Dear ' + manager + ',' : 'Dear Hiring Manager,';
 
+  const expLevel = (document.getElementById('cl-exp-grad') && document.getElementById('cl-exp-grad').dataset.active === 'true') ? 'graduate' : 'experienced';
+  const openingLine = expLevel === 'graduate'
+    ? 'I am a recent [Degree + Classification] graduate from [University].'
+    : 'I am a [Job Title] with [X] years of experience at [most recent company].';
+
   try {
     const data = await callClaude(
-      `You are an expert cover letter writer following the Le Careers graduate cover letter template exactly.
+      `You are an expert cover letter writer following the Le Careers cover letter formula exactly. Experience level: ${expLevel}.
 
-STRUCTURE (4 paragraphs + closing — follow this exactly):
+STRUCTURE — 5 paragraphs + closing. Follow this exactly:
 
-PARAGRAPH 1 — OPENING (2-3 sentences):
-"Dear [Hiring Manager name or 'Hiring Manager'],"
-Sentence 1: "I am a recent [Degree + Grade] graduate from [University]." OR if experienced: "I am a [Job Title] with [X] years at [Company]."
-Sentence 2: "I saw the [Role] at [Company] on [source if given], and I absolutely loved it."
-Sentence 3: One genuine, specific reason why THIS company excites them — reference something real and specific from the JD (a product, initiative, mission, client work, or culture point). Make it sound researched, not generic.
+PARAGRAPH 1 — HOOK (2-3 sentences):
+"${salutation}"
+Sentence 1: "${openingLine}"
+Sentence 2: "I saw the [Role] at [Company]${document.getElementById('cl-source').value.trim() ? ' on ' + document.getElementById('cl-source').value.trim() : ''}, and I absolutely loved it."
+Sentence 3: One specific, genuine reason this company excites the candidate — name a real product, programme, initiative, or mission point from the JD. NOT generic ("great company culture"). Sound like you researched them.
 
-PARAGRAPH 2 — COMPANY RESEARCH + ACHIEVEMENT (4-5 sentences):
-Expand on what specifically draws them to this company — a specific initiative, case study, value, or product mentioned in or inferable from the JD. Show genuine enthusiasm. Then link to their strongest CV achievement with a real number. Be specific: name the tool, the output, the metric.
+PARAGRAPH 2 — WHY THIS COMPANY (3-4 sentences):
+This is the most important paragraph. Identify ONE specific thing from the JD (a named initiative, technology, client sector, methodology, or company value) and explain WHY it resonates with the candidate personally. Then connect it directly to their strongest CV achievement — name the tool, metric, or output explicitly. Show you understand what the company does and why you fit into that specifically.
 
-PARAGRAPH 3 — SECOND ACHIEVEMENT (4-5 sentences):
-A second strong, relevant achievement from the CV with numbers or impact. Link it directly to a skill or requirement from the JD. If the CV has extracurriculars or leadership, include one sentence on a non-work achievement that shows character (leadership, creativity, resilience).
+PARAGRAPH 3 — WHY YOU (3-4 sentences):
+A second strong achievement from the CV with a concrete result (number, %, ranking, or named output). Link it to a skill or requirement from the JD. Be specific: name tools used and what the outcome was.
 
-PARAGRAPH 4 — CLOSING (2-3 sentences):
-"[Company] has a special place in my heart, [genuine specific reason — e.g. having researched their work on X / spoken to people at Y / admired their approach to Z]. I know the [training/opportunity/impact] I will receive at [Company] is irreplaceable. I look forward to speaking with you."
-Then: "Yours Sincerely," on its own line, then candidate name on the next line.
+PARAGRAPH 4 — PERSONALITY (2-3 sentences):
+One non-work achievement that shows character — leadership, creativity, resilience, or initiative. This could be a society role, competition, personal project, or community contribution from the CV. Shows the candidate is a well-rounded person, not just a CV.
+
+PARAGRAPH 5 — CLOSE (2-3 sentences):
+"[Company] has a special place in my heart — [genuine reason: e.g. having admired their work on X / researched their approach to Y / spoken to people at Z]. I know the [training/opportunity/impact] I will gain at [Company] is irreplaceable. I look forward to speaking with you."
+Then on new lines: "Yours Sincerely," then the candidate's name.
 
 STRICT RULES:
 - Under 350 words total. Count carefully.
-- CRITICAL: Only use facts, numbers and achievements EXPLICITLY stated in the CV. If a number is not in the CV, do NOT include it. Never invent percentages, counts, or metrics not explicitly mentioned. If caught inventing facts, the candidate will fail their interview.
-- Sound genuine, humble and enthusiastic — not corporate or robotic.
-- Reference the company name at least 3 times naturally.
-- BANNED words: passionate, dedicated, leverage, synergy, hardworking, aligned with my values, people-centered, excited to apply, I am eager, I believe I would be a great fit.
-- No em dashes (—). Use commas or full stops instead.
-- No asterisks or markdown formatting.
-- End EXACTLY with: Yours Sincerely,\n[candidate name]
-- Respond ONLY with valid JSON: {"letter":"<full letter with \n for newlines>"}`,      `Candidate name: ${name}\nSalutation: ${salutation}\nCompany: ${company}\nRole: ${role}\nJob Description: ${jd.slice(0,1500)}\nCV: ${cv.slice(0,2000)}`,
-      1400
+- CRITICAL: Only use facts, numbers, and achievements EXPLICITLY in the CV. Never invent metrics, percentages, or outcomes. If no number exists, describe the impact qualitatively.
+- Sound genuine, humble, and enthusiastic — not corporate or robotic.
+- Reference the company name at least 3 times.
+- BANNED words/phrases: passionate, dedicated, leverage, synergy, hardworking, aligned with my values, people-centered, excited to apply, I am eager, I believe I would be a great fit, dynamic, innovative team.
+- No em dashes (—). Use commas or full stops.
+- No asterisks or markdown.
+- End EXACTLY with: Yours Sincerely,\\n[candidate name]
+- Respond ONLY with valid JSON: {"letter":"<full letter with \\n for newlines>"}`,
+      `Candidate name: ${name}\nSalutation: ${salutation}\nCompany: ${company}\nRole: ${role}\nJob Description: ${jd.slice(0,1800)}\nCV: ${cv.slice(0,2500)}`,
+      1600
     );
 
     const letter = data.letter || '';
