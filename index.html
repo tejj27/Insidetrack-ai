@@ -219,17 +219,24 @@ select:focus{border-color:var(--green)}
 .wysiwyg-hint.visible{display:block}
 
 /* CV Builder */
-.cvb-section-card{background:white;border:1.5px solid var(--cream3);border-radius:12px;margin-bottom:12px;overflow:hidden}
-.cvb-section-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)}
-.cvb-entry{padding:14px 16px;border-top:1px solid var(--cream3)}
-.cvb-entry + .cvb-entry{border-top:1px dashed var(--cream3)}
+.cvb-section-card{background:white;border:1.5px solid var(--cream3);border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);transition:box-shadow 0.2s}
+.cvb-section-card:focus-within{box-shadow:0 0 0 2px rgba(124,58,237,0.14),0 2px 10px rgba(0,0,0,0.07)}
+.cvb-section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)}
+.cvb-entry{padding:16px 18px;border-top:1px solid var(--cream3)}
 .cvb-bullet-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.cvb-add-btn{background:none;border:1.5px dashed var(--cream3);border-radius:8px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink4);width:100%;transition:all 0.15s;text-align:center}
-.cvb-add-btn:hover{border-color:var(--green);color:var(--green)}
-.cvb-tpl-pill{padding:5px 14px;border-radius:20px;border:1.5px solid var(--cream3);background:var(--cream);font-size:11px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;color:var(--ink3);transition:all 0.15s}
-.cvb-tpl-pill:hover{border-color:var(--green);color:var(--green)}
-.cvb-tpl-pill.active{background:var(--green);border-color:var(--green);color:white}
-.cvb-preview-doc{background:white;padding:30px 28px;font-size:10.5pt;line-height:1.55;min-height:540px}
+.cvb-add-btn{background:none;border:1.5px dashed var(--cream3);border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink4);width:100%;transition:all 0.2s;text-align:center}
+.cvb-add-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.cvb-tpl-pill{padding:7px 18px;border-radius:22px;border:1.5px solid var(--cream3);background:white;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;color:var(--ink3);transition:all 0.18s;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.cvb-tpl-pill:hover{border-color:var(--green);color:var(--green);transform:translateY(-1px)}
+.cvb-tpl-pill.active{background:var(--green);border-color:var(--green);color:white;box-shadow:0 3px 14px rgba(124,58,237,0.35);transform:translateY(-1px)}
+/* Document page shell */
+.cvb-page-shell{background:#d8d4cd;border-radius:12px;padding:14px;box-shadow:inset 0 2px 10px rgba(0,0,0,0.1)}
+.cvb-page-paper{background:white;box-shadow:0 8px 40px rgba(0,0,0,0.25),0 2px 8px rgba(0,0,0,0.1);border-radius:2px;overflow-y:auto;max-height:74vh}
+.cvb-preview-doc{padding:36px 34px;font-size:10.5pt;line-height:1.6;min-height:480px}
+/* AI badge on buttons */
+.cvb-ai-btn{background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px}
+.cvb-ai-btn:hover{background:linear-gradient(135deg,#6d28d9,#7c3aed);box-shadow:0 3px 12px rgba(124,58,237,0.4)}
+.cvb-ai-btn:disabled{opacity:0.6;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -1018,38 +1025,54 @@ select:focus{border-color:var(--green)}
 
       <!-- ── CV BUILDER PANEL ── -->
       <div class="tool-panel" id="panel-cvbuilder">
-        <div class="panel-header">
-          <div class="panel-eyebrow" style="color:var(--green)"><div class="panel-eyebrow-dot" style="background:var(--green)"></div>05  CV BUILDER</div>
-          <h2 class="panel-title">Build your CV from scratch</h2>
-          <p class="panel-sub">No blank page. Fill in each section, let AI write your bullet points, pick a template, and download as DOCX or PDF in one click.</p>
+
+        <!-- Top bar: title + template + downloads -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+          <div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+              <div style="width:6px;height:6px;border-radius:50%;background:var(--green)"></div>
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--green)">05  CV BUILDER</span>
+            </div>
+            <h2 style="font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:-0.3px;line-height:1.2">Build your CV from scratch</h2>
+          </div>
+          <!-- Download buttons -->
+          <div style="display:flex;gap:8px;flex-shrink:0">
+            <button onclick="cvbDownloadDocx()" style="display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s;box-shadow:0 2px 10px rgba(124,58,237,0.3)" onmouseover="this.style.background='var(--green-mid)'" onmouseout="this.style.background='var(--green)'">⬇ Download DOCX</button>
+            <button onclick="cvbDownloadPDF()" style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:white;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='var(--ink2)'" onmouseout="this.style.background='var(--ink)'">⬇ Save PDF</button>
+          </div>
         </div>
 
-        <!-- Template + sample row -->
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:var(--cream2);border-radius:12px;border:1.5px solid var(--cream3);margin-bottom:20px">
-          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap">Template</span>
-          <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <!-- Template + sample strip -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:10px 14px;background:white;border-radius:12px;border:1.5px solid var(--cream3);box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Style</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button class="cvb-tpl-pill active" id="cvbtpl-classic" onclick="cvbSelectTemplate('classic',this)">Classic</button>
             <button class="cvb-tpl-pill" id="cvbtpl-modern" onclick="cvbSelectTemplate('modern',this)">Modern</button>
             <button class="cvb-tpl-pill" id="cvbtpl-minimal" onclick="cvbSelectTemplate('minimal',this)">Minimal</button>
             <button class="cvb-tpl-pill" id="cvbtpl-executive" onclick="cvbSelectTemplate('executive',this)">Executive</button>
           </div>
-          <div style="margin-left:auto;display:flex;gap:7px">
-            <button onclick="cvbLoadSample('business')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)'">💼 Business sample</button>
-            <button onclick="cvbLoadSample('tech')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)'">💻 Tech sample</button>
-          </div>
+          <div style="width:1px;height:20px;background:var(--cream3);margin:0 4px"></div>
+          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Samples</span>
+          <button onclick="cvbLoadSample('business')" style="display:inline-flex;align-items:center;gap:5px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">💼 Business</button>
+          <button onclick="cvbLoadSample('tech')" style="display:inline-flex;align-items:center;gap:5px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">💻 Tech</button>
+          <div style="margin-left:auto;font-size:11px;color:var(--ink4);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block"></span>Preview updates live</div>
         </div>
 
-        <!-- Two-column layout -->
-        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+        <!-- Main two-col: form left, document right -->
+        <div style="display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start">
 
-          <!-- LEFT: Form editor -->
-          <div>
-            <!-- Personal Info -->
+          <!-- LEFT: Scrollable form -->
+          <div style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px">
+
+            <!-- Personal Info card -->
             <div class="cvb-section-card">
               <div class="cvb-section-header">
-                <div style="display:flex;align-items:center;gap:8px"><span>👤</span><span style="font-size:13px;font-weight:700;color:var(--ink)">Personal Information</span></div>
+                <div style="display:flex;align-items:center;gap:9px">
+                  <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">👤</div>
+                  <span style="font-size:13px;font-weight:700;color:var(--ink)">Personal Information</span>
+                </div>
               </div>
-              <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+              <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px">
                 <div class="form-row">
                   <div class="form-group" style="margin:0"><label class="field-label">Full Name</label><input type="text" id="cvb-name" placeholder="e.g. Alex Johnson" oninput="cvbRender()"></div>
                   <div class="form-group" style="margin:0"><label class="field-label">Email</label><input type="text" id="cvb-email" placeholder="alex@email.com" oninput="cvbRender()"></div>
@@ -1059,42 +1082,44 @@ select:focus{border-color:var(--green)}
                   <div class="form-group" style="margin:0"><label class="field-label">Location</label><input type="text" id="cvb-location" placeholder="London, UK" oninput="cvbRender()"></div>
                 </div>
                 <div class="form-row">
-                  <div class="form-group" style="margin:0"><label class="field-label">LinkedIn <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" id="cvb-linkedin" placeholder="linkedin.com/in/alexjohnson" oninput="cvbRender()"></div>
-                  <div class="form-group" style="margin:0"><label class="field-label">Portfolio / GitHub <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" id="cvb-portfolio" placeholder="github.com/alexjohnson" oninput="cvbRender()"></div>
+                  <div class="form-group" style="margin:0"><label class="field-label">LinkedIn <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" id="cvb-linkedin" placeholder="linkedin.com/in/you" oninput="cvbRender()"></div>
+                  <div class="form-group" style="margin:0"><label class="field-label">Portfolio / GitHub <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" id="cvb-portfolio" placeholder="github.com/you" oninput="cvbRender()"></div>
                 </div>
               </div>
             </div>
 
-            <!-- Dynamic sections -->
+            <!-- Dynamic sections injected here -->
             <div id="cvb-sections"></div>
 
-            <!-- Add section buttons -->
-            <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:14px 16px">
-              <div style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Add a section</div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button onclick="cvbAddSection('summary')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Summary</button>
-                <button onclick="cvbAddSection('experience')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Work Experience</button>
-                <button onclick="cvbAddSection('education')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Education</button>
-                <button onclick="cvbAddSection('projects')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Projects</button>
-                <button onclick="cvbAddSection('skills')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Skills</button>
-                <button onclick="cvbAddSection('custom')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Other</button>
+            <!-- Add section palette -->
+            <div style="background:white;border:1.5px solid var(--cream3);border-radius:14px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
+              <div style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span>＋</span> Add a section</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+                <button onclick="cvbAddSection('summary')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>📝</span>Summary</button>
+                <button onclick="cvbAddSection('experience')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>💼</span>Work Experience</button>
+                <button onclick="cvbAddSection('education')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>🎓</span>Education</button>
+                <button onclick="cvbAddSection('projects')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>🚀</span>Projects</button>
+                <button onclick="cvbAddSection('skills')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>⚡</span>Skills</button>
+                <button onclick="cvbAddSection('custom')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>➕</span>Other</button>
               </div>
             </div>
-          </div>
 
-          <!-- RIGHT: Live preview -->
-          <div style="position:sticky;top:80px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-              <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.06em">Live Preview</span>
-              <div style="display:flex;gap:6px">
-                <button onclick="cvbDownloadDocx()" style="background:var(--green);color:white;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='var(--green-mid)'" onmouseout="this.style.background='var(--green)'">⬇ DOCX</button>
-                <button onclick="cvbDownloadPDF()" style="background:#1a4fa0;color:white;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='#143d7a'" onmouseout="this.style.background='#1a4fa0'">⬇ PDF</button>
+          </div><!-- /left form -->
+
+          <!-- RIGHT: Document preview -->
+          <div style="position:sticky;top:72px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div>
+                <span style="font-size:12px;font-weight:700;color:var(--ink2)">Document Preview</span>
+                <span style="font-size:11px;color:var(--ink4);margin-left:8px">scroll to see full CV</span>
               </div>
             </div>
-            <div style="border:1px solid var(--cream3);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-md)">
-              <div id="cvb-preview" class="cvb-preview-doc"></div>
+            <!-- Page shell -->
+            <div class="cvb-page-shell">
+              <div class="cvb-page-paper">
+                <div id="cvb-preview" class="cvb-preview-doc"></div>
+              </div>
             </div>
-            <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--ink4)">Updates live as you type</div>
           </div>
 
         </div>
@@ -1320,6 +1345,9 @@ function switchTool(tool) {
   if (tool === 'coverletter') setTimeout(_autoFillCV, 0);
   if (tool === 'outreach') setTimeout(_autoFillOutreachCV, 0);
   if (tool === 'cvbuilder') setTimeout(cvbRender, 0);
+  // Expand main-content for CV builder (needs wide layout for doc preview)
+  var mc = document.querySelector('.main-content');
+  if (mc) mc.style.maxWidth = (tool === 'cvbuilder') ? '100%' : '';
   ['ats','outreach','tracker','coverletter','cvbuilder'].forEach(t => {
     var panel = document.getElementById('panel-'+t);
     if (panel) panel.classList.remove('active');
@@ -4798,7 +4826,7 @@ function cvbEntryHTML(type, si, ei, entry) {
       + cvbBulletsHTML(si, ei, entry.bullets||[])
       + '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">'
       + '<button onclick="cvbAddBullet('+si+','+ei+')" style="background:none;border:1.5px dashed var(--cream3);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif;color:var(--ink4);transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.color=\'var(--green)\'" onmouseout="this.style.borderColor=\'var(--cream3)\';this.style.color=\'var(--ink4)\'">+ Bullet</button>'
-      + '<button onclick="cvbAIBullets('+si+','+ei+',event)" id="cvb-ai-'+si+'-'+ei+'" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif">✨ AI generate bullets</button>'
+      + '<button onclick="cvbAIBullets('+si+','+ei+',event)" id="cvb-ai-'+si+'-'+ei+'" class="cvb-ai-btn">✨ AI generate bullets</button>'
       + '</div>';
   } else if (type === 'education') {
     html += '<div class="form-row" style="margin-bottom:10px">'
@@ -4824,7 +4852,7 @@ function cvbEntryHTML(type, si, ei, entry) {
       + cvbBulletsHTML(si, ei, entry.bullets||[])
       + '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">'
       + '<button onclick="cvbAddBullet('+si+','+ei+')" style="background:none;border:1.5px dashed var(--cream3);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif;color:var(--ink4);transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.color=\'var(--green)\'" onmouseout="this.style.borderColor=\'var(--cream3)\';this.style.color=\'var(--ink4)\'">+ Bullet</button>'
-      + '<button onclick="cvbAIBullets('+si+','+ei+',event)" id="cvb-ai-'+si+'-'+ei+'" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif">✨ AI generate bullets</button>'
+      + '<button onclick="cvbAIBullets('+si+','+ei+',event)" id="cvb-ai-'+si+'-'+ei+'" class="cvb-ai-btn">✨ AI generate bullets</button>'
       + '</div>';
   }
   html += '</div>';
