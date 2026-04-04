@@ -237,6 +237,13 @@ select:focus{border-color:var(--green)}
 .cvb-ai-btn{background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px}
 .cvb-ai-btn:hover{background:linear-gradient(135deg,#6d28d9,#7c3aed);box-shadow:0 3px 12px rgba(124,58,237,0.4)}
 .cvb-ai-btn:disabled{opacity:0.6;cursor:not-allowed}
+/* Sample dropdown options */
+.cvb-dd-opt{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 12px;font-size:12px;font-family:'Geist',sans-serif;color:var(--ink3);cursor:pointer;border-radius:8px;transition:all 0.12s}
+.cvb-dd-opt:hover{background:var(--green-bg);color:var(--green)}
+.cvb-dd-opt strong{font-weight:700;color:inherit}
+/* Bold button */
+.cvb-bold-btn{background:white;border:1.5px solid var(--cream3);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Georgia',serif;color:var(--ink3);transition:all 0.15s;line-height:1.4;flex-shrink:0}
+.cvb-bold-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
 </style>
 </head>
 <body>
@@ -1053,16 +1060,28 @@ select:focus{border-color:var(--green)}
           </div>
           <div style="width:1px;height:20px;background:var(--cream3);margin:0 4px"></div>
           <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Sample CV</span>
-          <select onchange="if(this.value){cvbLoadSample(this.value);this.value=''}" style="padding:6px 12px;border:1.5px solid var(--cream3);border-radius:8px;font-family:'Geist',sans-serif;font-size:12px;background:white;color:var(--ink3);cursor:pointer;outline:none;transition:border-color 0.15s;font-weight:500" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--cream3)'">
-            <option value="">Choose a field...</option>
-            <option value="tech">💻 Software Engineer</option>
-            <option value="business">💼 Business / BA</option>
-            <option value="finance">📊 Finance / Investment</option>
-            <option value="healthcare">🏥 Healthcare / Nursing</option>
-            <option value="creative">🎨 Creative / Marketing</option>
-            <option value="graduate">🎓 Graduate / Entry Level</option>
-          </select>
-          <div style="margin-left:auto;font-size:11px;color:var(--ink4);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block"></span>Preview updates live</div>
+          <!-- Custom dropdown -->
+          <div style="position:relative" id="cvb-sample-wrap">
+            <button onclick="cvbToggleSampleDd(event)" id="cvb-sample-trigger"
+              style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid var(--cream3);border-radius:10px;padding:7px 14px;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;min-width:190px;justify-content:space-between;transition:all 0.15s;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+              <span id="cvb-sample-label" style="display:flex;align-items:center;gap:7px">
+                <span style="font-size:13px">📋</span><span>Load sample CV</span>
+              </span>
+              <svg id="cvb-sample-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" style="transition:transform 0.2s;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <!-- Dropdown panel -->
+            <div id="cvb-sample-dd" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:white;border:1.5px solid var(--cream3);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.06);z-index:600;min-width:220px;overflow:hidden;animation:fadeUp 0.15s ease">
+              <div style="padding:6px">
+                <button onclick="cvbPickSample('tech','💻','Software Engineer')" class="cvb-dd-opt">💻 <strong>Software Engineer</strong></button>
+                <button onclick="cvbPickSample('business','💼','Business / BA')" class="cvb-dd-opt">💼 <strong>Business / BA</strong></button>
+                <button onclick="cvbPickSample('finance','📊','Finance / Investment')" class="cvb-dd-opt">📊 <strong>Finance / Investment</strong></button>
+                <button onclick="cvbPickSample('healthcare','🏥','Healthcare / Nursing')" class="cvb-dd-opt">🏥 <strong>Healthcare / Nursing</strong></button>
+                <button onclick="cvbPickSample('creative','🎨','Creative / Marketing')" class="cvb-dd-opt">🎨 <strong>Creative / Marketing</strong></button>
+                <button onclick="cvbPickSample('graduate','🎓','Graduate / Entry Level')" class="cvb-dd-opt">🎓 <strong>Graduate / Entry Level</strong></button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-left:auto;font-size:11px;color:var(--ink4);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block"></span>Updates live</div>
         </div>
 
         <!-- Main two-col: form left, document right -->
@@ -4793,8 +4812,13 @@ function cvbSectionHTML(sec, si) {
     var ph = sec.type==='summary' ? 'Summarise your experience, key strengths, and career goal in 2-3 sentences...'
       : sec.type==='skills' ? 'e.g.\nTechnical: SQL, Python, Power BI\nTools: JIRA, Confluence\nMethodologies: Agile, BPMN'
       : 'Add any other relevant information here...';
+    var taId = 'cvb-ta-'+si;
     html += '<div style="padding:14px 16px">'
-      + '<textarea rows="4" placeholder="'+ph+'" oninput="_cvbSections['+si+'].text=this.value;cvbRender()" style="width:100%">'+cvbEsc(sec.text||'')+'</textarea>';
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">'
+      + '<span style="font-size:11px;color:var(--ink4)">Select text then press <b>B</b> to bold</span>'
+      + '<button onclick="cvbBoldInput(\''+taId+'\')" class="cvb-bold-btn" title="Bold selected text"><b>B</b></button>'
+      + '</div>'
+      + '<textarea id="'+taId+'" rows="4" placeholder="'+ph+'" oninput="_cvbSections['+si+'].text=this.value;cvbRender()" style="width:100%">'+cvbEsc(sec.text||'')+'</textarea>';
     if (sec.type === 'summary') {
       html += '<button onclick="cvbAISummary('+si+',event)" style="margin-top:8px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:8px;padding:7px 15px;font-size:12px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif" id="cvb-sum-btn-'+si+'">✨ AI generate summary</button>';
     }
@@ -4869,10 +4893,12 @@ function cvbEntryHTML(type, si, ei, entry) {
 function cvbBulletsHTML(si, ei, bullets) {
   var html = '';
   bullets.forEach(function(b, bi) {
+    var bid = 'cvb-blt-'+si+'-'+ei+'-'+bi;
     html += '<div class="cvb-bullet-row">'
       + '<span style="font-size:13px;color:var(--ink4);flex-shrink:0;width:14px">•</span>'
-      + '<input type="text" value="'+cvbEsc(b)+'" placeholder="e.g. Led cross-functional team of 8 to deliver £2M digital transformation project on time" '
+      + '<input type="text" id="'+bid+'" value="'+cvbEsc(b)+'" placeholder="e.g. Led cross-functional team of 8 to deliver £2M digital transformation" '
       + 'oninput="_cvbSections['+si+'].entries['+ei+'].bullets['+bi+']=this.value;cvbRender()" style="flex:1">'
+      + '<button onclick="cvbBoldInput(\''+bid+'\')" class="cvb-bold-btn" title="Bold selected text (select text first)"><b>B</b></button>'
       + '<button onclick="_cvbSections['+si+'].entries['+ei+'].bullets.splice('+bi+',1);cvbRenderForm();cvbRender()" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink4);padding:2px 4px;flex-shrink:0;transition:color 0.15s" onmouseover="this.style.color=\'#991b1b\'" onmouseout="this.style.color=\'var(--ink4)\'">✕</button>'
       + '</div>';
   });
@@ -4904,6 +4930,64 @@ function cvbAddBullet(si, ei) {
   }
 }
 
+// ── Bold helper ──
+function cvbParseBold(text) {
+  return cvbEsc(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+function cvbBoldInput(idOrEl) {
+  var el = typeof idOrEl === 'string' ? document.getElementById(idOrEl) : idOrEl;
+  if (!el) return;
+  var s = el.selectionStart, e = el.selectionEnd;
+  if (s === e) {
+    el.style.outline = '2px solid #f59e0b';
+    el.title = 'Select some text first, then click B';
+    setTimeout(function(){ el.style.outline = ''; el.title = ''; }, 1200);
+    return;
+  }
+  var v = el.value, sel = v.slice(s, e);
+  if (sel.startsWith('**') && sel.endsWith('**') && sel.length > 4) {
+    el.value = v.slice(0,s) + sel.slice(2,-2) + v.slice(e);
+  } else {
+    el.value = v.slice(0,s) + '**' + sel + '**' + v.slice(e);
+  }
+  el.dispatchEvent(new Event('input'));
+  el.focus();
+}
+
+// ── Sample dropdown ──
+function cvbToggleSampleDd(evt) {
+  evt && evt.stopPropagation();
+  var dd = document.getElementById('cvb-sample-dd');
+  var ch = document.getElementById('cvb-sample-chevron');
+  var open = dd.style.display !== 'none';
+  dd.style.display = open ? 'none' : 'block';
+  if (ch) ch.style.transform = open ? '' : 'rotate(180deg)';
+}
+function cvbPickSample(type, icon, label) {
+  cvbLoadSample(type);
+  var lbl = document.getElementById('cvb-sample-label');
+  if (lbl) lbl.innerHTML = '<span style="font-size:13px">'+icon+'</span><span>'+label+'</span>';
+  var trigger = document.getElementById('cvb-sample-trigger');
+  if (trigger) {
+    trigger.style.borderColor = 'var(--green)';
+    trigger.style.background = 'var(--green-bg)';
+    trigger.style.color = 'var(--green)';
+  }
+  var dd = document.getElementById('cvb-sample-dd');
+  if (dd) dd.style.display = 'none';
+  var ch = document.getElementById('cvb-sample-chevron');
+  if (ch) ch.style.transform = '';
+}
+document.addEventListener('click', function(e) {
+  var wrap = document.getElementById('cvb-sample-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    var dd = document.getElementById('cvb-sample-dd');
+    if (dd) dd.style.display = 'none';
+    var ch = document.getElementById('cvb-sample-chevron');
+    if (ch) ch.style.transform = '';
+  }
+});
+
 // ── Live Preview Renderer ──
 function cvbRender() {
   var preview = document.getElementById('cvb-preview');
@@ -4934,7 +5018,7 @@ function cvbRender() {
       if (!sec.text) return;
       html += cvbPreviewHeading(sec.title, s);
       sec.text.split('\n').forEach(function(line) {
-        if (line.trim()) html += '<div style="font-size:9.5pt;margin-bottom:3px">'+cvbEsc(line)+'</div>';
+        if (line.trim()) html += '<div style="font-size:9.5pt;margin-bottom:3px">'+cvbParseBold(line)+'</div>';
       });
     } else if (sec.type === 'experience') {
       var hasAny = (sec.entries||[]).some(function(e){ return e.company || e.role; });
@@ -4949,7 +5033,7 @@ function cvbRender() {
           + '<span style="font-size:9.5pt;'+(s.italicRole?'font-style:italic;':'')+'">'+cvbEsc(entry.role||'')+'</span>'
           + '<span style="font-size:9pt;color:#555">'+cvbEsc(entry.dates||'')+'</span></div>';
         (entry.bullets||[]).forEach(function(b) {
-          if (b.trim()) html += '<div style="margin-left:13px;margin-bottom:2px;font-size:9.5pt">&bull; '+cvbEsc(b)+'</div>';
+          if (b.trim()) html += '<div style="margin-left:13px;margin-bottom:2px;font-size:9.5pt">&bull; '+cvbParseBold(b)+'</div>';
         });
         html += '<div style="margin-bottom:8px"></div>';
       });
@@ -4978,7 +5062,7 @@ function cvbRender() {
           + '<span style="font-size:9pt;font-weight:normal;color:#555">'+cvbEsc(entry.dates||'')+'</span></div>';
         if (entry.org) html += '<div style="font-size:9.5pt;'+(s.italicRole?'font-style:italic;':'')+'margin-bottom:4px">'+cvbEsc(entry.org)+(entry.location?' &middot; '+cvbEsc(entry.location):'')+'</div>';
         (entry.bullets||[]).forEach(function(b) {
-          if (b.trim()) html += '<div style="margin-left:13px;margin-bottom:2px;font-size:9.5pt">&bull; '+cvbEsc(b)+'</div>';
+          if (b.trim()) html += '<div style="margin-left:13px;margin-bottom:2px;font-size:9.5pt">&bull; '+cvbParseBold(b)+'</div>';
         });
         html += '<div style="margin-bottom:8px"></div>';
       });
@@ -5140,7 +5224,7 @@ function cvbBuildPrintHTML(s) {
     if (sec.type==='summary'||sec.type==='skills'||sec.type==='custom') {
       if (!sec.text) return;
       html += '<div class="cv-sec">'+cvbEsc(sec.title)+'</div>';
-      sec.text.split('\n').forEach(function(l){ if (l.trim()) html += '<div class="cv-txt">'+cvbEsc(l)+'</div>'; });
+      sec.text.split('\n').forEach(function(l){ if (l.trim()) html += '<div class="cv-txt">'+cvbParseBold(l)+'</div>'; });
     } else if (sec.type==='experience') {
       var has = (sec.entries||[]).some(function(e){ return e.company||e.role; });
       if (!has) return;
@@ -5149,7 +5233,7 @@ function cvbBuildPrintHTML(s) {
         if (!e.company&&!e.role) return;
         html += '<div class="cv-row"><span class="cv-co">'+cvbEsc(e.company||'')+'</span><span class="cv-loc">'+cvbEsc(e.location||'')+'</span></div>';
         html += '<div class="cv-sub"><span class="cv-role">'+cvbEsc(e.role||'')+'</span><span class="cv-date">'+cvbEsc(e.dates||'')+'</span></div>';
-        (e.bullets||[]).forEach(function(b){ if (b.trim()) html += '<div class="cv-bul">&bull; '+cvbEsc(b)+'</div>'; });
+        (e.bullets||[]).forEach(function(b){ if (b.trim()) html += '<div class="cv-bul">&bull; '+cvbParseBold(b)+'</div>'; });
         html += '<div class="cv-gap"></div>';
       });
     } else if (sec.type==='education') {
@@ -5171,7 +5255,7 @@ function cvbBuildPrintHTML(s) {
         if (!e.title) return;
         html += '<div class="cv-row"><span class="cv-co">'+cvbEsc(e.title||'')+'</span><span class="cv-loc">'+cvbEsc(e.dates||'')+'</span></div>';
         if (e.org) html += '<div style="font-size:10.5pt;'+(s.italicRole?'font-style:italic;':'')+'margin-bottom:5pt">'+cvbEsc(e.org)+(e.location?' &middot; '+cvbEsc(e.location):'')+'</div>';
-        (e.bullets||[]).forEach(function(b){ if (b.trim()) html += '<div class="cv-bul">&bull; '+cvbEsc(b)+'</div>'; });
+        (e.bullets||[]).forEach(function(b){ if (b.trim()) html += '<div class="cv-bul">&bull; '+cvbParseBold(b)+'</div>'; });
         html += '<div class="cv-gap"></div>';
       });
     }
