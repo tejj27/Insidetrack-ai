@@ -1052,9 +1052,16 @@ select:focus{border-color:var(--green)}
             <button class="cvb-tpl-pill" id="cvbtpl-executive" onclick="cvbSelectTemplate('executive',this)">Executive</button>
           </div>
           <div style="width:1px;height:20px;background:var(--cream3);margin:0 4px"></div>
-          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Samples</span>
-          <button onclick="cvbLoadSample('business')" style="display:inline-flex;align-items:center;gap:5px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">💼 Business</button>
-          <button onclick="cvbLoadSample('tech')" style="display:inline-flex;align-items:center;gap:5px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">💻 Tech</button>
+          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Sample CV</span>
+          <select onchange="if(this.value){cvbLoadSample(this.value);this.value=''}" style="padding:6px 12px;border:1.5px solid var(--cream3);border-radius:8px;font-family:'Geist',sans-serif;font-size:12px;background:white;color:var(--ink3);cursor:pointer;outline:none;transition:border-color 0.15s;font-weight:500" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--cream3)'">
+            <option value="">Choose a field...</option>
+            <option value="tech">💻 Software Engineer</option>
+            <option value="business">💼 Business / BA</option>
+            <option value="finance">📊 Finance / Investment</option>
+            <option value="healthcare">🏥 Healthcare / Nursing</option>
+            <option value="creative">🎨 Creative / Marketing</option>
+            <option value="graduate">🎓 Graduate / Entry Level</option>
+          </select>
           <div style="margin-left:auto;font-size:11px;color:var(--ink4);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block"></span>Preview updates live</div>
         </div>
 
@@ -5091,28 +5098,93 @@ function cvbDownloadDocx() {
 }
 
 function cvbDownloadPDF() {
-  var name = (document.getElementById('cvb-name')||{value:''}).value || 'CV';
+  var name = (document.getElementById('cvb-name')||{value:''}).value.trim() || 'CV';
   var s = _cvbStyles[_cvbTemplate] || _cvbStyles.classic;
-  var previewHtml = (document.getElementById('cvb-preview')||{innerHTML:''}).innerHTML;
-  if (!previewHtml.trim()) { alert('Please fill in your CV details first.'); return; }
+  var body = cvbBuildPrintHTML(s);
+  if (!body) { alert('Please fill in your CV details first.'); return; }
   var w = window.open('', '_blank');
-  w.document.write('<!DOCTYPE html><html><head><title>'+name+'</title><style>body{font-family:'+s.nf+';margin:18mm 22mm;font-size:11pt;line-height:1.55;color:'+s.nc+'}@media print{@page{margin:15mm 20mm}}</style></head><body>'+previewHtml+'</body></html>');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+name+' CV</title><style>'
+    + '*{box-sizing:border-box;margin:0;padding:0}'
+    + 'body{font-family:'+s.nf+';font-size:11pt;line-height:1.6;color:'+s.nc+';}'
+    + '@page{size:A4;margin:18mm 22mm}'
+    + '.cv-name{font-size:22pt;font-weight:bold;text-align:'+s.na+';margin-bottom:5pt}'
+    + '.cv-contact{font-size:9.5pt;color:#555;text-align:'+s.na+';margin-bottom:16pt;line-height:1.7}'
+    + '.cv-sec{font-size:11pt;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;color:'+s.hc+';border-bottom:1.2pt solid '+s.rule+';margin:14pt 0 7pt;padding-bottom:2pt}'
+    + '.cv-row{display:flex;justify-content:space-between;align-items:baseline}'
+    + '.cv-co{font-size:11pt;font-weight:bold}'
+    + '.cv-loc{font-size:9.5pt;color:#555;font-weight:normal}'
+    + '.cv-role{font-size:10.5pt;'+(s.italicRole?'font-style:italic;':'')+'}'
+    + '.cv-date{font-size:9.5pt;color:#555}'
+    + '.cv-sub{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5pt}'
+    + '.cv-bul{margin-left:14pt;margin-bottom:3pt;font-size:10.5pt}'
+    + '.cv-txt{font-size:10.5pt;margin-bottom:3pt}'
+    + '.cv-gap{margin-bottom:9pt}'
+    + '</style></head><body>'+body+'</body></html>');
   w.document.close();
   w.focus();
-  setTimeout(function(){ w.print(); }, 600);
+  setTimeout(function(){ w.print(); }, 500);
+}
+
+function cvbBuildPrintHTML(s) {
+  var name = (document.getElementById('cvb-name')||{value:''}).value.trim();
+  var email = (document.getElementById('cvb-email')||{value:''}).value.trim();
+  var phone = (document.getElementById('cvb-phone')||{value:''}).value.trim();
+  var location = (document.getElementById('cvb-location')||{value:''}).value.trim();
+  var linkedin = (document.getElementById('cvb-linkedin')||{value:''}).value.trim();
+  var portfolio = (document.getElementById('cvb-portfolio')||{value:''}).value.trim();
+  if (!name && !email) return null;
+  var contacts = [location, phone, email, linkedin, portfolio].filter(Boolean);
+  var html = '<div class="cv-name">'+cvbEsc(name||'Your Name')+'</div>';
+  html += '<div class="cv-contact">'+contacts.map(cvbEsc).join(' &nbsp;|&nbsp; ')+'</div>';
+  _cvbSections.forEach(function(sec) {
+    if (sec.type==='summary'||sec.type==='skills'||sec.type==='custom') {
+      if (!sec.text) return;
+      html += '<div class="cv-sec">'+cvbEsc(sec.title)+'</div>';
+      sec.text.split('\n').forEach(function(l){ if (l.trim()) html += '<div class="cv-txt">'+cvbEsc(l)+'</div>'; });
+    } else if (sec.type==='experience') {
+      var has = (sec.entries||[]).some(function(e){ return e.company||e.role; });
+      if (!has) return;
+      html += '<div class="cv-sec">'+cvbEsc(sec.title)+'</div>';
+      (sec.entries||[]).forEach(function(e) {
+        if (!e.company&&!e.role) return;
+        html += '<div class="cv-row"><span class="cv-co">'+cvbEsc(e.company||'')+'</span><span class="cv-loc">'+cvbEsc(e.location||'')+'</span></div>';
+        html += '<div class="cv-sub"><span class="cv-role">'+cvbEsc(e.role||'')+'</span><span class="cv-date">'+cvbEsc(e.dates||'')+'</span></div>';
+        (e.bullets||[]).forEach(function(b){ if (b.trim()) html += '<div class="cv-bul">&bull; '+cvbEsc(b)+'</div>'; });
+        html += '<div class="cv-gap"></div>';
+      });
+    } else if (sec.type==='education') {
+      var has = (sec.entries||[]).some(function(e){ return e.school||e.degree; });
+      if (!has) return;
+      html += '<div class="cv-sec">'+cvbEsc(sec.title)+'</div>';
+      (sec.entries||[]).forEach(function(e) {
+        if (!e.school&&!e.degree) return;
+        html += '<div class="cv-row"><span class="cv-co">'+cvbEsc(e.school||'')+'</span><span class="cv-loc">'+cvbEsc(e.location||'')+'</span></div>';
+        html += '<div class="cv-sub"><span class="cv-role">'+cvbEsc(e.degree||'')+'</span><span class="cv-date">'+cvbEsc(e.dates||'')+'</span></div>';
+        if (e.notes) html += '<div class="cv-txt" style="color:#555">'+cvbEsc(e.notes)+'</div>';
+        html += '<div class="cv-gap"></div>';
+      });
+    } else if (sec.type==='projects') {
+      var has = (sec.entries||[]).some(function(e){ return e.title; });
+      if (!has) return;
+      html += '<div class="cv-sec">'+cvbEsc(sec.title)+'</div>';
+      (sec.entries||[]).forEach(function(e) {
+        if (!e.title) return;
+        html += '<div class="cv-row"><span class="cv-co">'+cvbEsc(e.title||'')+'</span><span class="cv-loc">'+cvbEsc(e.dates||'')+'</span></div>';
+        if (e.org) html += '<div style="font-size:10.5pt;'+(s.italicRole?'font-style:italic;':'')+'margin-bottom:5pt">'+cvbEsc(e.org)+(e.location?' &middot; '+cvbEsc(e.location):'')+'</div>';
+        (e.bullets||[]).forEach(function(b){ if (b.trim()) html += '<div class="cv-bul">&bull; '+cvbEsc(b)+'</div>'; });
+        html += '<div class="cv-gap"></div>';
+      });
+    }
+  });
+  return html;
 }
 
 // ── Sample CVs ──
-function cvbLoadSample(type) {
-  document.getElementById('cvb-name').value     = type === 'tech' ? 'Alex Chen' : 'Sarah Williams';
-  document.getElementById('cvb-email').value    = type === 'tech' ? 'alex.chen@email.com' : 'sarah.williams@email.com';
-  document.getElementById('cvb-phone').value    = '+44 7700 900000';
-  document.getElementById('cvb-location').value = 'London, UK';
-  document.getElementById('cvb-linkedin').value = type === 'tech' ? 'linkedin.com/in/alexchen' : 'linkedin.com/in/sarahwilliams';
-  document.getElementById('cvb-portfolio').value = type === 'tech' ? 'github.com/alexchen' : '';
-
-  if (type === 'tech') {
-    _cvbSections = [
+var _cvbSampleData = {
+  tech: {
+    name:'Alex Chen', email:'alex.chen@email.com', phone:'+44 7700 900001', location:'London, UK',
+    linkedin:'linkedin.com/in/alexchen', portfolio:'github.com/alexchen',
+    sections:[
       { type:'summary', title:'PROFESSIONAL SUMMARY', text:'Software engineer with 3+ years of experience building scalable web applications and APIs. Expertise in React, Node.js and cloud infrastructure on AWS. Track record of reducing page load times by 40% and shipping products used by 100K+ users.' },
       { type:'experience', title:'WORK EXPERIENCE', entries:[
         { company:'TechCorp Ltd', role:'Senior Software Engineer', location:'London, UK', dates:'Jan 2023 – Present',
@@ -5128,9 +5200,12 @@ function cvbLoadSample(type) {
           bullets:['Built a developer productivity CLI downloaded 12K times on npm','Reduced boilerplate setup time for new Node.js projects from 30 min to under 2 min'] }
       ]},
       { type:'skills', title:'SKILLS', text:'Languages: JavaScript, TypeScript, Python, SQL\nFrameworks: React, Node.js, Express, Next.js\nCloud & DevOps: AWS (Lambda, S3, RDS), Docker, Kubernetes, CI/CD\nTools: Git, JIRA, Figma, Postman, Jest' }
-    ];
-  } else {
-    _cvbSections = [
+    ]
+  },
+  business: {
+    name:'Sarah Williams', email:'sarah.williams@email.com', phone:'+44 7700 900002', location:'London, UK',
+    linkedin:'linkedin.com/in/sarahwilliams', portfolio:'',
+    sections:[
       { type:'summary', title:'PROFESSIONAL SUMMARY', text:'Business Analyst with 4+ years of experience in financial services and digital transformation. Skilled in requirements gathering, process optimisation and stakeholder management. Delivered projects generating £3M+ in verified cost savings.' },
       { type:'experience', title:'WORK EXPERIENCE', entries:[
         { company:'Barclays', role:'Business Analyst', location:'London, UK', dates:'Mar 2022 – Present',
@@ -5142,11 +5217,96 @@ function cvbLoadSample(type) {
         { school:'Warwick Business School', degree:'MSc Business Analytics, Distinction', location:'Coventry, UK', dates:'Sep 2019 – Sep 2020', notes:'' },
         { school:'University of Nottingham', degree:"BA Business Management, 2:1", location:'Nottingham, UK', dates:'Sep 2016 – Jun 2019', notes:'' }
       ]},
-      { type:'skills', title:'SKILLS', text:'Business Analysis: Requirements Gathering, BRD, Process Mapping, Stakeholder Management, Gap Analysis\nData & Reporting: Power BI, SQL, Advanced Excel, Tableau\nMethodologies: Agile/Scrum, BPMN, UAT, Waterfall\nTools: JIRA, Confluence, Visio, SharePoint, ServiceNow' }
-    ];
+      { type:'skills', title:'SKILLS', text:'Business Analysis: Requirements Gathering, BRD, Process Mapping, Stakeholder Management\nData & Reporting: Power BI, SQL, Advanced Excel, Tableau\nMethodologies: Agile/Scrum, BPMN, UAT, Waterfall\nTools: JIRA, Confluence, Visio, SharePoint, ServiceNow' }
+    ]
+  },
+  finance: {
+    name:'James Okafor', email:'james.okafor@email.com', phone:'+44 7700 900003', location:'London, UK',
+    linkedin:'linkedin.com/in/jamesokafor', portfolio:'',
+    sections:[
+      { type:'summary', title:'PROFESSIONAL SUMMARY', text:'CFA Level II candidate and Finance Analyst with 3 years of experience in investment banking and equity research. Strong track record in financial modelling, valuation and client presentations. Managed deal analysis on transactions totalling $1.2B.' },
+      { type:'experience', title:'WORK EXPERIENCE', entries:[
+        { company:'Goldman Sachs', role:'Analyst, Investment Banking', location:'London, UK', dates:'Sep 2022 – Present',
+          bullets:['Built detailed DCF and LBO models for 8 M&A transactions totalling $1.2B in deal value','Prepared pitch books and information memoranda for 3 successful IPO mandates','Conducted sector research covering 15 listed companies, informing £80M portfolio decisions'] },
+        { company:'PwC', role:'Finance Intern', location:'London, UK', dates:'Jun 2021 – Aug 2022',
+          bullets:['Supported due diligence on 4 PE-backed transactions across consumer and tech sectors','Modelled 3-statement projections and sensitivity analyses used in final client reports','Prepared management accounts and variance analysis for 6 portfolio companies'] }
+      ]},
+      { type:'education', title:'EDUCATION', entries:[
+        { school:'London School of Economics', degree:'BSc Finance, First Class Honours', location:'London, UK', dates:'Sep 2018 – Jun 2021', notes:'CFA Institute: Level I passed (2022), Level II candidate (2024)' }
+      ]},
+      { type:'skills', title:'SKILLS', text:'Financial Modelling: DCF, LBO, M&A, 3-Statement\nTools: Excel (Advanced), Bloomberg Terminal, FactSet, Capital IQ\nLanguages: Python (Pandas, NumPy), SQL\nSoft Skills: Client Presentations, Due Diligence, Stakeholder Reporting' }
+    ]
+  },
+  healthcare: {
+    name:'Priya Nair', email:'priya.nair@email.com', phone:'+44 7700 900004', location:'Manchester, UK',
+    linkedin:'linkedin.com/in/priyanair', portfolio:'',
+    sections:[
+      { type:'summary', title:'PROFESSIONAL SUMMARY', text:'Registered Nurse (NMC PIN 12A3456B) with 5 years of clinical experience across acute medical and surgical wards. Consistently commended for patient-centred care and effective multidisciplinary team collaboration. Pursuing Band 7 leadership opportunities.' },
+      { type:'experience', title:'WORK EXPERIENCE', entries:[
+        { company:'Manchester University NHS Foundation Trust', role:'Senior Staff Nurse, Medical Ward', location:'Manchester, UK', dates:'Apr 2021 – Present',
+          bullets:['Deliver holistic care to a caseload of 8–10 acute medical patients per shift, maintaining zero medication errors in 24 months','Charge nurse responsibility for 28-bed ward on alternate weekends, coordinating staff of 12 across day and night shifts','Implemented new patient handover protocol reducing missed observations by 40% across the ward'] },
+        { company:'Salford Royal NHS Foundation Trust', role:'Staff Nurse, Surgical Ward', location:'Salford, UK', dates:'Sep 2019 – Mar 2021',
+          bullets:['Managed pre- and post-operative care for elective and emergency surgical patients','Completed IV cannulation and phlebotomy training, reducing average wait time by 30 minutes per patient','Mentored 4 student nurses through 12-week clinical placements, receiving positive supervisor evaluations'] }
+      ]},
+      { type:'education', title:'EDUCATION', entries:[
+        { school:'University of Manchester', degree:'BSc Nursing (Adult), First Class Honours', location:'Manchester, UK', dates:'Sep 2016 – Jun 2019', notes:'NMC Registered Nurse (Adult) — PIN 12A3456B' }
+      ]},
+      { type:'skills', title:'SKILLS', text:'Clinical: IV Cannulation, Phlebotomy, Medication Administration, Wound Care, ECG Interpretation\nSystems: EMIS Web, SystmOne, EPR, Datix Incident Reporting\nSoft Skills: Patient Advocacy, Safeguarding, MDT Collaboration, Clinical Supervision' }
+    ]
+  },
+  creative: {
+    name:'Mia Thornton', email:'mia.thornton@email.com', phone:'+44 7700 900005', location:'London, UK',
+    linkedin:'linkedin.com/in/miathornton', portfolio:'miathornton.co.uk',
+    sections:[
+      { type:'summary', title:'PROFESSIONAL SUMMARY', text:'Creative Marketing Manager with 5 years of experience building brand identities and running performance campaigns across social, email and paid channels. Generated £4.2M attributable revenue through data-driven creative strategies. Passionate about storytelling that converts.' },
+      { type:'experience', title:'WORK EXPERIENCE', entries:[
+        { company:'Ogilvy UK', role:'Senior Marketing Manager', location:'London, UK', dates:'Feb 2022 – Present',
+          bullets:['Led rebranding of a £50M FMCG client, increasing brand recall by 28% in post-campaign tracking','Managed £1.2M annual paid social budget across Meta and TikTok, achieving 3.8x ROAS','Built content calendar and editorial strategy generating 180K organic impressions per month'] },
+        { company:'ASOS', role:'Brand & Content Executive', location:'London, UK', dates:'Jul 2019 – Jan 2022',
+          bullets:['Produced 60+ pieces of long-form content per quarter driving 22% uplift in organic traffic YoY','Collaborated with influencer team on 15 ambassador campaigns reaching 12M combined followers','Ran A/B tests on email subject lines, lifting open rates from 19% to 27% in 6 months'] }
+      ]},
+      { type:'education', title:'EDUCATION', entries:[
+        { school:'University of the Arts London', degree:'BA Graphic Communication, 2:1', location:'London, UK', dates:'Sep 2016 – Jun 2019', notes:'' }
+      ]},
+      { type:'projects', title:'NOTABLE CAMPAIGNS', entries:[
+        { title:'Regen25 Sustainability Campaign', org:'Ogilvy UK', location:'', dates:'2023',
+          bullets:['Conceptualised and delivered 360 campaign earning Cannes Lions shortlist','Cross-channel reach of 45M; £800K earned media value in 6 weeks'] }
+      ]},
+      { type:'skills', title:'SKILLS', text:'Marketing: Brand Strategy, Content Marketing, Paid Social, Email (Klaviyo), SEO/SEM\nCreative Tools: Adobe Creative Suite, Figma, Canva, Final Cut Pro\nAnalytics: Google Analytics 4, Meta Ads Manager, HubSpot, Looker Studio\nSoft Skills: Copywriting, Art Direction, Campaign Planning, Budget Management' }
+    ]
+  },
+  graduate: {
+    name:'Lena Kowalski', email:'lena.kowalski@email.com', phone:'+44 7700 900006', location:'Birmingham, UK',
+    linkedin:'linkedin.com/in/lenakowalski', portfolio:'',
+    sections:[
+      { type:'summary', title:'PERSONAL STATEMENT', text:'Recent Economics graduate (2:1, University of Birmingham) seeking a graduate analyst role in consulting or financial services. Strong analytical and communication skills developed through academic projects and a summer internship. Eager to contribute to a fast-paced team while developing professional expertise.' },
+      { type:'experience', title:'EXPERIENCE', entries:[
+        { company:'KPMG', role:'Summer Intern, Advisory', location:'Birmingham, UK', dates:'Jun 2024 – Aug 2024',
+          bullets:['Supported senior consultants on a local authority efficiency review, analysing £12M operating budget','Prepared slide decks and data summaries presented directly to client CFO','Awarded "Best Intern Presentation" across a cohort of 24 interns'] },
+        { company:'University of Birmingham Students Union', role:'Finance Officer (Volunteer)', location:'Birmingham, UK', dates:'Sep 2022 – Jun 2024',
+          bullets:['Managed £8,000 annual society budget across 3 clubs, maintaining zero overspend in 2 years','Produced monthly financial reports reviewed by the Students Union Executive Board'] }
+      ]},
+      { type:'education', title:'EDUCATION', entries:[
+        { school:'University of Birmingham', degree:'BSc Economics, 2:1', location:'Birmingham, UK', dates:'Sep 2021 – Jun 2024', notes:'Relevant modules: Econometrics, Corporate Finance, Game Theory, Data Analysis with Python\nDissertation: Impact of Interest Rate Changes on SME Lending (Grade: 74%)' }
+      ]},
+      { type:'skills', title:'SKILLS', text:'Analytical: Excel (Pivot Tables, VLOOKUP), Python (Pandas), SPSS, R (basic)\nSoft Skills: Presentation, Report Writing, Team Collaboration, Time Management\nLanguages: English (native), Polish (fluent), Spanish (conversational)' }
+    ]
   }
+};
+
+function cvbLoadSample(type) {
+  var d = _cvbSampleData[type];
+  if (!d) return;
+  document.getElementById('cvb-name').value = d.name;
+  document.getElementById('cvb-email').value = d.email;
+  document.getElementById('cvb-phone').value = d.phone;
+  document.getElementById('cvb-location').value = d.location;
+  document.getElementById('cvb-linkedin').value = d.linkedin;
+  document.getElementById('cvb-portfolio').value = d.portfolio;
+  _cvbSections = JSON.parse(JSON.stringify(d.sections)); // deep copy
   cvbRenderForm();
   cvbRender();
+  showDlToast('Sample CV loaded — customise any field to make it yours');
 }
 </script>
 </body>
