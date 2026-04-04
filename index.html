@@ -217,6 +217,19 @@ select:focus{border-color:var(--green)}
 #cv-preview-doc[contenteditable="true"] [data-cv-type]:focus{background:rgba(124,58,237,0.08);outline:none}
 .wysiwyg-hint{display:none;font-size:11px;color:var(--green);text-align:center;padding:6px;background:#f3f0ff;border-bottom:1px solid #d8cff8}
 .wysiwyg-hint.visible{display:block}
+
+/* CV Builder */
+.cvb-section-card{background:white;border:1.5px solid var(--cream3);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.cvb-section-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)}
+.cvb-entry{padding:14px 16px;border-top:1px solid var(--cream3)}
+.cvb-entry + .cvb-entry{border-top:1px dashed var(--cream3)}
+.cvb-bullet-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cvb-add-btn{background:none;border:1.5px dashed var(--cream3);border-radius:8px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink4);width:100%;transition:all 0.15s;text-align:center}
+.cvb-add-btn:hover{border-color:var(--green);color:var(--green)}
+.cvb-tpl-pill{padding:5px 14px;border-radius:20px;border:1.5px solid var(--cream3);background:var(--cream);font-size:11px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;color:var(--ink3);transition:all 0.15s}
+.cvb-tpl-pill:hover{border-color:var(--green);color:var(--green)}
+.cvb-tpl-pill.active{background:var(--green);border-color:var(--green);color:white}
+.cvb-preview-doc{background:white;padding:30px 28px;font-size:10.5pt;line-height:1.55;min-height:540px}
 </style>
 </head>
 <body>
@@ -247,14 +260,14 @@ select:focus{border-color:var(--green)}
   <div class="hero">
     <div class="hero-badge">✦ AI powered · Free to start</div>
     <h1 class="hero-title">Land more interviews<br>with <span>every application</span></h1>
-    <p class="hero-sub">InsideTrack gives you four AI tools to tailor your CV, write cover letters, generate outreach messages, and track every application, all in one place.</p>
+    <p class="hero-sub">InsideTrack gives you five AI tools to build and tailor your CV, write cover letters, generate outreach messages, and track every application, all in one place.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
       <button class="btn btn-green btn-lg" onclick="openApp('ats')">Start free →</button>
       <button id="hero-signin-btn" class="btn btn-ghost btn-lg" onclick="openAuth('signin')">Sign in</button>
     </div>
     <div class="hero-stats">
       <div style="text-align:center"><div class="stat-num">60s</div><div class="stat-lbl">To scan your CV<br>against any job</div></div>
-      <div style="text-align:center"><div class="stat-num">4×</div><div class="stat-lbl">Tools in one place<br>free to start</div></div>
+      <div style="text-align:center"><div class="stat-num">5×</div><div class="stat-lbl">Tools in one place<br>free to start</div></div>
     </div>
   </div>
 
@@ -286,6 +299,13 @@ select:focus{border-color:var(--green)}
       <div class="tool-desc">Log applications in one tap. Track status from Applied > Interview > Offer. Get AI insights on your job search pattern and nudges to follow up at exactly the right time.</div>
       <div class="tool-cta"><span class="tool-cta-label">Log and track your hunt</span><button class="btn btn-sm" style="background:#7c3aed;color:white">Open tracker →</button></div>
     </div>
+    <div class="tool-card" onclick="openApp('cvbuilder')" style="grid-column:1/-1;background:linear-gradient(135deg,#faf8f4 60%,#f3f0ff)">
+      <div class="tool-num">05  CV BUILDER</div>
+      <div class="tool-icon">📄</div>
+      <div class="tool-title">Build Your CV from Scratch</div>
+      <div class="tool-desc">No blank page anxiety. Fill in sections step by step — Education, Work Experience, Projects, Skills. AI writes your bullet points. Choose from 4 professional templates and download as DOCX or PDF instantly.</div>
+      <div class="tool-cta"><span class="tool-cta-label">4 templates · AI bullets · DOCX + PDF</span><button class="btn btn-sm" style="background:#7c3aed;color:white">Build CV →</button></div>
+    </div>
   </div>
 
   <div id="section-pricing" style="text-align:center;padding:0 28px 24px"><h2 style="font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.3px;margin-bottom:4px">Simple pricing</h2><p style="font-size:13px;color:var(--ink4)">No card needed to start</p></div>
@@ -297,7 +317,7 @@ select:focus{border-color:var(--green)}
         <li><span class="chk">✓</span> 3 ATS scans</li>
         <li><span class="chk">✓</span> 1 CV tailor</li>
         <li><span class="chk">✓</span> 1 job search kit</li>
-        <li><span class="chk">✓</span> All 4 tools</li>
+        <li><span class="chk">✓</span> All 5 tools incl. CV Builder</li>
       </ul>
       <button class="btn btn-ghost btn-md" style="width:100%" onclick="openApp('ats')">Get started</button>
     </div>
@@ -388,6 +408,7 @@ select:focus{border-color:var(--green)}
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('ats')">ATS Scanner</span>
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('outreach')">Outreach AI</span>
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('tracker')">Application Tracker</span>
+          <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('cvbuilder')">CV Builder</span>
         </div>
       </div>
       <div>
@@ -440,6 +461,7 @@ select:focus{border-color:var(--green)}
     <div class="mobile-tab" id="mtab-outreach" onclick="switchTool('outreach')">✉️ Outreach</div>
     <div class="mobile-tab" id="mtab-tracker" onclick="switchTool('tracker')">📋 Tracker</div>
     <div class="mobile-tab" id="mtab-coverletter" onclick="switchTool('coverletter')">📝 Cover Letter</div>
+    <div class="mobile-tab" id="mtab-cvbuilder" onclick="switchTool('cvbuilder')">📄 CV Builder</div>
   </div>
 
   <div class="app-body">
@@ -460,6 +482,11 @@ select:focus{border-color:var(--green)}
       <button class="sidebar-btn" id="sbtn-coverletter" onclick="switchTool('coverletter')">
         <span class="sbtn-icon">📝</span>
         <span class="sbtn-label">Cover Letter</span>
+      </button>
+      <div style="height:1px;background:var(--cream3);margin:6px 4px"></div>
+      <button class="sidebar-btn" id="sbtn-cvbuilder" onclick="switchTool('cvbuilder')">
+        <span class="sb-icon">📄</span>
+        <div><span class="sb-name">CV Builder</span><span class="sb-sub">Build from scratch</span></div>
       </button>
     </div>
 
@@ -989,7 +1016,89 @@ select:focus{border-color:var(--green)}
         </div>
       </div><!-- /panel-coverletter -->
 
+      <!-- ── CV BUILDER PANEL ── -->
+      <div class="tool-panel" id="panel-cvbuilder">
+        <div class="panel-header">
+          <div class="panel-eyebrow" style="color:var(--green)"><div class="panel-eyebrow-dot" style="background:var(--green)"></div>05  CV BUILDER</div>
+          <h2 class="panel-title">Build your CV from scratch</h2>
+          <p class="panel-sub">No blank page. Fill in each section, let AI write your bullet points, pick a template, and download as DOCX or PDF in one click.</p>
+        </div>
 
+        <!-- Template + sample row -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;background:var(--cream2);border-radius:12px;border:1.5px solid var(--cream3);margin-bottom:20px">
+          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap">Template</span>
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <button class="cvb-tpl-pill active" id="cvbtpl-classic" onclick="cvbSelectTemplate('classic',this)">Classic</button>
+            <button class="cvb-tpl-pill" id="cvbtpl-modern" onclick="cvbSelectTemplate('modern',this)">Modern</button>
+            <button class="cvb-tpl-pill" id="cvbtpl-minimal" onclick="cvbSelectTemplate('minimal',this)">Minimal</button>
+            <button class="cvb-tpl-pill" id="cvbtpl-executive" onclick="cvbSelectTemplate('executive',this)">Executive</button>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:7px">
+            <button onclick="cvbLoadSample('business')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)'">💼 Business sample</button>
+            <button onclick="cvbLoadSample('tech')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)'">💻 Tech sample</button>
+          </div>
+        </div>
+
+        <!-- Two-column layout -->
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start">
+
+          <!-- LEFT: Form editor -->
+          <div>
+            <!-- Personal Info -->
+            <div class="cvb-section-card">
+              <div class="cvb-section-header">
+                <div style="display:flex;align-items:center;gap:8px"><span>👤</span><span style="font-size:13px;font-weight:700;color:var(--ink)">Personal Information</span></div>
+              </div>
+              <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+                <div class="form-row">
+                  <div class="form-group" style="margin:0"><label class="field-label">Full Name</label><input type="text" id="cvb-name" placeholder="e.g. Alex Johnson" oninput="cvbRender()"></div>
+                  <div class="form-group" style="margin:0"><label class="field-label">Email</label><input type="text" id="cvb-email" placeholder="alex@email.com" oninput="cvbRender()"></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group" style="margin:0"><label class="field-label">Phone</label><input type="text" id="cvb-phone" placeholder="+44 7700 900000" oninput="cvbRender()"></div>
+                  <div class="form-group" style="margin:0"><label class="field-label">Location</label><input type="text" id="cvb-location" placeholder="London, UK" oninput="cvbRender()"></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group" style="margin:0"><label class="field-label">LinkedIn <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" id="cvb-linkedin" placeholder="linkedin.com/in/alexjohnson" oninput="cvbRender()"></div>
+                  <div class="form-group" style="margin:0"><label class="field-label">Portfolio / GitHub <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" id="cvb-portfolio" placeholder="github.com/alexjohnson" oninput="cvbRender()"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic sections -->
+            <div id="cvb-sections"></div>
+
+            <!-- Add section buttons -->
+            <div style="background:var(--cream2);border:1.5px solid var(--cream3);border-radius:12px;padding:14px 16px">
+              <div style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Add a section</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onclick="cvbAddSection('summary')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Summary</button>
+                <button onclick="cvbAddSection('experience')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Work Experience</button>
+                <button onclick="cvbAddSection('education')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Education</button>
+                <button onclick="cvbAddSection('projects')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Projects</button>
+                <button onclick="cvbAddSection('skills')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Skills</button>
+                <button onclick="cvbAddSection('custom')" style="background:white;border:1.5px solid var(--cream3);border-radius:8px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)'">+ Other</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Live preview -->
+          <div style="position:sticky;top:80px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.06em">Live Preview</span>
+              <div style="display:flex;gap:6px">
+                <button onclick="cvbDownloadDocx()" style="background:var(--green);color:white;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='var(--green-mid)'" onmouseout="this.style.background='var(--green)'">⬇ DOCX</button>
+                <button onclick="cvbDownloadPDF()" style="background:#1a4fa0;color:white;border:none;border-radius:8px;padding:7px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='#143d7a'" onmouseout="this.style.background='#1a4fa0'">⬇ PDF</button>
+              </div>
+            </div>
+            <div style="border:1px solid var(--cream3);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-md)">
+              <div id="cvb-preview" class="cvb-preview-doc"></div>
+            </div>
+            <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--ink4)">Updates live as you type</div>
+          </div>
+
+        </div>
+      </div><!-- /panel-cvbuilder -->
 
 
 
@@ -1210,8 +1319,10 @@ function switchTool(tool) {
   if (tool === 'tracker') setTimeout(renderTracker, 0);
   if (tool === 'coverletter') setTimeout(_autoFillCV, 0);
   if (tool === 'outreach') setTimeout(_autoFillOutreachCV, 0);
-  ['ats','outreach','tracker','coverletter'].forEach(t => {
-    document.getElementById('panel-'+t).classList.remove('active');
+  if (tool === 'cvbuilder') setTimeout(cvbRender, 0);
+  ['ats','outreach','tracker','coverletter','cvbuilder'].forEach(t => {
+    var panel = document.getElementById('panel-'+t);
+    if (panel) panel.classList.remove('active');
     const sb = document.getElementById('sbtn-'+t);
     if (sb) sb.classList.remove('active');
     const mt = document.getElementById('mtab-'+t);
@@ -4573,6 +4684,441 @@ async function sendChatMessage() {
   }
   if (sendBtn) sendBtn.disabled = false;
   if (input) input.focus();
+}
+</script>
+
+<script>
+// ══════════════════════════════════════════
+// CV BUILDER
+// ══════════════════════════════════════════
+var _cvbTemplate = 'classic';
+var _cvbSections = [];
+
+var _cvbStyles = {
+  classic:   { nf:'"Times New Roman", serif', nc:'#1a1814', hc:'#1a1814', na:'center', rule:'#000000', italicRole:true },
+  modern:    { nf:'"Calibri", "Segoe UI", sans-serif', nc:'#1a1814', hc:'#7c3aed', na:'left',   rule:'#7c3aed', italicRole:true },
+  minimal:   { nf:'"Arial", sans-serif',               nc:'#111111', hc:'#444444', na:'left',   rule:'#cccccc', italicRole:false },
+  executive: { nf:'"Georgia", serif',                   nc:'#1a1814', hc:'#1a4fa0', na:'center', rule:'#1a4fa0', italicRole:true }
+};
+
+function cvbSelectTemplate(tpl, btn) {
+  _cvbTemplate = tpl;
+  ['classic','modern','minimal','executive'].forEach(function(t) {
+    var b = document.getElementById('cvbtpl-'+t);
+    if (b) b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+  cvbRender();
+}
+
+function cvbAddSection(type) {
+  var titles = { summary:'PROFESSIONAL SUMMARY', experience:'WORK EXPERIENCE', education:'EDUCATION', projects:'PROJECTS', skills:'SKILLS', custom:'ADDITIONAL INFORMATION' };
+  var sec = { type:type, title:titles[type]||'SECTION' };
+  if (type === 'experience') {
+    sec.entries = [{ company:'', role:'', location:'', dates:'', bullets:['','',''] }];
+  } else if (type === 'education') {
+    sec.entries = [{ school:'', degree:'', location:'', dates:'', notes:'' }];
+  } else if (type === 'projects') {
+    sec.entries = [{ title:'', org:'', location:'', dates:'', bullets:['',''] }];
+  } else {
+    sec.text = '';
+  }
+  _cvbSections.push(sec);
+  cvbRenderForm();
+  cvbRender();
+}
+
+function cvbRenderForm() {
+  var container = document.getElementById('cvb-sections');
+  if (!container) return;
+  container.innerHTML = '';
+  _cvbSections.forEach(function(sec, si) {
+    var el = document.createElement('div');
+    el.className = 'cvb-section-card';
+    el.innerHTML = cvbSectionHTML(sec, si);
+    container.appendChild(el);
+  });
+}
+
+function cvbEsc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function cvbSectionHTML(sec, si) {
+  var icons = { summary:'📝', experience:'💼', education:'🎓', projects:'🚀', skills:'⚡', custom:'➕' };
+  var icon = icons[sec.type] || '📋';
+  var html = '<div class="cvb-section-header">'
+    + '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:15px">'+icon+'</span>'
+    + '<input type="text" value="'+cvbEsc(sec.title)+'" onchange="_cvbSections['+si+'].title=this.value;cvbRender()" '
+    + 'style="border:none;background:transparent;font-size:13px;font-weight:700;color:var(--ink);font-family:Geist,sans-serif;width:220px;outline:none" title="Click to rename"></div>'
+    + '<button onclick="_cvbSections.splice('+si+',1);cvbRenderForm();cvbRender()" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink4);padding:3px 8px;border-radius:6px;transition:background 0.15s" onmouseover="this.style.background=\'#fee2e2\';this.style.color=\'#991b1b\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--ink4)\'">✕ Remove</button>'
+    + '</div>';
+
+  if (sec.type === 'summary' || sec.type === 'skills' || sec.type === 'custom') {
+    var ph = sec.type==='summary' ? 'Summarise your experience, key strengths, and career goal in 2-3 sentences...'
+      : sec.type==='skills' ? 'e.g.\nTechnical: SQL, Python, Power BI\nTools: JIRA, Confluence\nMethodologies: Agile, BPMN'
+      : 'Add any other relevant information here...';
+    html += '<div style="padding:14px 16px">'
+      + '<textarea rows="4" placeholder="'+ph+'" oninput="_cvbSections['+si+'].text=this.value;cvbRender()" style="width:100%">'+cvbEsc(sec.text||'')+'</textarea>';
+    if (sec.type === 'summary') {
+      html += '<button onclick="cvbAISummary('+si+',event)" style="margin-top:8px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:8px;padding:7px 15px;font-size:12px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif" id="cvb-sum-btn-'+si+'">✨ AI generate summary</button>';
+    }
+    html += '</div>';
+  } else {
+    html += '<div id="cvb-entries-'+si+'">';
+    (sec.entries||[]).forEach(function(entry, ei) {
+      html += cvbEntryHTML(sec.type, si, ei, entry);
+    });
+    html += '</div>';
+    var addLabel = { experience:'+ Add another role', education:'+ Add qualification', projects:'+ Add project' }[sec.type] || '+ Add entry';
+    html += '<div style="padding:10px 16px;border-top:1px solid var(--cream3)"><button class="cvb-add-btn" onclick="cvbAddEntry('+si+')">'+addLabel+'</button></div>';
+  }
+  return html;
+}
+
+function cvbEntryHTML(type, si, ei, entry) {
+  var isFirst = ei > 0;
+  var html = '<div class="cvb-entry">';
+  if (ei > 0) {
+    html += '<div style="display:flex;justify-content:flex-end;margin-bottom:8px">'
+      + '<button onclick="cvbRemoveEntry('+si+','+ei+')" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--ink4);padding:2px 8px;border-radius:6px;transition:background 0.15s" onmouseover="this.style.background=\'#fee2e2\';this.style.color=\'#991b1b\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--ink4)\'">✕ Remove</button>'
+      + '</div>';
+  }
+
+  if (type === 'experience') {
+    html += '<div class="form-row" style="margin-bottom:10px">'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Company</label><input type="text" value="'+cvbEsc(entry.company||'')+'" placeholder="e.g. Accenture" oninput="_cvbSections['+si+'].entries['+ei+'].company=this.value;cvbRender()"></div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Job Title</label><input type="text" value="'+cvbEsc(entry.role||'')+'" placeholder="e.g. Business Analyst" oninput="_cvbSections['+si+'].entries['+ei+'].role=this.value;cvbRender()"></div>'
+      + '</div>'
+      + '<div class="form-row" style="margin-bottom:12px">'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Location</label><input type="text" value="'+cvbEsc(entry.location||'')+'" placeholder="London, UK" oninput="_cvbSections['+si+'].entries['+ei+'].location=this.value;cvbRender()"></div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Dates</label><input type="text" value="'+cvbEsc(entry.dates||'')+'" placeholder="Sep 2022 – Jun 2024" oninput="_cvbSections['+si+'].entries['+ei+'].dates=this.value;cvbRender()"></div>'
+      + '</div>'
+      + '<label class="field-label" style="margin-bottom:6px">Achievement bullets</label>'
+      + cvbBulletsHTML(si, ei, entry.bullets||[])
+      + '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">'
+      + '<button onclick="cvbAddBullet('+si+','+ei+')" style="background:none;border:1.5px dashed var(--cream3);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif;color:var(--ink4);transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.color=\'var(--green)\'" onmouseout="this.style.borderColor=\'var(--cream3)\';this.style.color=\'var(--ink4)\'">+ Bullet</button>'
+      + '<button onclick="cvbAIBullets('+si+','+ei+',event)" id="cvb-ai-'+si+'-'+ei+'" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif">✨ AI generate bullets</button>'
+      + '</div>';
+  } else if (type === 'education') {
+    html += '<div class="form-row" style="margin-bottom:10px">'
+      + '<div class="form-group" style="margin:0"><label class="field-label">University / School</label><input type="text" value="'+cvbEsc(entry.school||'')+'" placeholder="e.g. University of London" oninput="_cvbSections['+si+'].entries['+ei+'].school=this.value;cvbRender()"></div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Degree / Qualification</label><input type="text" value="'+cvbEsc(entry.degree||'')+'" placeholder="e.g. BSc Computer Science, 2:1" oninput="_cvbSections['+si+'].entries['+ei+'].degree=this.value;cvbRender()"></div>'
+      + '</div>'
+      + '<div class="form-row" style="margin-bottom:10px">'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Location</label><input type="text" value="'+cvbEsc(entry.location||'')+'" placeholder="London, UK" oninput="_cvbSections['+si+'].entries['+ei+'].location=this.value;cvbRender()"></div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Dates</label><input type="text" value="'+cvbEsc(entry.dates||'')+'" placeholder="Sep 2020 – Jun 2023" oninput="_cvbSections['+si+'].entries['+ei+'].dates=this.value;cvbRender()"></div>'
+      + '</div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Additional notes <span style="font-weight:400;color:var(--ink4)">(awards, grade, modules)</span></label>'
+      + '<input type="text" value="'+cvbEsc(entry.notes||'')+'" placeholder="e.g. Dissertation: Predictive Analytics in Retail" oninput="_cvbSections['+si+'].entries['+ei+'].notes=this.value;cvbRender()"></div>';
+  } else if (type === 'projects') {
+    html += '<div class="form-row" style="margin-bottom:10px">'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Project Title</label><input type="text" value="'+cvbEsc(entry.title||'')+'" placeholder="e.g. HR Analytics Dashboard" oninput="_cvbSections['+si+'].entries['+ei+'].title=this.value;cvbRender()"></div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Organisation / Context</label><input type="text" value="'+cvbEsc(entry.org||'')+'" placeholder="e.g. University Project" oninput="_cvbSections['+si+'].entries['+ei+'].org=this.value;cvbRender()"></div>'
+      + '</div>'
+      + '<div class="form-row" style="margin-bottom:12px">'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Location <span style="font-weight:400;color:var(--ink4)">(optional)</span></label><input type="text" value="'+cvbEsc(entry.location||'')+'" placeholder="Remote / London" oninput="_cvbSections['+si+'].entries['+ei+'].location=this.value;cvbRender()"></div>'
+      + '<div class="form-group" style="margin:0"><label class="field-label">Date</label><input type="text" value="'+cvbEsc(entry.dates||'')+'" placeholder="Jan 2024" oninput="_cvbSections['+si+'].entries['+ei+'].dates=this.value;cvbRender()"></div>'
+      + '</div>'
+      + '<label class="field-label" style="margin-bottom:6px">What you did / achieved</label>'
+      + cvbBulletsHTML(si, ei, entry.bullets||[])
+      + '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">'
+      + '<button onclick="cvbAddBullet('+si+','+ei+')" style="background:none;border:1.5px dashed var(--cream3);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif;color:var(--ink4);transition:all 0.15s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.color=\'var(--green)\'" onmouseout="this.style.borderColor=\'var(--cream3)\';this.style.color=\'var(--ink4)\'">+ Bullet</button>'
+      + '<button onclick="cvbAIBullets('+si+','+ei+',event)" id="cvb-ai-'+si+'-'+ei+'" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:7px;padding:5px 13px;font-size:11px;font-weight:600;cursor:pointer;font-family:Geist,sans-serif">✨ AI generate bullets</button>'
+      + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function cvbBulletsHTML(si, ei, bullets) {
+  var html = '';
+  bullets.forEach(function(b, bi) {
+    html += '<div class="cvb-bullet-row">'
+      + '<span style="font-size:13px;color:var(--ink4);flex-shrink:0;width:14px">•</span>'
+      + '<input type="text" value="'+cvbEsc(b)+'" placeholder="e.g. Led cross-functional team of 8 to deliver £2M digital transformation project on time" '
+      + 'oninput="_cvbSections['+si+'].entries['+ei+'].bullets['+bi+']=this.value;cvbRender()" style="flex:1">'
+      + '<button onclick="_cvbSections['+si+'].entries['+ei+'].bullets.splice('+bi+',1);cvbRenderForm();cvbRender()" style="background:none;border:none;cursor:pointer;font-size:14px;color:var(--ink4);padding:2px 4px;flex-shrink:0;transition:color 0.15s" onmouseover="this.style.color=\'#991b1b\'" onmouseout="this.style.color=\'var(--ink4)\'">✕</button>'
+      + '</div>';
+  });
+  return html;
+}
+
+function cvbAddEntry(si) {
+  var sec = _cvbSections[si];
+  if (!sec) return;
+  if (sec.type === 'experience') sec.entries.push({ company:'', role:'', location:'', dates:'', bullets:['','',''] });
+  else if (sec.type === 'education') sec.entries.push({ school:'', degree:'', location:'', dates:'', notes:'' });
+  else if (sec.type === 'projects') sec.entries.push({ title:'', org:'', location:'', dates:'', bullets:['',''] });
+  cvbRenderForm();
+  cvbRender();
+}
+
+function cvbRemoveEntry(si, ei) {
+  if (_cvbSections[si] && _cvbSections[si].entries.length > 1) {
+    _cvbSections[si].entries.splice(ei, 1);
+  }
+  cvbRenderForm();
+  cvbRender();
+}
+
+function cvbAddBullet(si, ei) {
+  if (_cvbSections[si] && _cvbSections[si].entries[ei]) {
+    _cvbSections[si].entries[ei].bullets.push('');
+    cvbRenderForm();
+  }
+}
+
+// ── Live Preview Renderer ──
+function cvbRender() {
+  var preview = document.getElementById('cvb-preview');
+  if (!preview) return;
+  var s = _cvbStyles[_cvbTemplate] || _cvbStyles.classic;
+  var name = (document.getElementById('cvb-name')||{value:''}).value || '';
+  var email = (document.getElementById('cvb-email')||{value:''}).value || '';
+  var phone = (document.getElementById('cvb-phone')||{value:''}).value || '';
+  var location = (document.getElementById('cvb-location')||{value:''}).value || '';
+  var linkedin = (document.getElementById('cvb-linkedin')||{value:''}).value || '';
+  var portfolio = (document.getElementById('cvb-portfolio')||{value:''}).value || '';
+
+  var html = '<div style="font-family:'+s.nf+';color:'+s.nc+';font-size:10.5pt;line-height:1.55">';
+
+  // Name
+  html += '<div style="font-size:18pt;font-weight:bold;text-align:'+s.na+';margin-bottom:3px;color:'+s.nc+'">'
+    + (name || '<span style="color:#ccc">Your Name</span>') + '</div>';
+
+  // Contact line
+  var contacts = [location, phone, email, linkedin, portfolio].filter(Boolean);
+  html += '<div style="text-align:'+s.na+';font-size:9pt;color:#666;margin-bottom:14px;line-height:1.6">'
+    + (contacts.length ? contacts.join(' &nbsp;|&nbsp; ') : '<span style="color:#ccc">contact details will appear here</span>')
+    + '</div>';
+
+  // Sections
+  _cvbSections.forEach(function(sec) {
+    if (sec.type === 'summary' || sec.type === 'skills' || sec.type === 'custom') {
+      if (!sec.text) return;
+      html += cvbPreviewHeading(sec.title, s);
+      sec.text.split('\n').forEach(function(line) {
+        if (line.trim()) html += '<div style="font-size:9.5pt;margin-bottom:3px">'+cvbEsc(line)+'</div>';
+      });
+    } else if (sec.type === 'experience') {
+      var hasAny = (sec.entries||[]).some(function(e){ return e.company || e.role; });
+      if (!hasAny) return;
+      html += cvbPreviewHeading(sec.title, s);
+      (sec.entries||[]).forEach(function(entry) {
+        if (!entry.company && !entry.role) return;
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:bold;font-size:10pt;margin-bottom:1px">'
+          + '<span>'+cvbEsc(entry.company||'')+'</span>'
+          + '<span style="font-size:9pt;font-weight:normal;color:#555">'+cvbEsc(entry.location||'')+'</span></div>';
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">'
+          + '<span style="font-size:9.5pt;'+(s.italicRole?'font-style:italic;':'')+'">'+cvbEsc(entry.role||'')+'</span>'
+          + '<span style="font-size:9pt;color:#555">'+cvbEsc(entry.dates||'')+'</span></div>';
+        (entry.bullets||[]).forEach(function(b) {
+          if (b.trim()) html += '<div style="margin-left:13px;margin-bottom:2px;font-size:9.5pt">&bull; '+cvbEsc(b)+'</div>';
+        });
+        html += '<div style="margin-bottom:8px"></div>';
+      });
+    } else if (sec.type === 'education') {
+      var hasAny = (sec.entries||[]).some(function(e){ return e.school || e.degree; });
+      if (!hasAny) return;
+      html += cvbPreviewHeading(sec.title, s);
+      (sec.entries||[]).forEach(function(entry) {
+        if (!entry.school && !entry.degree) return;
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:bold;font-size:10pt;margin-bottom:1px">'
+          + '<span>'+cvbEsc(entry.school||'')+'</span>'
+          + '<span style="font-size:9pt;font-weight:normal;color:#555">'+cvbEsc(entry.location||'')+'</span></div>';
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:'+(entry.notes?'2':'7')+'px">'
+          + '<span style="font-size:9.5pt;'+(s.italicRole?'font-style:italic;':'')+'">'+cvbEsc(entry.degree||'')+'</span>'
+          + '<span style="font-size:9pt;color:#555">'+cvbEsc(entry.dates||'')+'</span></div>';
+        if (entry.notes) html += '<div style="font-size:9pt;color:#666;margin-bottom:7px">'+cvbEsc(entry.notes)+'</div>';
+      });
+    } else if (sec.type === 'projects') {
+      var hasAny = (sec.entries||[]).some(function(e){ return e.title; });
+      if (!hasAny) return;
+      html += cvbPreviewHeading(sec.title, s);
+      (sec.entries||[]).forEach(function(entry) {
+        if (!entry.title) return;
+        html += '<div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:bold;font-size:10pt;margin-bottom:1px">'
+          + '<span>'+cvbEsc(entry.title||'')+'</span>'
+          + '<span style="font-size:9pt;font-weight:normal;color:#555">'+cvbEsc(entry.dates||'')+'</span></div>';
+        if (entry.org) html += '<div style="font-size:9.5pt;'+(s.italicRole?'font-style:italic;':'')+'margin-bottom:4px">'+cvbEsc(entry.org)+(entry.location?' &middot; '+cvbEsc(entry.location):'')+'</div>';
+        (entry.bullets||[]).forEach(function(b) {
+          if (b.trim()) html += '<div style="margin-left:13px;margin-bottom:2px;font-size:9.5pt">&bull; '+cvbEsc(b)+'</div>';
+        });
+        html += '<div style="margin-bottom:8px"></div>';
+      });
+    }
+  });
+
+  html += '</div>';
+  preview.innerHTML = html;
+}
+
+function cvbPreviewHeading(title, s) {
+  return '<div style="font-weight:bold;text-transform:uppercase;font-size:10pt;border-bottom:1.5px solid '+s.rule+';color:'+s.hc+';margin:14px 0 6px;padding-bottom:2px;letter-spacing:0.05em">'+cvbEsc(title)+'</div>';
+}
+
+// ── AI: Generate Bullets ──
+async function cvbAIBullets(si, ei, evt) {
+  var sec = _cvbSections[si];
+  if (!sec) return;
+  var entry = sec.entries[ei];
+  if (!entry) return;
+  var role = entry.role || entry.title || '';
+  var company = entry.company || entry.org || '';
+  if (!role && !company) { alert('Fill in the role / title first.'); return; }
+  var btn = evt && evt.target ? evt.target : document.getElementById('cvb-ai-'+si+'-'+ei);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating...'; }
+  var existing = (entry.bullets||[]).filter(function(b){return b.trim();});
+  var prompt = 'Write 3 strong CV bullet points for this role.\n\nRole: '+role+(company?'\nCompany: '+company:'')+'\n'+(existing.length ? 'Context: '+existing.join('; ')+'\n' : '')+'\nRules:\n- Start each with a strong action verb (Led, Built, Designed, Managed, Delivered, etc.)\n- Include at least one quantified result (%, £, time, headcount)\n- Keep each under 100 characters\n- No first-person pronouns\n- Return exactly 3 lines, no bullets, no numbering, no extra text';
+  try {
+    var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system:'You are an expert CV writer. Output only the 3 bullet lines, one per line, no formatting.', messages:[{role:'user',content:prompt}] }) });
+    var data = await resp.json();
+    var text = (data.content && data.content[0] ? data.content[0].text : '').trim();
+    var lines = text.split('\n').map(function(l){ return l.replace(/^[\d\.\-\•\*]\s*/,'').trim(); }).filter(function(l){ return l.length > 5; }).slice(0, 4);
+    if (lines.length) { _cvbSections[si].entries[ei].bullets = lines; cvbRenderForm(); cvbRender(); }
+  } catch(e) { alert('Could not generate bullets. Please try again.'); }
+  if (btn) { btn.disabled = false; btn.textContent = '✨ AI generate bullets'; }
+}
+
+// ── AI: Generate Summary ──
+async function cvbAISummary(si, evt) {
+  var btn = evt && evt.target ? evt.target : document.getElementById('cvb-sum-btn-'+si);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating...'; }
+  var name = (document.getElementById('cvb-name')||{value:''}).value || '';
+  var expLines = [];
+  _cvbSections.forEach(function(sec) {
+    if (sec.type === 'experience') {
+      (sec.entries||[]).forEach(function(e) {
+        if (e.role || e.company) expLines.push((e.role||'')+(e.company?' at '+e.company:''));
+      });
+    }
+  });
+  var skillsSec = _cvbSections.find(function(s){ return s.type==='skills'; });
+  var prompt = 'Write a 2–3 sentence professional CV summary.\n\n'+(name?'Name: '+name+'\n':'')+(expLines.length?'Experience: '+expLines.join(', ')+'\n':'')+(skillsSec && skillsSec.text ? 'Skills: '+skillsSec.text.slice(0,200)+'\n':'')+'\nRules:\n- 2–3 sentences only\n- Third-person style (no "I")\n- Confident, professional tone\n- Mention the type of role they are suited for\n- Return ONLY the summary, no labels or headings';
+  try {
+    var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200, system:'You are an expert CV writer. Output only the summary text.', messages:[{role:'user',content:prompt}] }) });
+    var data = await resp.json();
+    var summary = (data.content && data.content[0] ? data.content[0].text : '').trim();
+    if (summary) { _cvbSections[si].text = summary; cvbRenderForm(); cvbRender(); }
+  } catch(e) { alert('Could not generate summary. Please try again.'); }
+  if (btn) { btn.disabled = false; btn.textContent = '✨ AI generate summary'; }
+}
+
+// ── Build plain-text CV for DOCX export ──
+function cvbBuildText() {
+  var name = (document.getElementById('cvb-name')||{value:''}).value || '';
+  var email = (document.getElementById('cvb-email')||{value:''}).value || '';
+  var phone = (document.getElementById('cvb-phone')||{value:''}).value || '';
+  var location = (document.getElementById('cvb-location')||{value:''}).value || '';
+  var linkedin = (document.getElementById('cvb-linkedin')||{value:''}).value || '';
+  var portfolio = (document.getElementById('cvb-portfolio')||{value:''}).value || '';
+  var lines = [];
+  if (name) lines.push(name);
+  var contacts = [location, phone, email, linkedin, portfolio].filter(Boolean);
+  if (contacts.length) lines.push(contacts.join(' | '));
+  lines.push('');
+  _cvbSections.forEach(function(sec) {
+    lines.push(sec.title);
+    if (sec.type === 'summary' || sec.type === 'skills' || sec.type === 'custom') {
+      if (sec.text) { lines.push(sec.text); lines.push(''); }
+    } else if (sec.type === 'experience') {
+      (sec.entries||[]).forEach(function(e) {
+        if (!e.company && !e.role) return;
+        var right = [e.location, e.dates].filter(Boolean).join('  ');
+        lines.push([e.company, e.role].filter(Boolean).join(' — ')+(right ? '   '+right : ''));
+        (e.bullets||[]).forEach(function(b){ if (b.trim()) lines.push('• '+b); });
+        lines.push('');
+      });
+    } else if (sec.type === 'education') {
+      (sec.entries||[]).forEach(function(e) {
+        if (!e.school && !e.degree) return;
+        lines.push([e.degree, e.school].filter(Boolean).join(' | ')+(e.dates ? '   '+e.dates : ''));
+        if (e.notes) lines.push(e.notes);
+        lines.push('');
+      });
+    } else if (sec.type === 'projects') {
+      (sec.entries||[]).forEach(function(e) {
+        if (!e.title) return;
+        lines.push(e.title+(e.org ? ' | '+e.org : '')+(e.dates ? '   '+e.dates : ''));
+        (e.bullets||[]).forEach(function(b){ if (b.trim()) lines.push('• '+b); });
+        lines.push('');
+      });
+    }
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function cvbDownloadDocx() {
+  var text = cvbBuildText();
+  if (!text.replace(/\n/g,'').trim()) { alert('Please fill in your CV details first.'); return; }
+  var prevTpl = typeof _activeTemplate !== 'undefined' ? _activeTemplate : 'classic';
+  _activeTemplate = _cvbTemplate;
+  var blob = buildDocxBlob(text);
+  _activeTemplate = prevTpl;
+  var name = ((document.getElementById('cvb-name')||{value:''}).value || 'My').replace(/\s+/g,'_');
+  triggerDownload(blob, name+'_CV.docx');
+  showDlToast('✓ Downloaded — open in Word or Google Docs');
+}
+
+function cvbDownloadPDF() {
+  var name = (document.getElementById('cvb-name')||{value:''}).value || 'CV';
+  var s = _cvbStyles[_cvbTemplate] || _cvbStyles.classic;
+  var previewHtml = (document.getElementById('cvb-preview')||{innerHTML:''}).innerHTML;
+  if (!previewHtml.trim()) { alert('Please fill in your CV details first.'); return; }
+  var w = window.open('', '_blank');
+  w.document.write('<!DOCTYPE html><html><head><title>'+name+'</title><style>body{font-family:'+s.nf+';margin:18mm 22mm;font-size:11pt;line-height:1.55;color:'+s.nc+'}@media print{@page{margin:15mm 20mm}}</style></head><body>'+previewHtml+'</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 600);
+}
+
+// ── Sample CVs ──
+function cvbLoadSample(type) {
+  document.getElementById('cvb-name').value     = type === 'tech' ? 'Alex Chen' : 'Sarah Williams';
+  document.getElementById('cvb-email').value    = type === 'tech' ? 'alex.chen@email.com' : 'sarah.williams@email.com';
+  document.getElementById('cvb-phone').value    = '+44 7700 900000';
+  document.getElementById('cvb-location').value = 'London, UK';
+  document.getElementById('cvb-linkedin').value = type === 'tech' ? 'linkedin.com/in/alexchen' : 'linkedin.com/in/sarahwilliams';
+  document.getElementById('cvb-portfolio').value = type === 'tech' ? 'github.com/alexchen' : '';
+
+  if (type === 'tech') {
+    _cvbSections = [
+      { type:'summary', title:'PROFESSIONAL SUMMARY', text:'Software engineer with 3+ years of experience building scalable web applications and APIs. Expertise in React, Node.js and cloud infrastructure on AWS. Track record of reducing page load times by 40% and shipping products used by 100K+ users.' },
+      { type:'experience', title:'WORK EXPERIENCE', entries:[
+        { company:'TechCorp Ltd', role:'Senior Software Engineer', location:'London, UK', dates:'Jan 2023 – Present',
+          bullets:['Led migration from monolith to microservices, cutting deployment time from 4 hours to 20 minutes','Built real-time notification system processing 50K events/day using Node.js and Redis pub/sub','Mentored 3 junior engineers through weekly code reviews, improving team PR approval rate by 60%'] },
+        { company:'StartupXYZ', role:'Software Engineer', location:'London, UK', dates:'Sep 2021 – Dec 2022',
+          bullets:['Developed React dashboard used by 8K+ daily active users, boosting retention by 25%','Integrated Stripe payments processing £500K/month with zero critical incidents in 14 months','Optimised database queries reducing average API response time from 800ms to 120ms'] }
+      ]},
+      { type:'education', title:'EDUCATION', entries:[
+        { school:'University of Manchester', degree:'BSc Computer Science, First Class Honours', location:'Manchester, UK', dates:'Sep 2018 – Jun 2021', notes:'Dissertation: Machine Learning for Real-Time Fraud Detection (Grade: 82%)' }
+      ]},
+      { type:'projects', title:'PROJECTS', entries:[
+        { title:'Open Source CLI Tool', org:'Personal Project', location:'', dates:'2023',
+          bullets:['Built a developer productivity CLI downloaded 12K times on npm','Reduced boilerplate setup time for new Node.js projects from 30 min to under 2 min'] }
+      ]},
+      { type:'skills', title:'SKILLS', text:'Languages: JavaScript, TypeScript, Python, SQL\nFrameworks: React, Node.js, Express, Next.js\nCloud & DevOps: AWS (Lambda, S3, RDS), Docker, Kubernetes, CI/CD\nTools: Git, JIRA, Figma, Postman, Jest' }
+    ];
+  } else {
+    _cvbSections = [
+      { type:'summary', title:'PROFESSIONAL SUMMARY', text:'Business Analyst with 4+ years of experience in financial services and digital transformation. Skilled in requirements gathering, process optimisation and stakeholder management. Delivered projects generating £3M+ in verified cost savings.' },
+      { type:'experience', title:'WORK EXPERIENCE', entries:[
+        { company:'Barclays', role:'Business Analyst', location:'London, UK', dates:'Mar 2022 – Present',
+          bullets:['Mapped 12 end-to-end business processes using BPMN, reducing manual effort by 35% and saving 1,200 hours/year','Facilitated requirements workshops with C-suite stakeholders to define £2M digital transformation roadmap','Built Power BI dashboards tracking 8 KPIs across 3 departments, enabling weekly data-driven decisions'] },
+        { company:'Deloitte', role:'Junior Business Analyst', location:'London, UK', dates:'Aug 2020 – Feb 2022',
+          bullets:['Gathered and documented business requirements for 5 regulatory compliance projects on time and under budget','Created UAT test scripts covering 200+ scenarios, achieving 98% first-pass rate','Supported 6 Agile sprints maintaining a prioritised backlog of 120+ user stories for a £500K product'] }
+      ]},
+      { type:'education', title:'EDUCATION', entries:[
+        { school:'Warwick Business School', degree:'MSc Business Analytics, Distinction', location:'Coventry, UK', dates:'Sep 2019 – Sep 2020', notes:'' },
+        { school:'University of Nottingham', degree:"BA Business Management, 2:1", location:'Nottingham, UK', dates:'Sep 2016 – Jun 2019', notes:'' }
+      ]},
+      { type:'skills', title:'SKILLS', text:'Business Analysis: Requirements Gathering, BRD, Process Mapping, Stakeholder Management, Gap Analysis\nData & Reporting: Power BI, SQL, Advanced Excel, Tableau\nMethodologies: Agile/Scrum, BPMN, UAT, Waterfall\nTools: JIRA, Confluence, Visio, SharePoint, ServiceNow' }
+    ];
+  }
+  cvbRenderForm();
+  cvbRender();
 }
 </script>
 </body>
