@@ -218,32 +218,138 @@ select:focus{border-color:var(--green)}
 .wysiwyg-hint{display:none;font-size:11px;color:var(--green);text-align:center;padding:6px;background:#f3f0ff;border-bottom:1px solid #d8cff8}
 .wysiwyg-hint.visible{display:block}
 
-/* CV Builder */
-.cvb-section-card{background:white;border:1.5px solid var(--cream3);border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);transition:box-shadow 0.2s}
-.cvb-section-card:focus-within{box-shadow:0 0 0 2px rgba(124,58,237,0.14),0 2px 10px rgba(0,0,0,0.07)}
-.cvb-section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)}
-.cvb-entry{padding:16px 18px;border-top:1px solid var(--cream3)}
-.cvb-bullet-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.cvb-add-btn{background:none;border:1.5px dashed var(--cream3);border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink4);width:100%;transition:all 0.2s;text-align:center}
-.cvb-add-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
-.cvb-tpl-pill{padding:7px 18px;border-radius:22px;border:1.5px solid var(--cream3);background:white;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;cursor:pointer;color:var(--ink3);transition:all 0.18s;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
-.cvb-tpl-pill:hover{border-color:var(--green);color:var(--green);transform:translateY(-1px)}
-.cvb-tpl-pill.active{background:var(--green);border-color:var(--green);color:white;box-shadow:0 3px 14px rgba(124,58,237,0.35);transform:translateY(-1px)}
-/* Document page shell */
-.cvb-page-shell{background:#d8d4cd;border-radius:12px;padding:14px;box-shadow:inset 0 2px 10px rgba(0,0,0,0.1)}
-.cvb-page-paper{background:white;box-shadow:0 8px 40px rgba(0,0,0,0.25),0 2px 8px rgba(0,0,0,0.1);border-radius:2px;overflow-y:auto;max-height:74vh}
-.cvb-preview-doc{padding:36px 34px;font-size:10.5pt;line-height:1.6;min-height:480px}
-/* AI badge on buttons */
-.cvb-ai-btn{background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px}
-.cvb-ai-btn:hover{background:linear-gradient(135deg,#6d28d9,#7c3aed);box-shadow:0 3px 12px rgba(124,58,237,0.4)}
-.cvb-ai-btn:disabled{opacity:0.6;cursor:not-allowed}
+/* ── CV Builder 2026 ───────────────────────────────── */
+@keyframes cvbSlideIn{from{opacity:0;transform:translateY(16px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes cvbSparkle{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}50%{box-shadow:0 0 0 6px rgba(124,58,237,0.12)}}
+
+/* Section cards — glass morphism */
+.cvb-section-card{
+  background:rgba(255,255,255,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(228,223,212,0.6);
+  border-radius:20px;margin-bottom:12px;overflow:hidden;
+  box-shadow:0 2px 16px rgba(0,0,0,0.04),0 1px 3px rgba(0,0,0,0.03);
+  transition:all 0.28s cubic-bezier(0.4,0,0.2,1);
+  animation:cvbSlideIn 0.3s ease both;
+  position:relative;
+}
+.cvb-section-card::before{
+  content:'';position:absolute;left:0;top:16px;bottom:16px;width:3px;
+  background:linear-gradient(to bottom,#7c3aed,#a78bfa);
+  border-radius:0 3px 3px 0;
+  opacity:0;transition:opacity 0.25s;
+}
+.cvb-section-card:focus-within{
+  box-shadow:0 0 0 2px rgba(124,58,237,0.16),0 10px 40px rgba(124,58,237,0.08);
+  border-color:rgba(124,58,237,0.3);transform:translateY(-1px);
+}
+.cvb-section-card:focus-within::before{opacity:1}
+.cvb-section-card:hover:not(:focus-within){box-shadow:0 6px 24px rgba(0,0,0,0.07);transform:translateY(-1px)}
+
+/* Section header */
+.cvb-section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;
+  background:linear-gradient(135deg,rgba(243,240,255,0.6),rgba(255,255,255,0));
+  border-bottom:1px solid rgba(228,223,212,0.45);
+}
+
+/* Entry + bullet */
+.cvb-entry{padding:16px 18px;border-top:1px solid rgba(228,223,212,0.5)}
+.cvb-bullet-row{display:flex;align-items:center;gap:7px;margin-bottom:7px;border-radius:8px;transition:background 0.15s;padding:2px 0}
+
+/* Add entry button */
+.cvb-add-btn{
+  background:transparent;border:1.5px dashed rgba(124,58,237,0.22);
+  border-radius:11px;padding:10px 14px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  font-family:'Geist',sans-serif;color:var(--ink4);
+  width:100%;transition:all 0.22s;text-align:center;letter-spacing:0.01em;
+}
+.cvb-add-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg);transform:none}
+
+/* Template cards (replaces pills) */
+.cvb-tpl-card{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  background:white;border:1.5px solid rgba(212,205,195,0.7);border-radius:14px;
+  padding:10px 11px 9px;cursor:pointer;
+  transition:all 0.22s cubic-bezier(0.4,0,0.2,1);
+  font-size:11px;font-weight:700;color:var(--ink3);
+  font-family:'Geist',sans-serif;min-width:72px;
+}
+.cvb-tpl-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 22px rgba(124,58,237,0.14);color:var(--green)}
+.cvb-tpl-card.active{border-color:var(--green);background:linear-gradient(145deg,#f5f0ff,#ede9fe);color:var(--green);box-shadow:0 4px 18px rgba(124,58,237,0.2);transform:translateY(-2px)}
+
+/* Template mini preview inside card */
+.cvb-tpl-thumb{width:54px;height:40px;border-radius:5px;overflow:hidden;position:relative;background:#fafafa;border:1px solid #ede8e0}
+
+/* Section "Add" cards */
+.cvb-sec-add-card{
+  display:flex;align-items:center;gap:9px;
+  background:white;border:1.5px solid rgba(212,205,195,0.7);
+  border-radius:12px;padding:10px 13px;
+  cursor:pointer;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+  font-size:12px;font-weight:600;font-family:'Geist',sans-serif;
+  color:var(--ink3);text-align:left;
+}
+.cvb-sec-add-card:hover{border-color:var(--green);color:var(--green);transform:translateY(-2px);box-shadow:0 5px 18px rgba(124,58,237,0.13);background:var(--green-bg)}
+.cvb-sec-add-card .cvb-icon{width:26px;height:26px;border-radius:8px;background:var(--cream2);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:background 0.2s}
+.cvb-sec-add-card:hover .cvb-icon{background:rgba(124,58,237,0.12)}
+
+/* Document shell */
+.cvb-page-shell{
+  background:linear-gradient(160deg,#cdc8c0,#b8b3ab);
+  border-radius:14px;padding:18px;
+  box-shadow:inset 0 2px 12px rgba(0,0,0,0.12),0 4px 24px rgba(0,0,0,0.08);
+}
+.cvb-page-paper{
+  background:white;
+  box-shadow:0 12px 48px rgba(0,0,0,0.28),0 3px 12px rgba(0,0,0,0.12);
+  border-radius:3px;overflow-y:auto;max-height:76vh;
+}
+.cvb-preview-doc{padding:38px 36px;font-size:10.5pt;line-height:1.6;min-height:520px}
+
+/* AI buttons */
+.cvb-ai-btn{
+  background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;
+  border:none;border-radius:9px;padding:7px 15px;
+  font-size:11px;font-weight:600;cursor:pointer;
+  font-family:'Geist',sans-serif;
+  transition:all 0.2s;display:inline-flex;align-items:center;gap:5px;
+  box-shadow:0 2px 10px rgba(124,58,237,0.25);
+}
+.cvb-ai-btn:hover{
+  background:linear-gradient(135deg,#6d28d9,#7c3aed);
+  box-shadow:0 4px 20px rgba(124,58,237,0.45);transform:translateY(-1px);
+}
+.cvb-ai-btn:disabled{opacity:0.55;cursor:not-allowed;transform:none;box-shadow:none}
+
 /* Sample dropdown options */
 .cvb-dd-opt{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 12px;font-size:12px;font-family:'Geist',sans-serif;color:var(--ink3);cursor:pointer;border-radius:8px;transition:all 0.12s}
 .cvb-dd-opt:hover{background:var(--green-bg);color:var(--green)}
 .cvb-dd-opt strong{font-weight:700;color:inherit}
+
 /* Bold button */
-.cvb-bold-btn{background:white;border:1.5px solid var(--cream3);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Georgia',serif;color:var(--ink3);transition:all 0.15s;line-height:1.4;flex-shrink:0}
-.cvb-bold-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.cvb-bold-btn{background:white;border:1.5px solid rgba(212,205,195,0.8);border-radius:7px;padding:3px 9px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Georgia',serif;color:var(--ink3);transition:all 0.15s;line-height:1.4;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+.cvb-bold-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg);box-shadow:0 2px 8px rgba(124,58,237,0.15)}
+
+/* Premium input/textarea styling scoped to CV builder */
+#panel-cvbuilder input[type="text"],#panel-cvbuilder textarea{
+  background:rgba(250,249,247,0.7);
+  border:1.5px solid rgba(212,205,195,0.6);
+  border-radius:10px;padding:10px 13px;
+  font-family:'Geist',sans-serif;font-size:13px;
+  color:var(--ink);transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+  width:100%;box-sizing:border-box;
+}
+#panel-cvbuilder input[type="text"]:focus,#panel-cvbuilder textarea:focus{
+  border-color:rgba(124,58,237,0.55);
+  box-shadow:0 0 0 3px rgba(124,58,237,0.1),0 2px 8px rgba(0,0,0,0.05);
+  background:white;outline:none;
+}
+#panel-cvbuilder input[type="text"]::placeholder,#panel-cvbuilder textarea::placeholder{color:var(--ink4);opacity:0.7}
+#panel-cvbuilder .cvb-section-header input[type="text"]{background:transparent;border:none;box-shadow:none;border-radius:0;padding:0}
+#panel-cvbuilder .cvb-section-header input[type="text"]:focus{background:transparent;box-shadow:none;border-bottom:1.5px solid rgba(124,58,237,0.4)}
 </style>
 </head>
 <body>
@@ -1033,33 +1139,104 @@ select:focus{border-color:var(--green)}
       <!-- ── CV BUILDER PANEL ── -->
       <div class="tool-panel" id="panel-cvbuilder">
 
-        <!-- Top bar: title + template + downloads -->
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+        <!-- Top bar: title + downloads -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px">
           <div>
             <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
               <div style="width:6px;height:6px;border-radius:50%;background:var(--green)"></div>
               <span style="font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--green)">05  CV BUILDER</span>
             </div>
-            <h2 style="font-family:'Instrument Serif',serif;font-size:22px;letter-spacing:-0.3px;line-height:1.2">Build your CV from scratch</h2>
+            <h2 style="font-family:'Instrument Serif',serif;font-size:24px;letter-spacing:-0.4px;line-height:1.2">Build your CV from scratch</h2>
+            <p style="font-size:12px;color:var(--ink4);margin-top:3px">Fill in each section — AI writes your bullet points, pick a template, download.</p>
           </div>
-          <!-- Download buttons -->
           <div style="display:flex;gap:8px;flex-shrink:0">
-            <button onclick="cvbDownloadDocx()" style="display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s;box-shadow:0 2px 10px rgba(124,58,237,0.3)" onmouseover="this.style.background='var(--green-mid)'" onmouseout="this.style.background='var(--green)'">⬇ Download DOCX</button>
-            <button onclick="cvbDownloadPDF()" style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:white;border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='var(--ink2)'" onmouseout="this.style.background='var(--ink)'">⬇ Save PDF</button>
+            <button onclick="cvbDownloadDocx()" style="display:inline-flex;align-items:center;gap:6px;background:var(--green);color:white;border:none;border-radius:11px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.2s;box-shadow:0 3px 14px rgba(124,58,237,0.32)" onmouseover="this.style.background='var(--green-mid)';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--green)';this.style.transform=''">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> DOCX
+            </button>
+            <button onclick="cvbDownloadPDF()" style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:white;border:none;border-radius:11px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.2s;box-shadow:0 2px 10px rgba(0,0,0,0.15)" onmouseover="this.style.background='#2a2520';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--ink)';this.style.transform=''">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> PDF
+            </button>
           </div>
         </div>
 
-        <!-- Template + sample strip -->
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:10px 14px;background:white;border-radius:12px;border:1.5px solid var(--cream3);box-shadow:0 1px 4px rgba(0,0,0,0.04)">
-          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Style</span>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button class="cvb-tpl-pill active" id="cvbtpl-classic" onclick="cvbSelectTemplate('classic',this)">Classic</button>
-            <button class="cvb-tpl-pill" id="cvbtpl-modern" onclick="cvbSelectTemplate('modern',this)">Modern</button>
-            <button class="cvb-tpl-pill" id="cvbtpl-minimal" onclick="cvbSelectTemplate('minimal',this)">Minimal</button>
-            <button class="cvb-tpl-pill" id="cvbtpl-executive" onclick="cvbSelectTemplate('executive',this)">Executive</button>
+        <!-- Template cards + sample strip -->
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px;padding:14px 18px;background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border-radius:18px;border:1px solid rgba(228,223,212,0.6);box-shadow:0 2px 16px rgba(0,0,0,0.04)">
+          <!-- Template label -->
+          <span style="font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;margin-right:2px">Template</span>
+          <!-- Template visual cards -->
+          <div style="display:flex;gap:8px">
+
+            <!-- Classic -->
+            <button class="cvb-tpl-card active" id="cvbtpl-classic" onclick="cvbSelectTemplate('classic',this)">
+              <div class="cvb-tpl-thumb">
+                <div style="padding:5px 6px">
+                  <div style="width:65%;height:5px;background:#1a1714;border-radius:2px;margin:0 auto 3px"></div>
+                  <div style="height:1px;background:#1a1714;margin-bottom:3px"></div>
+                  <div style="width:90%;height:2px;background:#ccc;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:80%;height:2px;background:#ccc;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:85%;height:2px;background:#ccc;border-radius:1px;margin-bottom:3px"></div>
+                  <div style="width:55%;height:3px;background:#888;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:90%;height:2px;background:#ddd;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:75%;height:2px;background:#ddd;border-radius:1px"></div>
+                </div>
+              </div>
+              Classic
+            </button>
+
+            <!-- Modern -->
+            <button class="cvb-tpl-card" id="cvbtpl-modern" onclick="cvbSelectTemplate('modern',this)">
+              <div class="cvb-tpl-thumb">
+                <div style="display:flex;height:100%">
+                  <div style="width:4px;background:linear-gradient(to bottom,#0ea5e9,#38bdf8);border-radius:0;flex-shrink:0"></div>
+                  <div style="padding:5px 5px;flex:1">
+                    <div style="width:80%;height:4px;background:#0f172a;border-radius:2px;margin-bottom:3px"></div>
+                    <div style="width:60%;height:2px;background:#94a3b8;border-radius:1px;margin-bottom:3px"></div>
+                    <div style="width:55%;height:3px;background:#0ea5e9;border-radius:1px;margin-bottom:2px"></div>
+                    <div style="width:90%;height:2px;background:#e2e8f0;border-radius:1px;margin-bottom:2px"></div>
+                    <div style="width:80%;height:2px;background:#e2e8f0;border-radius:1px;margin-bottom:2px"></div>
+                    <div style="width:85%;height:2px;background:#e2e8f0;border-radius:1px"></div>
+                  </div>
+                </div>
+              </div>
+              Modern
+            </button>
+
+            <!-- Minimal -->
+            <button class="cvb-tpl-card" id="cvbtpl-minimal" onclick="cvbSelectTemplate('minimal',this)">
+              <div class="cvb-tpl-thumb">
+                <div style="padding:6px 7px">
+                  <div style="width:70%;height:4px;background:#111;border-radius:1px;margin-bottom:4px"></div>
+                  <div style="width:85%;height:1.5px;background:#e5e7eb;margin-bottom:5px"></div>
+                  <div style="width:40%;height:2px;background:#9ca3af;border-radius:1px;margin-bottom:3px"></div>
+                  <div style="width:88%;height:1.5px;background:#f3f4f6;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:78%;height:1.5px;background:#f3f4f6;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:82%;height:1.5px;background:#f3f4f6;border-radius:1px"></div>
+                </div>
+              </div>
+              Minimal
+            </button>
+
+            <!-- Executive -->
+            <button class="cvb-tpl-card" id="cvbtpl-executive" onclick="cvbSelectTemplate('executive',this)">
+              <div class="cvb-tpl-thumb" style="background:#1e293b">
+                <div style="background:linear-gradient(135deg,#1e293b,#0f172a);padding:7px 7px 5px">
+                  <div style="width:72%;height:5px;background:white;border-radius:2px;margin-bottom:2px"></div>
+                  <div style="width:58%;height:2px;background:rgba(255,255,255,0.45);border-radius:1px;margin-bottom:3px"></div>
+                  <div style="width:90%;height:1px;background:rgba(255,255,255,0.2);margin-bottom:3px"></div>
+                </div>
+                <div style="background:white;padding:3px 6px">
+                  <div style="width:50%;height:2.5px;background:#1e293b;border-radius:1px;margin-bottom:2px"></div>
+                  <div style="width:88%;height:1.5px;background:#e5e7eb;border-radius:1px;margin-bottom:1.5px"></div>
+                  <div style="width:75%;height:1.5px;background:#e5e7eb;border-radius:1px"></div>
+                </div>
+              </div>
+              Executive
+            </button>
+
           </div>
-          <div style="width:1px;height:20px;background:var(--cream3);margin:0 4px"></div>
-          <span style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap">Sample CV</span>
+
+          <div style="width:1px;height:36px;background:rgba(212,205,195,0.6);margin:0 4px"></div>
+          <span style="font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap">Sample CV</span>
           <!-- Custom dropdown -->
           <div style="position:relative" id="cvb-sample-wrap">
             <button onclick="cvbToggleSampleDd(event)" id="cvb-sample-trigger"
@@ -1085,17 +1262,20 @@ select:focus{border-color:var(--green)}
         </div>
 
         <!-- Main two-col: form left, document right -->
-        <div style="display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start">
+        <div style="display:grid;grid-template-columns:440px 1fr;gap:26px;align-items:start">
 
           <!-- LEFT: Scrollable form -->
-          <div style="max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px">
+          <div style="max-height:calc(100vh - 190px);overflow-y:auto;padding-right:2px;padding-bottom:4px">
 
             <!-- Personal Info card -->
             <div class="cvb-section-card">
               <div class="cvb-section-header">
-                <div style="display:flex;align-items:center;gap:9px">
-                  <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">👤</div>
-                  <span style="font-size:13px;font-weight:700;color:var(--ink)">Personal Information</span>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,0.25)">👤</div>
+                  <div>
+                    <div style="font-size:13px;font-weight:700;color:var(--ink)">Personal Information</div>
+                    <div style="font-size:10px;color:var(--ink4);margin-top:1px">Name, contact & links</div>
+                  </div>
                 </div>
               </div>
               <div style="padding:16px 18px;display:flex;flex-direction:column;gap:12px">
@@ -1118,15 +1298,18 @@ select:focus{border-color:var(--green)}
             <div id="cvb-sections"></div>
 
             <!-- Add section palette -->
-            <div style="background:white;border:1.5px solid var(--cream3);border-radius:14px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">
-              <div style="font-size:11px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px"><span>＋</span> Add a section</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-                <button onclick="cvbAddSection('summary')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>📝</span>Summary</button>
-                <button onclick="cvbAddSection('experience')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>💼</span>Work Experience</button>
-                <button onclick="cvbAddSection('education')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>🎓</span>Education</button>
-                <button onclick="cvbAddSection('projects')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>🚀</span>Projects</button>
-                <button onclick="cvbAddSection('skills')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>⚡</span>Skills</button>
-                <button onclick="cvbAddSection('custom')" style="display:flex;align-items:center;gap:7px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:9px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Geist',sans-serif;color:var(--ink3);transition:all 0.15s;text-align:left" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)';this.style.background='var(--green-bg)'" onmouseout="this.style.borderColor='var(--cream3)';this.style.color='var(--ink3)';this.style.background='var(--cream2)'"><span>➕</span>Other</button>
+            <div style="background:rgba(255,255,255,0.82);backdrop-filter:blur(16px);border:1px solid rgba(228,223,212,0.55);border-radius:20px;padding:18px 20px;box-shadow:0 2px 16px rgba(0,0,0,0.04)">
+              <div style="font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:14px;display:flex;align-items:center;gap:7px">
+                <div style="width:18px;height:18px;border-radius:6px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:10px">＋</div>
+                Add a section
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <button onclick="cvbAddSection('summary')" class="cvb-sec-add-card"><div class="cvb-icon">📝</div><span>Summary</span></button>
+                <button onclick="cvbAddSection('experience')" class="cvb-sec-add-card"><div class="cvb-icon">💼</div><span>Work Experience</span></button>
+                <button onclick="cvbAddSection('education')" class="cvb-sec-add-card"><div class="cvb-icon">🎓</div><span>Education</span></button>
+                <button onclick="cvbAddSection('projects')" class="cvb-sec-add-card"><div class="cvb-icon">🚀</div><span>Projects</span></button>
+                <button onclick="cvbAddSection('skills')" class="cvb-sec-add-card"><div class="cvb-icon">⚡</div><span>Skills</span></button>
+                <button onclick="cvbAddSection('custom')" class="cvb-sec-add-card"><div class="cvb-icon">✦</div><span>Other</span></button>
               </div>
             </div>
 
@@ -1134,10 +1317,15 @@ select:focus{border-color:var(--green)}
 
           <!-- RIGHT: Document preview -->
           <div style="position:sticky;top:72px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-              <div>
-                <span style="font-size:12px;font-weight:700;color:var(--ink2)">Document Preview</span>
-                <span style="font-size:11px;color:var(--ink4);margin-left:8px">scroll to see full CV</span>
+            <!-- Preview header bar -->
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border-radius:12px;border:1px solid rgba(228,223,212,0.5)">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 2px rgba(16,185,129,0.2)"></div>
+                <span style="font-size:12px;font-weight:700;color:var(--ink2)">Live Preview</span>
+                <span style="font-size:11px;color:var(--ink4)">· updates as you type</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <button onclick="cvbDownloadPDF()" style="font-size:11px;font-weight:600;color:var(--green);background:var(--green-bg);border:1px solid rgba(124,58,237,0.2);border-radius:7px;padding:4px 10px;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.15s" onmouseover="this.style.background='#ede9fe'" onmouseout="this.style.background='var(--green-bg)'">⬇ PDF</button>
               </div>
             </div>
             <!-- Page shell -->
@@ -1146,6 +1334,7 @@ select:focus{border-color:var(--green)}
                 <div id="cvb-preview" class="cvb-preview-doc"></div>
               </div>
             </div>
+            <p style="text-align:center;font-size:11px;color:var(--ink4);margin-top:10px;opacity:0.7">Scroll inside preview to see full document</p>
           </div>
 
         </div>
@@ -4799,13 +4988,18 @@ function cvbEsc(s) {
 }
 
 function cvbSectionHTML(sec, si) {
-  var icons = { summary:'📝', experience:'💼', education:'🎓', projects:'🚀', skills:'⚡', custom:'➕' };
+  var icons = { summary:'📝', experience:'💼', education:'🎓', projects:'🚀', skills:'⚡', custom:'✦' };
+  var subs  = { summary:'2–3 sentence overview', experience:'Roles and achievements', education:'Degrees and courses', projects:'Side projects and work', skills:'Tools, languages, methods', custom:'Extra information' };
   var icon = icons[sec.type] || '📋';
+  var sub  = subs[sec.type]  || '';
   var html = '<div class="cvb-section-header">'
-    + '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:15px">'+icon+'</span>'
-    + '<input type="text" value="'+cvbEsc(sec.title)+'" onchange="_cvbSections['+si+'].title=this.value;cvbRender()" '
-    + 'style="border:none;background:transparent;font-size:13px;font-weight:700;color:var(--ink);font-family:Geist,sans-serif;width:220px;outline:none" title="Click to rename"></div>'
-    + '<button onclick="_cvbSections.splice('+si+',1);cvbRenderForm();cvbRender()" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--ink4);padding:3px 8px;border-radius:6px;transition:background 0.15s" onmouseover="this.style.background=\'#fee2e2\';this.style.color=\'#991b1b\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--ink4)\'">✕ Remove</button>'
+    + '<div style="display:flex;align-items:center;gap:10px">'
+    + '<div style="width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;box-shadow:0 2px 8px rgba(124,58,237,0.22)">'+icon+'</div>'
+    + '<div><input type="text" value="'+cvbEsc(sec.title)+'" onchange="_cvbSections['+si+'].title=this.value;cvbRender()" '
+    + 'style="border:none;background:transparent;font-size:13px;font-weight:700;color:var(--ink);font-family:Geist,sans-serif;width:200px;outline:none;display:block" title="Click to rename">'
+    + '<div style="font-size:10px;color:var(--ink4);margin-top:1px">'+sub+'</div></div>'
+    + '</div>'
+    + '<button onclick="_cvbSections.splice('+si+',1);cvbRenderForm();cvbRender()" style="background:none;border:none;cursor:pointer;font-size:11px;font-weight:600;color:var(--ink4);padding:4px 9px;border-radius:7px;transition:all 0.15s;font-family:Geist,sans-serif" onmouseover="this.style.background=\'#fee2e2\';this.style.color=\'#991b1b\'" onmouseout="this.style.background=\'none\';this.style.color=\'var(--ink4)\'">✕ Remove</button>'
     + '</div>';
 
   if (sec.type === 'summary' || sec.type === 'skills' || sec.type === 'custom') {
