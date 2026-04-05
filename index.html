@@ -1859,19 +1859,28 @@ async function matcherFileSelect(e) {
 }
 
 // ── callClaude ──
+// Client-side guards: length checks before sending, friendly 429 handling
+const _MAX_INPUT_CHARS = 38000; // stay under server's 40K limit
 async function callClaude(system, user, maxTokens) {
   if (DEMO_MODE) {
-    // Simulate a short network delay so the loading spinner shows
     await new Promise(function(r){ setTimeout(r, 900); });
     return _demoCallClaude(system);
+  }
+  // Client-side length guard
+  if (user && user.length > _MAX_INPUT_CHARS) {
+    throw new Error('Your input is too long. Please shorten your CV or job description and try again.');
   }
   const res = await fetch('/api/chat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||2000,system,messages:[{role:'user',content:user}]})
   });
+  if (res.status === 429) {
+    const retryAfter = res.headers.get('Retry-After') || '60';
+    throw new Error('You\'re sending requests too quickly. Please wait ' + retryAfter + ' seconds and try again.');
+  }
   const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
+  if (data.error) throw new Error(data.error);
   let raw = data.content[0].text.trim();
   raw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
   try { return JSON.parse(raw); } catch(e) {}
@@ -4962,12 +4971,18 @@ async function sendChatMessage() {
         messages:recentMsgs
       })
     });
+    if (res.status === 429) {
+      var ra = res.headers.get('Retry-After') || '60';
+      var el2 = document.getElementById(typingId); if (el2) el2.remove();
+      _appendBotMsg('⏳ You're sending messages too quickly. Please wait ' + ra + ' seconds and try again.');
+      return;
+    }
     var data = await res.json();
     var reply = '';
     if (data.content && data.content[0] && data.content[0].text) {
       reply = data.content[0].text.trim();
-    } else if (data.error && data.error.message) {
-      reply = "Sorry, something went wrong: " + data.error.message;
+    } else if (data.error) {
+      reply = "Sorry, something went wrong. Please try again.";
     } else {
       reply = "Sorry, I couldn't get a response. Please try again!";
     }
@@ -5403,6 +5418,7 @@ async function cvbAIBullets(si, ei, evt) {
   var prompt = 'Write 3 strong CV bullet points for this role.\n\nRole: '+role+(company?'\nCompany: '+company:'')+'\n'+(existing.length ? 'Context: '+existing.join('; ')+'\n' : '')+'\nRules:\n- Start each with a strong action verb (Led, Built, Designed, Managed, Delivered, etc.)\n- Include at least one quantified result (%, £, time, headcount)\n- Keep each under 100 characters\n- No first-person pronouns\n- Return exactly 3 lines, no bullets, no numbering, no extra text';
   try {
     var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system:'You are an expert CV writer. Output only the 3 bullet lines, one per line, no formatting.', messages:[{role:'user',content:prompt}] }) });
+    if (resp.status === 429) { var ra=resp.headers.get('Retry-After')||'60'; alert('Too many requests. Please wait '+ra+' seconds.'); return; }
     var data = await resp.json();
     var text = (data.content && data.content[0] ? data.content[0].text : '').trim();
     var lines = text.split('\n').map(function(l){ return l.replace(/^[\d\.\-\•\*]\s*/,'').trim(); }).filter(function(l){ return l.length > 5; }).slice(0, 4);
@@ -5428,6 +5444,7 @@ async function cvbAISummary(si, evt) {
   var prompt = 'Write a 2–3 sentence professional CV summary.\n\n'+(name?'Name: '+name+'\n':'')+(expLines.length?'Experience: '+expLines.join(', ')+'\n':'')+(skillsSec && skillsSec.text ? 'Skills: '+skillsSec.text.slice(0,200)+'\n':'')+'\nRules:\n- 2–3 sentences only\n- Third-person style (no "I")\n- Confident, professional tone\n- Mention the type of role they are suited for\n- Return ONLY the summary, no labels or headings';
   try {
     var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200, system:'You are an expert CV writer. Output only the summary text.', messages:[{role:'user',content:prompt}] }) });
+    if (resp.status === 429) { var ra=resp.headers.get('Retry-After')||'60'; alert('Too many requests. Please wait '+ra+' seconds.'); return; }
     var data = await resp.json();
     var summary = (data.content && data.content[0] ? data.content[0].text : '').trim();
     if (summary) { _cvbSections[si].text = summary; cvbRenderForm(); cvbRender(); }
