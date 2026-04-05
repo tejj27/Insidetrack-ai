@@ -1283,10 +1283,10 @@ select:focus{border-color:var(--green)}
         </div>
 
         <!-- Main two-col: form left, resizer, document right -->
-        <div style="display:flex;gap:0;align-items:start;position:relative">
+        <div id="cvb-layout" style="display:flex;gap:0;align-items:start;position:relative">
 
           <!-- LEFT: Scrollable form -->
-          <div style="max-height:calc(100vh - 190px);overflow-y:auto;padding-right:12px;padding-bottom:4px;width:440px;flex-shrink:0">
+          <div id="cvb-left" style="max-height:calc(100vh - 190px);overflow-y:auto;padding-right:12px;padding-bottom:4px;width:440px;flex-shrink:0">
 
             <!-- Personal Info card -->
             <div class="cvb-section-card">
@@ -1338,13 +1338,15 @@ select:focus{border-color:var(--green)}
 
           <!-- DRAG HANDLE -->
           <div id="cvb-drag-handle" onmousedown="cvbStartResize(event)"
-            style="width:22px;flex-shrink:0;cursor:col-resize;display:flex;align-items:center;justify-content:center;align-self:stretch;min-height:300px;position:relative;z-index:20;user-select:none;-webkit-user-select:none">
-            <div id="cvb-drag-visual" style="width:5px;height:56px;background:rgba(212,205,195,0.8);border-radius:3px;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
-              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
-              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
-              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
-              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
-              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
+            title="Drag to resize panels"
+            style="width:28px;flex-shrink:0;cursor:col-resize;display:flex;align-items:center;justify-content:center;align-self:stretch;min-height:400px;position:relative;z-index:20;user-select:none;-webkit-user-select:none;touch-action:none">
+            <div id="cvb-drag-visual" style="width:6px;height:64px;background:rgba(212,205,195,0.9);border-radius:4px;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+              <span style="width:2px;height:2px;border-radius:50%;background:var(--ink3);display:block"></span>
+              <span style="width:2px;height:2px;border-radius:50%;background:var(--ink3);display:block"></span>
+              <span style="width:2px;height:2px;border-radius:50%;background:var(--ink3);display:block"></span>
+              <span style="width:2px;height:2px;border-radius:50%;background:var(--ink3);display:block"></span>
+              <span style="width:2px;height:2px;border-radius:50%;background:var(--ink3);display:block"></span>
+              <span style="width:2px;height:2px;border-radius:50%;background:var(--ink3);display:block"></span>
             </div>
           </div>
 
@@ -5177,44 +5179,65 @@ function cvbAddBullet(si, ei) {
 
 // ── CV Builder pane resizer ──
 var _cvbResizing = false, _cvbResizeStartX = 0, _cvbResizeStartW = 0;
+
 function cvbStartResize(e) {
+  var left = document.getElementById('cvb-left');
+  if (!left) return;
   _cvbResizing = true;
   _cvbResizeStartX = e.clientX;
-  var left = document.getElementById('cvb-left');
-  _cvbResizeStartW = left ? left.offsetWidth : 440;
+  _cvbResizeStartW = left.getBoundingClientRect().width;
+  // Visual feedback
   var vis = document.getElementById('cvb-drag-visual');
-  if (vis) { vis.style.background='rgba(124,58,237,0.5)'; vis.style.width='5px'; }
+  if (vis) { vis.style.background = 'var(--green)'; vis.style.transform = 'scaleX(1.3)'; }
+  // Prevent text selection and iframe event capture
   document.body.style.cursor = 'col-resize';
   document.body.style.userSelect = 'none';
-  document.addEventListener('mousemove', cvbDoResize);
-  document.addEventListener('mouseup', cvbStopResize);
+  document.body.style.webkitUserSelect = 'none';
+  var right = document.getElementById('cvb-right');
+  if (right) right.style.pointerEvents = 'none';
+  document.addEventListener('mousemove', cvbDoResize, true);
+  document.addEventListener('mouseup', cvbStopResize, true);
   e.preventDefault();
+  e.stopPropagation();
 }
+
 function cvbDoResize(e) {
   if (!_cvbResizing) return;
   var left = document.getElementById('cvb-left');
-  var layout = left && left.parentElement;
+  var layout = document.getElementById('cvb-layout');
   if (!left || !layout) return;
   var dx = e.clientX - _cvbResizeStartX;
-  var newW = Math.max(280, Math.min(_cvbResizeStartW + dx, layout.offsetWidth - 300));
+  var maxW = layout.getBoundingClientRect().width - 320; // keep right col min 300px + handle
+  var newW = Math.max(260, Math.min(_cvbResizeStartW + dx, maxW));
   left.style.width = newW + 'px';
+  left.style.flexShrink = '0';
 }
-function cvbStopResize() {
+
+function cvbStopResize(e) {
+  if (!_cvbResizing) return;
   _cvbResizing = false;
   var vis = document.getElementById('cvb-drag-visual');
-  if (vis) { vis.style.background='rgba(212,205,195,0.8)'; }
+  if (vis) { vis.style.background = 'rgba(212,205,195,0.8)'; vis.style.transform = ''; }
   document.body.style.cursor = '';
   document.body.style.userSelect = '';
-  document.removeEventListener('mousemove', cvbDoResize);
-  document.removeEventListener('mouseup', cvbStopResize);
+  document.body.style.webkitUserSelect = '';
+  var right = document.getElementById('cvb-right');
+  if (right) right.style.pointerEvents = '';
+  document.removeEventListener('mousemove', cvbDoResize, true);
+  document.removeEventListener('mouseup', cvbStopResize, true);
 }
+
 // Drag handle hover effect
 document.addEventListener('DOMContentLoaded', function() {
   var h = document.getElementById('cvb-drag-handle');
   var vis = document.getElementById('cvb-drag-visual');
   if (h && vis) {
-    h.addEventListener('mouseenter', function(){ vis.style.background='rgba(124,58,237,0.35)'; vis.style.transform='scaleX(1.2)'; });
-    h.addEventListener('mouseleave', function(){ if(!_cvbResizing){ vis.style.background='rgba(212,205,195,0.8)'; vis.style.transform=''; } });
+    h.addEventListener('mouseenter', function() {
+      if (!_cvbResizing) { vis.style.background = 'rgba(124,58,237,0.4)'; vis.style.transform = 'scaleX(1.4)'; }
+    });
+    h.addEventListener('mouseleave', function() {
+      if (!_cvbResizing) { vis.style.background = 'rgba(212,205,195,0.8)'; vis.style.transform = ''; }
+    });
   }
 });
 
