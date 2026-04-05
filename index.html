@@ -970,10 +970,13 @@ select:focus{border-color:var(--green)}
           </div>
         </div>
 
-        <div id="tracker-empty" style="text-align:center;padding:40px 20px;color:var(--ink4)">
-          <div style="font-size:40px;margin-bottom:12px">📭</div>
+        <div id="tracker-empty" style="text-align:center;padding:48px 20px;color:var(--ink4)">
+          <div style="font-size:44px;margin-bottom:14px">📭</div>
           <div style="font-weight:700;font-size:15px;color:var(--ink2);margin-bottom:6px">No applications yet</div>
-          <div style="font-size:13px">Log your first application above or run an ATS scan and log it from there.</div>
+          <div style="font-size:13px;margin-bottom:16px">Log your first application above or run an ATS scan and log it from there.</div>
+          <div id="tracker-signin-hint" style="display:none;background:var(--green-bg);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:10px 16px;font-size:12px;color:var(--green);font-weight:600;display:inline-flex;align-items:center;gap:7px">
+            <span>🔒</span> <span>Sign in to save and revisit your applications across sessions</span>
+          </div>
         </div>
         <div id="tracker-list"></div>
       </div><!-- /panel-tracker -->
@@ -3118,8 +3121,15 @@ function setTrackerFilter(f) {
   renderTracker();
 }
 
-function getApps(){try{return JSON.parse(localStorage.getItem('insidetrack_apps')||'[]');}catch(e){return[];}}
-function saveApps(apps){localStorage.setItem('insidetrack_apps',JSON.stringify(apps));}
+function _appsKey(){return _currentUser ? 'insidetrack_apps_'+_currentUser.id : null;}
+function getApps(){
+  if(!_currentUser) return [];  // guests always see empty tracker
+  try{return JSON.parse(localStorage.getItem(_appsKey())||'[]');}catch(e){return[];}
+}
+function saveApps(apps){
+  if(!_currentUser) return;  // don't persist for guests
+  localStorage.setItem(_appsKey(), JSON.stringify(apps));
+}
 
 function logApplication(){
   const company=document.getElementById('track-company').value.trim();
@@ -3236,7 +3246,14 @@ function renderTracker(){
     if(_trackerFilter==='lastweek'){var d=Math.floor((now-new Date(a.date))/86400000);return d>=5&&d<=14;}
     return a.status===_trackerFilter;
   });
-  if(!apps.length){empty.style.display='block';list.innerHTML='';return;}
+  if(!apps.length){
+    empty.style.display='block';
+    list.innerHTML='';
+    // Show sign-in hint for guests
+    var hint=document.getElementById('tracker-signin-hint');
+    if(hint) hint.style.display=_currentUser?'none':'inline-flex';
+    return;
+  }
   if(!filtered.length){
     empty.style.display='block';
     document.querySelector('#tracker-empty div:nth-child(2)').textContent='No applications match this filter';
@@ -4541,6 +4558,7 @@ async function supaUpdateProfile(userId, data) {
 // Clear any old session on page load - user must sign in each visit
 localStorage.removeItem('it_user');
 localStorage.removeItem('it_token');
+localStorage.removeItem('insidetrack_apps'); // clear any old guest/shared data
 _currentUser = null;
 
 async function loadUserProfile() {
@@ -4634,6 +4652,7 @@ async function handleAuth(){
       closeAuth();
       showUserMenu();
       await loadUserProfile();
+      renderTracker(); // load this user's apps
       showDlToast('Welcome to InsideTrack.ai! 🎉');
     } else {
       var r3=await supaSignIn(email,password);
@@ -4643,6 +4662,7 @@ async function handleAuth(){
       closeAuth();
       showUserMenu();
       await loadUserProfile();
+      renderTracker(); // load this user's apps
       showDlToast('Welcome back, '+(_currentUser.user_metadata&&_currentUser.user_metadata.full_name||_currentUser.email.split('@')[0])+'! ✓');
     }
   } catch(e){
@@ -4656,12 +4676,13 @@ async function signOut(){
   await supaSignOut();
   _currentUser=null;
   // Clear ALL app data from localStorage
-  localStorage.removeItem('insidetrack_apps');
+  localStorage.removeItem('insidetrack_apps'); // legacy key
   localStorage.removeItem('it_guest_scans');
   localStorage.removeItem('it_ats_result');
   localStorage.removeItem('it_token');
   localStorage.removeItem('it_user');
   // Clear ATS result from screen
+  renderTracker(); // show empty tracker after sign-out
   var atsResult = document.getElementById('ats-result');
   if(atsResult) atsResult.innerHTML='';
   var atsResultWrap = document.getElementById('ats-result-wrap');
