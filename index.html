@@ -19,7 +19,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);line-height:1.6;font-size:14px}
 /* Nav */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--cream3);background:var(--cream);position:sticky;top:0;z-index:100}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;border-bottom:1px solid rgba(228,223,212,0.5);background:rgba(250,249,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:1000;box-shadow:0 1px 12px rgba(0,0,0,0.04)}
 .nav-brand{display:flex;align-items:center;gap:12px;cursor:pointer}
 .brand-mark{width:42px;height:42px;background:linear-gradient(135deg,#1a1814 60%,#7c3aed);border-radius:11px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);flex-shrink:0}
 .brand-mark svg{width:22px;height:22px;fill:none;stroke:#faf8f4;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
@@ -44,18 +44,36 @@ body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);lin
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--cream2);border:1px solid var(--cream3);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:20px}
 .hero-title{font-family:'Instrument Serif',serif;font-size:clamp(36px,6vw,58px);letter-spacing:-1px;line-height:1.12;color:var(--ink);margin-bottom:16px}
 .hero-title span{color:var(--green);font-style:italic}
-.hero-sub{font-size:16px;color:var(--ink3);line-height:1.7;max-width:520px;margin:0 auto 32px}
-.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;padding:24px 0;border-top:1px solid var(--cream3);border-bottom:1px solid var(--cream3);margin:32px 0}
-.stat-num{font-family:'Instrument Serif',serif;font-size:32px;color:var(--green);letter-spacing:-1px}
-.stat-lbl{font-size:11px;color:var(--ink4);margin-top:2px}
-/* Tool cards */
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;padding:0 28px 48px;max-width:1100px;margin:0 auto;width:100%}
-.tool-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:14px;padding:24px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
-.tool-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--cream3)}
-.tool-num{font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5;margin-bottom:10px}
-.tool-icon{font-size:24px;margin-bottom:12px}
-.tool-title{font-size:16px;font-weight:700;letter-spacing:-0.3px;margin-bottom:6px}
-.tool-desc{font-size:12px;color:var(--ink4);line-height:1.6;margin-bottom:16px}
+.hero-sub{font-size:16px;color:var(--ink3);line-height:1.75;max-width:540px;margin:0 auto 36px}
+.hero-stats{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;padding:28px 0;border-top:1px solid var(--cream3);border-bottom:1px solid var(--cream3);margin:36px 0}
+.stat-num{font-family:'Instrument Serif',serif;font-size:34px;color:var(--green);letter-spacing:-1.5px}
+.stat-lbl{font-size:11px;color:var(--ink4);margin-top:3px;line-height:1.4}
+/* Tool cards 2026 */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;padding:0 28px 56px;max-width:1100px;margin:0 auto;width:100%}
+.tool-card{
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(228,223,212,0.65);
+  border-radius:20px;padding:26px;cursor:pointer;
+  transition:all 0.28s cubic-bezier(0.4,0,0.2,1);
+  position:relative;overflow:hidden;
+  box-shadow:0 2px 16px rgba(0,0,0,0.05),0 1px 3px rgba(0,0,0,0.03);
+}
+.tool-card::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#7c3aed,#a78bfa);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.tool-card:hover{
+  box-shadow:0 12px 40px rgba(124,58,237,0.12),0 2px 8px rgba(0,0,0,0.07);
+  transform:translateY(-4px);border-color:rgba(124,58,237,0.25);
+}
+.tool-card:hover::before{transform:scaleX(1)}
+.tool-num{font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;opacity:0.45;margin-bottom:12px}
+.tool-icon{font-size:26px;margin-bottom:14px;display:block}
+.tool-title{font-size:17px;font-weight:700;letter-spacing:-0.4px;margin-bottom:7px}
+.tool-desc{font-size:12px;color:var(--ink4);line-height:1.65;margin-bottom:18px}
 .tool-cta{display:flex;align-items:center;justify-content:space-between}
 .tool-cta-label{font-size:11px;color:var(--ink4)}
 .inline-example{background:none;border:none;color:var(--blue);font-size:11px;cursor:pointer;padding:0;font-family:'Geist',sans-serif;text-decoration:underline;text-underline-offset:2px}
@@ -76,9 +94,9 @@ body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);lin
 .app-body{display:flex;flex:1;min-height:0}
 .sidebar{width:220px;border-right:1px solid var(--cream3);padding:16px 12px;display:flex;flex-direction:column;gap:4px;background:var(--cream);flex-shrink:0}
 @media(max-width:700px){.sidebar{display:none}}
-.sidebar-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:none;background:transparent;border-radius:9px;cursor:pointer;text-align:left;transition:all 0.15s;font-family:'Geist',sans-serif}
-.sidebar-btn:hover{background:var(--cream2)}
-.sidebar-btn.active{background:var(--cream2);box-shadow:inset 0 0 0 1.5px var(--cream3)}
+.sidebar-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:none;background:transparent;border-radius:10px;cursor:pointer;text-align:left;transition:all 0.2s cubic-bezier(0.4,0,0.2,1);font-family:'Geist',sans-serif}
+.sidebar-btn:hover{background:rgba(124,58,237,0.06);color:var(--green)}
+.sidebar-btn.active{background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(139,92,246,0.07));box-shadow:inset 0 0 0 1.5px rgba(124,58,237,0.2);color:var(--green)}
 .sb-icon{font-size:16px;width:20px;text-align:center}
 .sb-name{font-size:13px;font-weight:600;color:var(--ink);display:block}
 .sb-sub{font-size:11px;color:var(--ink4);display:block;margin-top:1px}
@@ -459,55 +477,55 @@ select:focus{border-color:var(--green)}
   <div style="max-width:680px;margin:0 auto;padding:0 28px 60px;width:100%">
     <h2 style="font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.3px;margin-bottom:6px;text-align:center">Frequently asked questions</h2>
     <p style="font-size:13px;color:var(--ink4);text-align:center;margin-bottom:32px">Everything you need to know</p>
-    <div id="faq-list">
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(0)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div id="faq-list" style="display:flex;flex-direction:column;gap:0">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(0)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">Is my CV data safe?</span>
         <span id="faq-icon-0" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-0" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Your CV is processed in real-time and never stored on our servers. All AI calls are made directly from your browser. We don't save, share or train on your CV data.</div>
+      <div id="faq-body-0" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Your CV is processed in real-time and never stored on our servers. All AI calls are made directly from your browser. We don't save, share or train on your CV data.</div>
     </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(1)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(1)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">Will the AI add skills I don't have?</span>
         <span id="faq-icon-1" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-1" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Never. InsideTrack only rewords and reorders what is already in your CV. If a required skill is missing, we flag it as a gap — we never invent it.</div>
+      <div id="faq-body-1" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Never. InsideTrack only rewords and reorders what is already in your CV. If a required skill is missing, we flag it as a gap — we never invent it.</div>
     </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(2)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(2)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">What file formats are supported?</span>
         <span id="faq-icon-2" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-2" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">We support PDF and DOCX (Microsoft Word) files. If yours isn't one of these, copy-paste the text directly into the editor.</div>
+      <div id="faq-body-2" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">We support PDF and DOCX (Microsoft Word) files. If yours isn't one of these, copy-paste the text directly into the editor.</div>
     </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(3)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(3)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">How does the ATS score work?</span>
         <span id="faq-icon-3" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-3" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Our AI analyses your CV against the job description and scores keyword match, relevance and structure — the same way a real ATS would. A score of 75%+ significantly improves your chances of getting through.</div>
+      <div id="faq-body-3" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Our AI analyses your CV against the job description and scores keyword match, relevance and structure — the same way a real ATS would. A score of 75%+ significantly improves your chances of getting through.</div>
     </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(4)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(4)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">How many times can I re-tailor my CV?</span>
         <span id="faq-icon-4" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-4" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Free users get 1 tailor and up to 3 re-tailor passes. Pro users get unlimited tailoring. Each pass refines the presentation further without adding new content.</div>
+      <div id="faq-body-4" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Free users get 1 tailor and up to 3 re-tailor passes. Pro users get unlimited tailoring. Each pass refines the presentation further without adding new content.</div>
     </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(5)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(5)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">Is InsideTrack free to use?</span>
         <span id="faq-icon-5" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-5" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI.</div>
+      <div id="faq-body-5" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI.</div>
     </div>
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(6)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(6)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">Can I use InsideTrack on mobile?</span>
         <span id="faq-icon-6" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-6" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">Yes. InsideTrack is fully responsive and works on any device. Uploading a CV works best on desktop.</div>
+      <div id="faq-body-6" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Yes. InsideTrack is fully responsive and works on any device. Uploading a CV works best on desktop.</div>
     </div>
     </div>
   </div>
@@ -520,7 +538,7 @@ select:focus{border-color:var(--green)}
           <div class="brand-mark"><svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><polyline points="2,13 6,8 10,10 16,4"/><polyline points="12,4 16,4 16,8"/></svg></div>
           <div class="brand-name" style="color:white"><span class="it-inside" style="color:white">Inside</span><span class="it-track">Track</span><span class="it-dot" style="color:white">.ai</span></div>
         </div>
-        <p style="font-size:12px;line-height:1.7;max-width:220px">AI-powered job search tools. Get more interviews, not more rejections.</p>
+        <p style="font-size:12px;line-height:1.7;max-width:220px">AI powered career tools. Get more interviews, not more rejections.</p>
       </div>
       <div>
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:white;margin-bottom:12px">Product</div>
@@ -772,7 +790,7 @@ select:focus{border-color:var(--green)}
                 </button>
                 <button onclick="selectTemplate('science')" id="tpl-science" class="tpl-btn">
                   <div class="tpl-thumb"><div style="height:5px;background:#0d3d38;width:68%;margin-bottom:1px;border-radius:1px"></div><div style="height:1px;background:#ccc;width:100%;margin-bottom:3px"></div><div style="height:2px;background:#0d6655;width:100%;background:#e8f5f3;border-radius:2px;padding:1px 3px;margin-bottom:3px"><div style="height:1px;background:#0d6655;width:38%;border-radius:1px"></div></div><div style="height:2px;background:#e8f5f3;width:100%;border-radius:2px;padding:1px 3px;margin-bottom:2px"><div style="height:1px;background:#0d6655;width:55%;border-radius:1px"></div></div><div style="display:flex;gap:2px;align-items:center;margin-bottom:1px"><div style="width:2.5px;height:2.5px;background:#0d6655;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#c8e8e4;flex:1;border-radius:1px"></div></div><div style="display:flex;gap:2px;align-items:center"><div style="width:2.5px;height:2.5px;background:#0d6655;border-radius:50%;flex-shrink:0"></div><div style="height:1.5px;background:#c8e8e4;flex:1;border-radius:1px"></div></div></div>
-                  <div class="tpl-label">Minimal</div><div class="tpl-sub">Data-focused</div>
+                  <div class="tpl-label">Minimal</div><div class="tpl-sub">Data focused</div>
                 </button>
                 <button onclick="selectTemplate('creative')" id="tpl-creative" class="tpl-btn">
                   <div class="tpl-thumb" style="flex-direction:row;padding:0;gap:0"><div style="width:16px;background:#1a1814;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:5px 2px;gap:3px"><div style="width:10px;height:10px;border-radius:50%;background:#c8b560"></div><div style="height:1.5px;background:rgba(255,255,255,0.4);width:10px;border-radius:1px"></div><div style="height:1px;background:rgba(255,255,255,0.25);width:10px;border-radius:1px"></div></div><div style="flex:1;padding:5px;display:flex;flex-direction:column;gap:2px"><div style="height:4px;background:#c8b560;width:70%;border-radius:1px"></div><div style="height:1px;background:#ddd;width:100%;margin-bottom:2px"></div><div style="height:1.5px;background:#c8b560;width:55%;border-radius:1px;margin-bottom:1px"></div><div style="height:1.5px;background:#eee;width:90%;border-radius:1px"></div><div style="height:1.5px;background:#eee;width:85%;border-radius:1px"></div></div></div>
@@ -867,7 +885,7 @@ select:focus{border-color:var(--green)}
             <div style="flex:1;min-width:200px;padding:14px 18px;background:#f0fdf4;border:1.5px solid #c4b5fd;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
               <div>
                 <div style="font-weight:700;font-size:13px;color:#7c3aed">📝 Write Cover Letter</div>
-                <div style="font-size:12px;color:#7c3aed;margin-top:2px">Auto-filled with your CV and JD.</div>
+                <div style="font-size:12px;color:#7c3aed;margin-top:2px">Pre-filled from your CV and JD.</div>
               </div>
               <button onclick="quickCoverLetter()" style="background:#7c3aed;color:white;border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer;white-space:nowrap" onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">Write →</button>
             </div>
@@ -1019,7 +1037,7 @@ select:focus{border-color:var(--green)}
             </div>
           </div>
           <div style="background:#e8f0fe;border:1px solid #c0d0f0;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:#1a4fa0">
-            💡 <strong>How to use:</strong> Send the Hiring Manager message first to build a warm connection, then follow up with the Recruiter message. Use the Stand-out version if you want to be more direct. Send follow-ups if you hear nothing back.
+            💡 <strong>How to use:</strong> Send the Hiring Manager message first to build a warm connection, then follow up with the Recruiter message. Use the Standout version if you want to be more direct. Send follow-ups if you hear nothing back.
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
@@ -1030,14 +1048,14 @@ select:focus{border-color:var(--green)}
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#7c3aed;border-radius:50%;display:inline-block"></span>📨 2. Recruiter Message <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">company-focused, direct to recruiter</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#7c3aed;border-radius:50%;display:inline-block"></span>📨 2. Recruiter Message <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">company focused, direct to recruiter</span></div>
               <button class="copy-btn" onclick="copyText('outreach-recruiter-msg',this)">📋 Copy</button>
             </div>
             <div id="outreach-recruiter-msg" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
           </div>
           <div style="background:var(--cream);border:1.5px solid var(--cream3);border-radius:12px;overflow:hidden;margin-bottom:12px">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--cream2);border-bottom:1px solid var(--cream3)">
-              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#059669;border-radius:50%;display:inline-block"></span>🚀 3. Stand-out Version <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">bolder, achievement-first, higher reward</span></div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px"><span style="width:8px;height:8px;background:#059669;border-radius:50%;display:inline-block"></span>🚀 3. Standout Version <span style="font-weight:400;font-size:11px;color:var(--ink4);margin-left:4px">bolder, achievement first, higher reward</span></div>
               <button class="copy-btn" onclick="copyText('outreach-day10',this)">📋 Copy</button>
             </div>
             <div id="outreach-day10" style="padding:16px;font-size:13px;color:var(--ink2);line-height:1.8;white-space:pre-wrap"></div>
@@ -1160,7 +1178,7 @@ select:focus{border-color:var(--green)}
         </div>
 
         <!-- Template cards + sample strip -->
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px;padding:14px 18px;background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border-radius:18px;border:1px solid rgba(228,223,212,0.6);box-shadow:0 2px 16px rgba(0,0,0,0.04)">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px;padding:14px 18px;background:white;border-radius:18px;border:1px solid rgba(228,223,212,0.6);box-shadow:0 2px 16px rgba(0,0,0,0.04);position:relative;z-index:100">
           <!-- Template label -->
           <span style="font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;margin-right:2px">Template</span>
           <!-- Template visual cards -->
@@ -1247,7 +1265,7 @@ select:focus{border-color:var(--green)}
               <svg id="cvb-sample-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" style="transition:transform 0.2s;flex-shrink:0"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <!-- Dropdown panel -->
-            <div id="cvb-sample-dd" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:white;border:1.5px solid var(--cream3);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.06);z-index:600;min-width:220px;overflow:hidden;animation:fadeUp 0.15s ease">
+            <div id="cvb-sample-dd" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:white;border:1.5px solid var(--cream3);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.14),0 2px 8px rgba(0,0,0,0.06);z-index:9999;min-width:220px;overflow:hidden;animation:fadeUp 0.15s ease">
               <div style="padding:6px">
                 <button onclick="cvbPickSample('tech','💻','Software Engineer')" class="cvb-dd-opt">💻 <strong>Software Engineer</strong></button>
                 <button onclick="cvbPickSample('business','💼','Business / BA')" class="cvb-dd-opt">💼 <strong>Business / BA</strong></button>
@@ -1261,11 +1279,11 @@ select:focus{border-color:var(--green)}
           <div style="margin-left:auto;font-size:11px;color:var(--ink4);display:flex;align-items:center;gap:5px"><span style="width:7px;height:7px;border-radius:50%;background:#10b981;display:inline-block"></span>Updates live</div>
         </div>
 
-        <!-- Main two-col: form left, document right -->
-        <div style="display:grid;grid-template-columns:440px 1fr;gap:26px;align-items:start">
+        <!-- Main two-col: form left, resizer, document right -->
+        <div style="display:flex;gap:0;align-items:start;position:relative">
 
           <!-- LEFT: Scrollable form -->
-          <div style="max-height:calc(100vh - 190px);overflow-y:auto;padding-right:2px;padding-bottom:4px">
+          <div style="max-height:calc(100vh - 190px);overflow-y:auto;padding-right:12px;padding-bottom:4px;width:440px;flex-shrink:0">
 
             <!-- Personal Info card -->
             <div class="cvb-section-card">
@@ -1315,8 +1333,20 @@ select:focus{border-color:var(--green)}
 
           </div><!-- /left form -->
 
+          <!-- DRAG HANDLE -->
+          <div id="cvb-drag-handle" onmousedown="cvbStartResize(event)"
+            style="width:22px;flex-shrink:0;cursor:col-resize;display:flex;align-items:center;justify-content:center;align-self:stretch;min-height:300px;position:relative;z-index:20;user-select:none;-webkit-user-select:none">
+            <div id="cvb-drag-visual" style="width:5px;height:56px;background:rgba(212,205,195,0.8);border-radius:3px;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
+              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
+              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
+              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
+              <span style="width:3px;height:3px;border-radius:50%;background:var(--ink4);display:block"></span>
+            </div>
+          </div>
+
           <!-- RIGHT: Document preview -->
-          <div style="position:sticky;top:72px">
+          <div id="cvb-right" style="flex:1;min-width:260px;position:sticky;top:72px">
             <!-- Preview header bar -->
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,0.75);backdrop-filter:blur(12px);border-radius:12px;border:1px solid rgba(228,223,212,0.5)">
               <div style="display:flex;align-items:center;gap:8px">
@@ -3332,7 +3362,7 @@ Structure: "Hi [Name]," + reference ONE specific thing about the company's work 
 2. recruiter_linkedin — LinkedIn message directly to a recruiter
 Structure: "Hi [Name]," + 1-line summary of strongest credential + express interest in [Role] at [Company] referencing something specific from the company context + ask for a call or to share CV. Max 90 words.
 
-3. follow_up_day10 — Stand-out version (bolder, achievement-first)
+3. follow_up_day10 — Standout version (bolder, achievement-first)
 Lead with the company's specific focus area from the context. Then immediately tie it to candidate's strongest achievement with number. Show you understand what they're trying to do and how you fit. End with a clear ask. Max 100 words.
 
 4. follow_up_day15 — Follow-up if no reply after 10 days
@@ -4040,12 +4070,12 @@ function renderFAQ() {
   const el = document.getElementById('faq-list');
   if (!el) return;
   el.innerHTML = faqs.map((f, i) => `
-    <div style="border-bottom:1px solid var(--cream3);padding:16px 0">
-      <button onclick="toggleFAQ(${i})" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif">
+    <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
+      <button onclick="toggleFAQ(${i})" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
         <span style="font-size:14px;font-weight:600;color:var(--ink)">${f.q}</span>
         <span id="faq-icon-${i}" style="font-size:18px;color:var(--ink4);flex-shrink:0;transition:transform 0.2s">+</span>
       </button>
-      <div id="faq-body-${i}" style="display:none;padding-top:10px;font-size:13px;color:var(--ink3);line-height:1.7">${f.a}</div>
+      <div id="faq-body-${i}" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">${f.a}</div>
     </div>`).join('');
 }
 
@@ -5123,6 +5153,49 @@ function cvbAddBullet(si, ei) {
     cvbRenderForm();
   }
 }
+
+// ── CV Builder pane resizer ──
+var _cvbResizing = false, _cvbResizeStartX = 0, _cvbResizeStartW = 0;
+function cvbStartResize(e) {
+  _cvbResizing = true;
+  _cvbResizeStartX = e.clientX;
+  var left = document.getElementById('cvb-left');
+  _cvbResizeStartW = left ? left.offsetWidth : 440;
+  var vis = document.getElementById('cvb-drag-visual');
+  if (vis) { vis.style.background='rgba(124,58,237,0.5)'; vis.style.width='5px'; }
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+  document.addEventListener('mousemove', cvbDoResize);
+  document.addEventListener('mouseup', cvbStopResize);
+  e.preventDefault();
+}
+function cvbDoResize(e) {
+  if (!_cvbResizing) return;
+  var left = document.getElementById('cvb-left');
+  var layout = left && left.parentElement;
+  if (!left || !layout) return;
+  var dx = e.clientX - _cvbResizeStartX;
+  var newW = Math.max(280, Math.min(_cvbResizeStartW + dx, layout.offsetWidth - 300));
+  left.style.width = newW + 'px';
+}
+function cvbStopResize() {
+  _cvbResizing = false;
+  var vis = document.getElementById('cvb-drag-visual');
+  if (vis) { vis.style.background='rgba(212,205,195,0.8)'; }
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+  document.removeEventListener('mousemove', cvbDoResize);
+  document.removeEventListener('mouseup', cvbStopResize);
+}
+// Drag handle hover effect
+document.addEventListener('DOMContentLoaded', function() {
+  var h = document.getElementById('cvb-drag-handle');
+  var vis = document.getElementById('cvb-drag-visual');
+  if (h && vis) {
+    h.addEventListener('mouseenter', function(){ vis.style.background='rgba(124,58,237,0.35)'; vis.style.transform='scaleX(1.2)'; });
+    h.addEventListener('mouseleave', function(){ if(!_cvbResizing){ vis.style.background='rgba(212,205,195,0.8)'; vis.style.transform=''; } });
+  }
+});
 
 // ── Bold helper ──
 function cvbParseBold(text) {
