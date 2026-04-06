@@ -1927,9 +1927,20 @@ async function runATS() {
   if (!resumeText) { showError('ats-error','Please upload your CV first.'); return; }
   const jd = document.getElementById('ats-jd').value.trim();
   if (!jd) { showError('ats-error','Please paste a job description.'); return; }
+
+  // Disable immediately — prevents double-clicks during the async scan-gate call
+  // which would overwrite btn.dataset.orig with the loading HTML, causing the
+  // button to restore to "Analysing…" instead of its original label.
+  const btn = document.getElementById('ats-btn');
+  if (btn.disabled) return;
+  const origLabel = btn.innerHTML;
+  btn.disabled = true;
+
   const allowed = await serverCheckAndIncrementScan();
-  if (!allowed) return;
-  hideError('ats-error'); setLoading('ats-btn',true);
+  if (!allowed) { btn.disabled = false; return; }
+
+  hideError('ats-error');
+  btn.innerHTML = '<div class="loader-ring" style="width:16px;height:16px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:7px"></div>Analysing\u2026';
   document.getElementById('ats-result').classList.remove('visible');
   document.getElementById('tailor-banner').style.display = 'none';
   document.getElementById('tailor-result').style.display = 'none';
@@ -1956,13 +1967,17 @@ Respond ONLY with valid JSON (no markdown):
     data.score = calcScore;
     data.grade = calcGrade;
 
-    // scan already incremented atomically by serverCheckAndIncrementScan() above
     if(data.company && data.company !== 'Unknown') _lastATSCompany = data.company;
     if(data.role && data.role !== 'Unknown') _lastATSRole = data.role;
     renderATS(data);
-    
-  } catch(e) { showError('ats-error', e.message); }
-  setLoading('ats-btn', false);
+
+  } catch(e) {
+    showError('ats-error', e.message);
+  } finally {
+    // Always restore — even if callClaude throws or renderATS throws
+    btn.innerHTML = origLabel;
+    btn.disabled = false;
+  }
 }
 function renderATS(data) {
   const score = data.score || 0;
