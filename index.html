@@ -1927,7 +1927,7 @@ async function runATS() {
   if (!resumeText) { showError('ats-error','Please upload your CV first.'); return; }
   const jd = document.getElementById('ats-jd').value.trim();
   if (!jd) { showError('ats-error','Please paste a job description.'); return; }
-  const allowed = await checkScanLimit();
+  const allowed = await serverCheckAndIncrementScan();
   if (!allowed) return;
   hideError('ats-error'); setLoading('ats-btn',true);
   document.getElementById('ats-result').classList.remove('visible');
@@ -1956,7 +1956,7 @@ Respond ONLY with valid JSON (no markdown):
     data.score = calcScore;
     data.grade = calcGrade;
 
-    await incrementScanCount();
+    // scan already incremented atomically by serverCheckAndIncrementScan() above
     if(data.company && data.company !== 'Unknown') _lastATSCompany = data.company;
     if(data.role && data.role !== 'Unknown') _lastATSRole = data.role;
     renderATS(data);
@@ -4663,6 +4663,7 @@ async function handleAuth(){
       closeAuth();
       showUserMenu();
       await loadUserProfile();
+      await migrateGuestScansToSupabase(); // carry over any guest scans
       renderTracker(); // load this user's apps
       showDlToast('Welcome to InsideTrack.ai! 🎉');
     } else {
@@ -4673,6 +4674,7 @@ async function handleAuth(){
       closeAuth();
       showUserMenu();
       await loadUserProfile();
+      await migrateGuestScansToSupabase(); // carry over any guest scans
       renderTracker(); // load this user's apps
       showDlToast('Welcome back, '+(_currentUser.user_metadata&&_currentUser.user_metadata.full_name||_currentUser.email.split('@')[0])+'! ✓');
     }
@@ -4711,53 +4713,94 @@ async function signOut(){
   showDlToast('Signed out successfully');
 }
 function doSignOut(){ signOut(); }
-async function checkScanLimit(){
-  if(DEMO_MODE) return true; // demo mode: unlimited scans, no Supabase needed
-  if(_currentUser){
-    try {
-      var r = await supaGetProfile(_currentUser.id);
-      if(!r) return true;
-      if(r.plan==='pro') return true;
-      if((r.scans_used||0)>=FREE_SCAN_LIMIT){
-        showUpgradeModal();
-        return false;
-      }
-      return true;
-    } catch(e) {
-      return true; // allow scan if profile check fails
+/**
+ * serverCheckAndIncrementScan()
+ * ─────────────────────────────
+ * Single server-side call that atomically checks the scan limit AND
+ * increments the counter if allowed.  For logged-in users this uses the
+ * Supabase service-role key on the server (un-bypassable).  Guests still
+ * use localStorage — they'll be prompted to sign up when they hit the limit.
+ *
+ * Returns true  → scan is allowed (counter already incremented server-side)
+ * Returns false → limit reached or error (UI already informed)
+ */
+async function serverCheckAndIncrementScan() {
+  if (DEMO_MODE) return true;
+
+  var jwt        = localStorage.getItem('it_token') || null;
+  var guestCount = parseInt(localStorage.getItem('it_guest_scans') || '0');
+
+  var headers = { 'Content-Type': 'application/json' };
+  if (jwt) headers['Authorization'] = 'Bearer ' + jwt;
+
+  var body = { action: 'check_and_increment' };
+  if (!jwt) body.guestCount = guestCount;  // guests: tell server their local count
+
+  try {
+    var res = await fetch('/api/scan', { method: 'POST', headers: headers, body: JSON.stringify(body) });
+
+    if (res.status === 429) {
+      var ra = res.headers.get('Retry-After') || '60';
+      showDlToast('Too many scan requests. Please wait ' + ra + ' seconds.');
+      return false;
     }
-  }
-  // Guest: use localStorage
-  var guestScans = parseInt(localStorage.getItem('it_guest_scans')||'0');
-  if(guestScans>=FREE_SCAN_LIMIT){
-    openAuth('signup');
-    showDlToast('You have used all 3 free scans. Sign up to continue!');
-    return false;
-  }
-  return true;
-}
-async function incrementScanCount(){
-  if(DEMO_MODE) return; // demo mode: don't touch Supabase
-  if(_currentUser){
-    try {
-      var profile = await supaGetProfile(_currentUser.id);
-      var c = (profile&&profile.scans_used)||0;
-      await supaUpdateProfile(_currentUser.id, {scans_used:c+1});
-      _userScans=c+1;
+
+    var data = await res.json();
+
+    if (!data.allowed) {
+      // Limit reached
+      showDlToast('You have used all ' + FREE_SCAN_LIMIT + ' free scans. Sign up to continue!');
+      setTimeout(function () { openAuth('signup'); }, 1200);
+      return false;
+    }
+
+    // Allowed — update local state
+    if (jwt) {
+      // Logged-in: refresh the profile display
+      _userScans = data.used || 0;
       await loadUserProfile();
-    } catch(e){ console.log('increment error',e); }
-    var dummy=0;
-  } else {
-    // Guest: track in localStorage
-    var g=parseInt(localStorage.getItem('it_guest_scans')||'0');
-    localStorage.setItem('it_guest_scans', g+1);
-    var remaining = FREE_SCAN_LIMIT - (g+1);
-    if(remaining>0) showDlToast(remaining+' free scan'+(remaining>1?'s':'')+' remaining. Sign up to get unlimited!');
+    } else {
+      // Guest: persist incremented count to localStorage + show nudge
+      var newCount = guestCount + 1;
+      localStorage.setItem('it_guest_scans', newCount);
+      var remaining = FREE_SCAN_LIMIT - newCount;
+      if (remaining > 0) {
+        showDlToast(remaining + ' free scan' + (remaining > 1 ? 's' : '') + ' remaining. Sign up to save your results!');
+      }
+    }
+    return true;
+
+  } catch (e) {
+    console.error('scan gate error:', e);
+    return true; // fail open — don't block scan on network hiccup
+  }
+}
+
+/**
+ * migrateGuestScansToSupabase()
+ * Called once after sign-in or sign-up.
+ * Bumps the Supabase scans_used to GREATEST(current, guestCount) so any
+ * scans done as a guest count toward the user's limit.
+ */
+async function migrateGuestScansToSupabase() {
+  var guestCount = parseInt(localStorage.getItem('it_guest_scans') || '0');
+  if (guestCount <= 0) return; // nothing to migrate
+  var jwt = localStorage.getItem('it_token');
+  if (!jwt) return;
+  try {
+    await fetch('/api/scan', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
+      body:    JSON.stringify({ action: 'migrate_guest', guestCount: guestCount }),
+    });
+    localStorage.removeItem('it_guest_scans'); // clear after migration
+  } catch (e) {
+    console.error('guest scan migration error:', e);
   }
 }
 
 function showUpgradeModal(){
-  showDlToast('You have used all 3 free scans. Sign up for more!');
+  showDlToast('You have used all ' + FREE_SCAN_LIMIT + ' free scans. Sign up for more!');
   setTimeout(function(){ openAuth('signup'); }, 1500);
 }
 </script>
