@@ -3142,6 +3142,8 @@ function useATSExample(){
 
 // ── Application Tracker ──
 let _trackerFilter = 'all';
+let _apps = [];          // in-memory cache, loaded from Supabase
+let _appsLoaded = false; // have we fetched from server yet?
 
 function setTrackerFilter(f) {
   _trackerFilter = f;
@@ -3150,33 +3152,59 @@ function setTrackerFilter(f) {
   renderTracker();
 }
 
-function _appsKey(){return _currentUser ? 'insidetrack_apps_'+_currentUser.id : null;}
-function getApps(){
-  if(!_currentUser) return [];  // guests always see empty tracker
-  try{return JSON.parse(localStorage.getItem(_appsKey())||'[]');}catch(e){return[];}
-}
-function saveApps(apps){
-  if(!_currentUser) return;  // don't persist for guests
-  localStorage.setItem(_appsKey(), JSON.stringify(apps));
+function _appJWT() { return localStorage.getItem('it_token') || null; }
+
+async function loadApps() {
+  if (!_currentUser) { _apps = []; _appsLoaded = true; return; }
+  const jwt = _appJWT();
+  if (!jwt) { _apps = []; _appsLoaded = true; return; }
+  try {
+    const r = await fetch('/api/applications', {
+      headers: { 'Authorization': 'Bearer ' + jwt }
+    });
+    if (!r.ok) throw new Error('fetch failed');
+    _apps = await r.json();
+    _appsLoaded = true;
+  } catch(e) {
+    console.error('loadApps:', e);
+    _apps = [];
+    _appsLoaded = true;
+  }
 }
 
-function logApplication(){
+function getApps() { return _apps; }
+
+async function logApplication(){
   const company=document.getElementById('track-company').value.trim();
   const role=document.getElementById('track-role').value.trim();
-  const score=document.getElementById('track-score').value.trim();
+  const scoreRaw=document.getElementById('track-score').value.trim();
   const source=document.getElementById('track-source').value;
   if(!company||!role){alert('Please enter a company and role.');return;}
-  const apps=getApps();
-  apps.unshift({id:Date.now(),company,role,score,source,status:'applied',date:new Date().toISOString()});
-  saveApps(apps);
-  document.getElementById('track-company').value='';
-  document.getElementById('track-role').value='';
-  document.getElementById('track-score').value='';
-  renderTracker();
+  if(!_currentUser){alert('Please sign in to log applications.');return;}
   const btn=event.currentTarget;
   const orig=btn.innerHTML;
-  btn.innerHTML='✅ Logged!';btn.style.background='#059669';
-  setTimeout(()=>{btn.innerHTML=orig;btn.style.background='#7c3aed';},2000);
+  btn.disabled=true;btn.innerHTML='Saving…';
+  const ats_score = scoreRaw ? parseInt(scoreRaw) : undefined;
+  try {
+    const jwt = _appJWT();
+    const r = await fetch('/api/applications', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+jwt},
+      body: JSON.stringify({company, role, source, status:'applied', ...(ats_score>=0 ? {ats_score} : {})})
+    });
+    if(!r.ok) throw new Error('save failed');
+    const created = await r.json();
+    _apps.unshift(created);
+    document.getElementById('track-company').value='';
+    document.getElementById('track-role').value='';
+    document.getElementById('track-score').value='';
+    renderTracker();
+    btn.innerHTML='✅ Logged!';btn.style.background='#059669';
+    setTimeout(()=>{btn.innerHTML=orig;btn.style.background='#7c3aed';btn.disabled=false;},2000);
+  } catch(e) {
+    showDlToast('Could not save application. Please try again.');
+    btn.innerHTML=orig;btn.disabled=false;
+  }
 }
 
 function quickLogFromATS(){
@@ -3196,16 +3224,48 @@ function quickLogFromATS(){
   }, 150);
 }
 
-function updateStatus(id,status){
-  const apps=getApps();const app=apps.find(a=>a.id===id);
-  if(app){app.status=status;saveApps(apps);renderTracker();}
+async function updateStatus(id, status){
+  const app = _apps.find(a => a.id === id);
+  if (!app) return;
+  const prev = app.status;
+  app.status = status; // optimistic
+  renderTracker();
+  try {
+    const jwt = _appJWT();
+    const r = await fetch('/api/applications', {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+jwt},
+      body: JSON.stringify({id, status})
+    });
+    if (!r.ok) throw new Error('update failed');
+    const updated = await r.json();
+    Object.assign(app, updated);
+  } catch(e) {
+    app.status = prev; // rollback
+    renderTracker();
+    showDlToast('Could not update status. Please try again.');
+  }
 }
 
-function deleteApp(id){
-  id = Number(id);
-  saveApps(getApps().filter(function(a){return a.id!==id;}));
+async function deleteApp(id){
+  const idx = _apps.findIndex(a => a.id === id);
+  if (idx === -1) return;
+  const [removed] = _apps.splice(idx, 1); // optimistic
   renderTracker();
-  showDlToast('Application removed');
+  try {
+    const jwt = _appJWT();
+    const r = await fetch('/api/applications', {
+      method:'DELETE',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+jwt},
+      body: JSON.stringify({id})
+    });
+    if (!r.ok) throw new Error('delete failed');
+    showDlToast('Application removed');
+  } catch(e) {
+    _apps.splice(idx, 0, removed); // rollback
+    renderTracker();
+    showDlToast('Could not remove application. Please try again.');
+  }
 }
 
 function goOutreach(company,role){
@@ -3221,7 +3281,7 @@ async function runInsights(){
   const loading=document.getElementById('insights-loading');
   const content=document.getElementById('insights-content');
   loading.style.display='block';content.innerHTML='';
-  const appSummary=apps.map(a=>`${a.role} at ${a.company} — ATS: ${a.score||'unknown'} — Status: ${a.status} — Applied: ${Math.floor((Date.now()-new Date(a.date))/86400000)}d ago`).join('\n');
+  const appSummary=apps.map(a=>`${a.role} at ${a.company} — ATS: ${a.ats_score!=null?a.ats_score+'%':'unknown'} — Status: ${a.status} — Applied: ${Math.floor((Date.now()-new Date(a.created_at))/86400000)}d ago`).join('\n');
   try{
     const data=await callClaude(
       `Job search analyst. SHORT punchy insights — coach texting, not essay. Respond ONLY valid JSON:
@@ -3255,7 +3315,8 @@ Max 3 insights. Brutal and specific.`,
   loading.style.display='none';
 }
 
-function renderTracker(){
+async function renderTracker(){
+  if (!_appsLoaded) await loadApps();
   const apps=getApps();
   document.getElementById('stat-total').textContent=apps.length;
   document.getElementById('stat-applied').textContent=apps.filter(a=>a.status==='applied').length;
@@ -3271,8 +3332,8 @@ function renderTracker(){
   const now=Date.now();
   var filtered=apps.filter(function(a){
     if(_trackerFilter==='all') return true;
-    if(_trackerFilter==='recent5') return Math.floor((now-new Date(a.date))/86400000)<=5;
-    if(_trackerFilter==='lastweek'){var d=Math.floor((now-new Date(a.date))/86400000);return d>=5&&d<=14;}
+    if(_trackerFilter==='recent5') return Math.floor((now-new Date(a.created_at))/86400000)<=5;
+    if(_trackerFilter==='lastweek'){var d=Math.floor((now-new Date(a.created_at))/86400000);return d>=5&&d<=14;}
     return a.status===_trackerFilter;
   });
   if(!apps.length){
@@ -3306,27 +3367,28 @@ function renderTracker(){
   const sn={applied:['interview','rejected'],interview:['offer','rejected'],offer:[],rejected:[]};
   const ds=d=>Math.floor((Date.now()-new Date(d))/86400000);
   list.innerHTML=filtered.map(app=>{
-    const days=ds(app.date);
+    const days=ds(app.created_at);
     const dateStr=days===0?'Today':days===1?'Yesterday':`${days} days ago`;
     const nudge=app.status==='applied'&&days>=5?`<div style="display:flex;align-items:center;gap:6px;padding:8px 12px;background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;margin-top:10px;font-size:12px;color:#92400e"><span>⏰</span><span>No reply in ${days} days — </span><button onclick="goOutreach('${esc(app.company)}','${esc(app.role)}')" style="background:none;border:none;color:#b45309;font-weight:700;cursor:pointer;font-family:'Geist',sans-serif;font-size:12px;padding:0;text-decoration:underline">Send follow-up ↗</button></div>`:'';
     const ns=sn[app.status]||[];
+    const idStr=String(app.id);
     return `<div class="tracker-card status-${app.status}" style="padding-left:24px">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:0">
           <div style="font-size:16px;font-weight:800;color:var(--ink);letter-spacing:-0.2px">${esc(app.company)}</div>
           <div style="font-size:13px;color:var(--ink3);margin-top:1px">${esc(app.role)}</div>
           <div style="display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap">
-            ${app.score?`<span style="font-size:11px;font-weight:700;background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:12px">ATS ${esc(app.score)}</span>`:''}
+            ${app.ats_score!=null?`<span style="font-size:11px;font-weight:700;background:#f0fdf4;color:#166534;padding:2px 8px;border-radius:12px">ATS ${app.ats_score}%</span>`:''}
             <span style="font-size:11px;color:var(--ink4)">📌 ${esc(app.source)}</span>
             <span style="font-size:11px;color:var(--ink4)">🕐 ${dateStr}</span>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
           <span class="status-pill status-${app.status}">${sl[app.status]||app.status}</span>
-          <button onclick="deleteApp(${app.id})" style="background:none;border:none;color:var(--ink4);cursor:pointer;font-size:12px;padding:0">✕ Remove</button>
+          <button onclick="deleteApp('${idStr}')" style="background:none;border:none;color:var(--ink4);cursor:pointer;font-size:12px;padding:0">✕ Remove</button>
         </div>
       </div>
-      ${ns.length?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--cream3)"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink4);margin-bottom:8px">Move to →</div><div style="display:flex;gap:8px;flex-wrap:wrap">${ns.map(s=>`<button class="status-pill status-${s}" onclick="updateStatus(${app.id},'${s}')">${sl[s]}</button>`).join('')}</div></div>`:''}
+      ${ns.length?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--cream3)"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink4);margin-bottom:8px">Move to →</div><div style="display:flex;gap:8px;flex-wrap:wrap">${ns.map(s=>`<button class="status-pill status-${s}" onclick="updateStatus('${idStr}','${s}')">${sl[s]}</button>`).join('')}</div></div>`:''}
       ${nudge}
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
         <button onclick="goCoverLetter('${esc(app.company)}','${esc(app.role)}')" style="background:none;border:1px solid var(--cream3);border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--ink3);cursor:pointer;font-family:'Geist',sans-serif">📝 Cover letter</button>
@@ -4679,6 +4741,7 @@ async function handleAuth(){
       var r2=await supaSignIn(email,password);
       if(r2.error) throw new Error(r2.error.message||r2.error);
       _currentUser=r2.data.user;
+      _appsLoaded=false; // force reload from Supabase
       closeAuth();
       showUserMenu();
       await loadUserProfile();
@@ -4690,6 +4753,7 @@ async function handleAuth(){
       if(r3.error) throw new Error(r3.error.message||'Invalid email or password.');
       if(!r3.data || !r3.data.user) throw new Error('Sign in failed. Please check your email and password.');
       _currentUser=r3.data.user;
+      _appsLoaded=false; // force reload from Supabase
       closeAuth();
       showUserMenu();
       await loadUserProfile();
@@ -4707,6 +4771,7 @@ async function handleAuth(){
 async function signOut(){
   await supaSignOut();
   _currentUser=null;
+  _apps=[]; _appsLoaded=false; // clear in-memory cache
   // Clear ALL app data from localStorage
   localStorage.removeItem('insidetrack_apps'); // legacy key
   localStorage.removeItem('it_guest_scans');
