@@ -4547,23 +4547,24 @@ async function supaSignOut() {
   _currentUser = null;
 }
 
+// Fetches profile via /api/profile (server-side) — never calls Supabase directly
+// from the browser. userId param kept for call-site compatibility but unused
+// (server extracts the user from the JWT).
 async function supaGetProfile(userId) {
   var token = localStorage.getItem('it_token');
-  var r = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId + '&select=scans_used,plan', {
-    headers: {'apikey':SUPA_KEY,'Authorization':'Bearer '+(token||SUPA_KEY)}
-  });
-  var d = await r.json();
-  return d && d[0] ? d[0] : null;
+  if (!token) return null;
+  try {
+    var r = await fetch('/api/profile', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!r.ok) return null;
+    return await r.json(); // { scans_used, plan }
+  } catch (e) {
+    console.error('supaGetProfile error:', e);
+    return null;
+  }
 }
-
-async function supaUpdateProfile(userId, data) {
-  var token = localStorage.getItem('it_token');
-  await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
-    method: 'PATCH',
-    headers: {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+(token||SUPA_KEY),'Prefer':'return=minimal'},
-    body: JSON.stringify(data)
-  });
-}
+// supaUpdateProfile removed — all profile writes go through /api/scan (server-side)
 
 // Check for existing session on load
 // Clear any old session on page load - user must sign in each visit
