@@ -25,7 +25,7 @@ const ALLOWED_MODELS = [
 const MAX_TOKENS_CAP    = 2500;
 const MAX_MESSAGES      = 20;
 const MAX_TOTAL_CHARS   = 40000;
-const MAX_SYSTEM_CHARS  = 12000; // CV tailor prompt includes dynamic keywords + suggestions
+const MAX_SYSTEM_CHARS  = 25000; // CV tailor prompt is ~20k chars + dynamic ATS suggestions
 const RATE_LIMIT_MAX    = 20;
 const RATE_LIMIT_WINDOW = 60000; // 1 minute
 
