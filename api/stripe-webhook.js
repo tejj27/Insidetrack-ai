@@ -128,6 +128,7 @@ export default async function handler(req, res) {
 
         await updateProfile(userId, {
           plan:                   'pro',
+          stripe_customer_id:     customerId,
           stripe_subscription_id: subscriptionId,
         });
         console.log(`stripe-webhook: user ${userId} upgraded to Pro`);
