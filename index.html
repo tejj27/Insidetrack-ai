@@ -4991,7 +4991,7 @@ async function manageSubscription(){
     var r=await fetch('/api/portal',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({ returnUrl: window.location.origin }),
+      body:JSON.stringify({ returnUrl: window.location.origin+'?from=portal' }),
     });
     var d=await r.json();
     if(d.url){ window.location.href=d.url; return; }
@@ -5019,6 +5019,27 @@ function initSessionFromStorage() {
   // and by the ?upgraded=1 handler. No UI changes on the landing page itself.
 }
 initSessionFromStorage();
+
+// Handle ?from=portal redirect — user returning from Stripe billing portal
+(function(){
+  if(window.location.search.includes('from=portal')){
+    history.replaceState(null,'',window.location.pathname);
+    var _portalCheck=setInterval(function(){
+      if(_currentUser){
+        clearInterval(_portalCheck);
+        openApp('ats');
+        loadUserProfile().then(function(p){
+          if(p && p.plan==='free'){
+            showDlToast('Your subscription has been cancelled. You\'re now on the Free plan.');
+          } else {
+            showDlToast('Welcome back!');
+          }
+        });
+      }
+    },300);
+    setTimeout(function(){ clearInterval(_portalCheck); },10000);
+  }
+})();
 
 // Handle ?upgraded=1 redirect from Stripe Checkout
 (function(){
