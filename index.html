@@ -4768,9 +4768,13 @@ function updateUserMenuDisplay(p){
   var e=document.getElementById('user-email-display');
   var pl=document.getElementById('user-plan-display');
   var sc=document.getElementById('user-scans-display');
+  var upBtn=document.getElementById('upgrade-btn');
+  var mgBtn=document.getElementById('manage-sub-btn');
   if(e) e.textContent=(_currentUser&&_currentUser.email)||'';
   if(pl) pl.textContent=p.plan==='pro'?'⭐ Pro Plan':'🆓 Free Plan';
   if(sc) sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+' / '+FREE_SCAN_LIMIT+' scans used');
+  if(upBtn) upBtn.style.display=p.plan==='pro'?'none':'block';
+  if(mgBtn) mgBtn.style.display=p.plan==='pro'?'block':'none';
   // Update nav label too
   var navSc=document.getElementById('nav-scan-count');
   if(navSc&&_currentUser) {
@@ -4950,6 +4954,67 @@ function showUpgradeModal(){
   showDlToast('You have used all ' + FREE_SCAN_LIMIT + ' free scans. Sign up for more!');
   setTimeout(function(){ openAuth('signup'); }, 1500);
 }
+
+async function startUpgrade(){
+  var token=localStorage.getItem('it_token');
+  if(!token){ openAuth('signup'); return; }
+  var btn=document.getElementById('upgrade-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Loading…'; }
+  try{
+    var r=await fetch('/api/create-checkout',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        successUrl: window.location.origin+'?upgraded=1',
+        cancelUrl:  window.location.origin,
+      }),
+    });
+    var d=await r.json();
+    if(d.url){ window.location.href=d.url; return; }
+    showDlToast(d.error||'Could not start checkout. Please try again.');
+  }catch(err){
+    showDlToast('Something went wrong. Please try again.');
+  }
+  if(btn){ btn.disabled=false; btn.textContent='⭐ Upgrade to Pro — £4.99/mo'; }
+}
+
+async function manageSubscription(){
+  var token=localStorage.getItem('it_token');
+  if(!token) return;
+  var btn=document.getElementById('manage-sub-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Opening…'; }
+  try{
+    var r=await fetch('/api/portal',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ returnUrl: window.location.origin }),
+    });
+    var d=await r.json();
+    if(d.url){ window.location.href=d.url; return; }
+    showDlToast(d.error||'Could not open billing portal. Please try again.');
+  }catch(err){
+    showDlToast('Something went wrong. Please try again.');
+  }
+  if(btn){ btn.disabled=false; btn.textContent='💳 Manage subscription'; }
+}
+
+// Handle ?upgraded=1 redirect from Stripe Checkout
+(function(){
+  if(window.location.search.includes('upgraded=1')){
+    history.replaceState(null,'',window.location.pathname); // clean the URL
+    // Wait for auth to load then flash the success toast
+    var _upgradeCheck=setInterval(function(){
+      if(_currentUser){
+        clearInterval(_upgradeCheck);
+        suGetProfile().then(function(p){
+          updateUserMenuDisplay(p);
+          showDlToast('🎉 Welcome to Pro! Unlimited scans unlocked.');
+        });
+      }
+    },300);
+    setTimeout(function(){ clearInterval(_upgradeCheck); },10000);
+  }
+})();
 </script>
 
   <!-- AUTH MODAL -->
@@ -5007,6 +5072,14 @@ function showUpgradeModal(){
         <div id="user-plan-display" style="font-size:13px;font-weight:700;color:#7c3aed"></div>
         <div id="user-scans-display" style="font-size:12px;color:#6a6560;font-family:'Geist Mono',monospace"></div>
       </div>
+      <!-- Upgrade button (free users only) -->
+      <button id="upgrade-btn" onclick="startUpgrade()" style="display:none;width:100%;padding:10px 14px;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;border-radius:10px;color:white;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left">
+        ⭐ Upgrade to Pro — £4.99/mo
+      </button>
+      <!-- Manage subscription (pro users only) -->
+      <button id="manage-sub-btn" onclick="manageSubscription()" style="display:none;width:100%;padding:10px 14px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;color:#15803d;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left">
+        💳 Manage subscription
+      </button>
       <button onclick="hideCVHistory();toggleUserDropdown();showCVHistory();" style="width:100%;padding:10px 14px;background:#f3f0ff;border:1.5px solid #d8cff8;border-radius:10px;color:#6d28d9;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left">
         📂 Recent CVs
       </button>
