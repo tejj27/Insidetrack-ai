@@ -2698,7 +2698,7 @@ function downloadCVasPDF() {
     tech:       '@page{margin:10mm 13mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0f172a}h2{color:#0369a1;border-bottom:1.5px solid #0369a1;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0369a1}',
     law:        '@page{margin:12mm 16mm;size:A4}body{font-family:"Times New Roman",Georgia,serif;color:#1a1814;font-size:10.5pt;line-height:1.6;margin:0;padding:0}h1{text-align:center;text-transform:uppercase;letter-spacing:3px;font-size:17pt;margin:0 0 2px 0;color:#1a1814}h2{text-align:left;text-transform:uppercase;letter-spacing:1.5px;font-size:9.5pt;font-weight:700;border-top:1.5px solid #1a1814;border-bottom:1.5px solid #1a1814;padding:2px 0;margin:14px 0 6px 0;color:#1a1814}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:2px 0}',
     science:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:20pt;font-weight:700;margin:0 0 4px 0;color:#0d3d38}h2{background:#e8f5f3;color:#0d6655;text-transform:uppercase;font-size:9.5pt;font-weight:700;padding:3px 8px;margin:14px 0 5px 0;border-radius:3px}p{margin:1px 0}ul{margin:2px 0;padding-left:16px}li{margin:1px 0}li::marker{color:#0d6655}',
-    creative:   '@page{margin:0;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0;display:table;width:100%;table-layout:fixed}#sidebar{display:table-cell;width:160px;background:#1a1814;padding:24px 14px;color:white;vertical-align:top;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}#main{display:table-cell;padding:24px 28px;vertical-align:top}h1{font-size:14pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:white;margin:0 0 10px 0;line-height:1.2}h2{color:#c8a84b;border-bottom:1.5px solid #c8a84b;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}li::marker{color:#c8a84b}.contact-item{display:block;font-size:8pt;color:rgba(255,255,255,0.7);margin-bottom:4px;overflow-wrap:anywhere;word-break:break-word;text-decoration:none}',
+    creative:   '@page{margin:0;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10pt;line-height:1.45;margin:0;padding:0}#cv-wrap{display:flex;flex-direction:row;width:100%;min-height:297mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}#sidebar{width:160px;min-width:160px;flex-shrink:0;background:#1a1814;padding:24px 14px;color:white;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}#main{flex:1;padding:24px 28px;color:#1a1814;font-size:10pt;line-height:1.45}h1{font-size:14pt;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:white;margin:0 0 10px 0;line-height:1.2}h2{color:#c8a84b;border-bottom:1.5px solid #c8a84b;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:2px;margin:12px 0 4px 0;letter-spacing:0.5px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:1px 0}li::marker{color:#c8a84b}.contact-item{display:block;font-size:8pt;color:rgba(255,255,255,0.7);margin-bottom:4px;overflow-wrap:anywhere;word-break:break-word;text-decoration:none}',
     // backwards compatibility
     modern:     '@page{margin:12mm 15mm;size:A4}body{font-family:Calibri,Arial,sans-serif;color:#1a1814;font-size:10.5pt;line-height:1.5;margin:0;padding:0}h1{text-align:left;font-size:19pt;margin:0 0 4px 0;color:#1a1814;border-bottom:2.5px solid #7c3aed;padding-bottom:5px}h2{color:#7c3aed;border-bottom:1.5px solid #7c3aed;text-transform:uppercase;font-size:10pt;font-weight:700;padding-bottom:2px;margin:14px 0 5px 0}p{margin:2px 0}ul{margin:3px 0;padding-left:16px}li{margin:1px 0}',
     minimal:    '@page{margin:10mm 14mm;size:A4}body{font-family:Arial,sans-serif;color:#111;font-size:10pt;line-height:1.4;margin:0;padding:0}h1{text-align:left;font-size:16pt;font-weight:700;margin:0 0 3px 0;color:#111}h2{color:#444;border-bottom:1px solid #ddd;text-transform:uppercase;font-size:9pt;font-weight:700;padding-bottom:1px;margin:10px 0 4px 0;letter-spacing:1px}p{margin:1px 0}ul{margin:2px 0;padding-left:14px}li{margin:0}',
@@ -2721,7 +2721,7 @@ function downloadCVasPDF() {
     'body{line-height:1.35!important;font-size:9.5pt!important}',
     '@page{margin:8mm 12mm!important}'
   ].join('') : '';
-  var style = '<style>' + (tplCSS[t] || tplCSS.classic) + compactOverride + '</style>';
+  var style = '<style>' + (tplCSS[t] || tplCSS.classic) + (t === 'creative' ? '' : compactOverride) + '</style>';
   var bodyHtml = '';
 
   // ── Creative template: build sidebar + main layout with photo ──
@@ -2780,7 +2780,7 @@ function downloadCVasPDF() {
       } else { mHtml+='<p>'+ml+'</p>'; }
     }
     if(inUl) mHtml+='</ul>';
-    bodyHtml = '<div id="sidebar">'+sHtml+'</div><div id="main">'+mHtml+'</div>';
+    bodyHtml = '<div id="cv-wrap"><div id="sidebar">'+sHtml+'</div><div id="main">'+mHtml+'</div></div>';
 
     printWin.document.write('<!DOCTYPE html><html><head><meta charset="utf-8">'+style+'</head><body>'+bodyHtml+'</body></html>');
     printWin.document.close();
@@ -2791,21 +2791,32 @@ function downloadCVasPDF() {
 
   var lines = cvText.split(String.fromCharCode(10));
   var inList = false;
-  var lineNum = 0, gotContact = false, currentSection = '';
+  var lineNum = 0, gotContact = false, collectingContact = false, contactParts = [], currentSection = '';
   var contactAlign = (t==='classic'||t==='executive') ? 'center' : 'left';
   for (var i=0; i<lines.length; i++) {
     var l = lines[i].trim();
     if (!l) {
+      if (collectingContact && contactParts.length > 0) {
+        if(inList){bodyHtml+='</ul>';inList=false;}
+        bodyHtml+='<p style="text-align:'+contactAlign+';font-size:9pt;color:#888;margin:2px 0 6px 0">'+contactParts.join(' | ')+'</p>';
+        contactParts = []; collectingContact = false; gotContact = true;
+      }
       if(inList){bodyHtml+='</ul>';inList=false;}
       bodyHtml+='<div style="height:4px"></div>';
       continue;
     }
     if (lineNum===0) { bodyHtml+='<h1>'+l+'</h1>'; lineNum++; continue; }
-    if (!gotContact && lineNum<=4 && (/@|linkedin|\.com|[\d]{5,}/.test(l)) && l.length<200) {
-      gotContact = true;
-      if(inList){bodyHtml+='</ul>';inList=false;}
-      bodyHtml+='<p style="text-align:'+contactAlign+';font-size:9pt;color:#888;margin:2px 0 6px 0">'+l+'</p>';
-      lineNum++; continue;
+    if (!gotContact && lineNum<=8) {
+      if ((/@|linkedin|\.com|[\d]{5,}/.test(l)) && l.length<200) {
+        collectingContact = true; contactParts.push(l); lineNum++; continue;
+      } else if (collectingContact && l.length < 100) {
+        contactParts.push(l); lineNum++; continue;
+      } else if (collectingContact) {
+        if(inList){bodyHtml+='</ul>';inList=false;}
+        bodyHtml+='<p style="text-align:'+contactAlign+';font-size:9pt;color:#888;margin:2px 0 6px 0">'+contactParts.join(' | ')+'</p>';
+        contactParts = []; collectingContact = false; gotContact = true;
+        // fall through to render current line normally
+      }
     }
     // Dynamic heading: ALL CAPS, short, no bullets/symbols/contact info
     var _lt = l.trim();
@@ -4065,7 +4076,9 @@ function renderCVPreview() {
         out+='<div'+edAttr('heading')+' style="margin-top:12px;padding-bottom:2px;border-bottom:'+s.hBorder+';font-family:'+s.hFont+';font-size:'+s.hSz+';font-weight:800;color:'+s.hColor+';text-transform:'+s.hTransform+';margin-bottom:4px;letter-spacing:0.5px">'+ex(line)+'</div>'; return;
       }
       if (/^[•\-\*▸○◦]/.test(line)) {
-        var bc = line.replace(/^[•\-\*▸○◦]\s*/,'');
+        // Strip ALL leading bullet chars (handles '• ▸ text' double-marker from re-render cycles)
+        var bc = line.replace(/^[•\-\*▸○◦\s]+/, '').trim();
+        if (!bc) return; // truly empty — skip
         out+='<div'+edAttr('bullet')+' style="display:flex;gap:7px;margin:3px 0;padding-left:4px"><span style="color:'+s.bulletColor+';flex-shrink:0;font-weight:700">'+s.bullet+'</span><span>'+richEx(bc)+'</span></div>'; return;
       }
       var hd = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|\d{4})/i.test(line);
@@ -4089,11 +4102,26 @@ function renderCVPreview() {
 
   var out = '<div style="font-family:'+s.font+';font-size:'+s.sz+';color:'+s.color+';line-height:'+s.lh+';padding:'+s.pad+'">';
   var lines = text.split('\n');
-  var li = 0, gotContact = false, previewSection = '';
+  var li = 0, gotContact = false, collectingContact = false, contactParts = [], previewSection = '';
+
+  // helper: flush collected contact parts as one line with rule
+  function flushContact() {
+    if (!contactParts.length) return;
+    out+='<div'+edAttr('contact')+' style="text-align:'+s.conAlign+';font-size:'+s.conSz+';color:'+s.conColor+';margin-bottom:4px">'+ex(contactParts.join(' | '))+'</div>';
+    if (s.ruleDouble) {
+      out+='<div style="border-top:1.5px solid '+s.ruleColor+';border-bottom:1.5px solid '+s.ruleColor+';padding:2px 0;margin:4px 0 10px 0"></div>';
+    } else {
+      out+='<div style="border-bottom:1.5px solid '+s.ruleColor+';margin-bottom:10px;margin-top:3px"></div>';
+    }
+    contactParts = []; collectingContact = false; gotContact = true;
+  }
 
   for (var i=0; i<lines.length; i++) {
     var line = lines[i].trim();
-    if (!line) { out+='<div style="height:5px"></div>'; li++; continue; }
+    if (!line) {
+      if (collectingContact) flushContact();
+      out+='<div style="height:5px"></div>'; li++; continue;
+    }
 
     // Name
     if (li===0) {
@@ -4103,16 +4131,15 @@ function renderCVPreview() {
       li++; continue;
     }
 
-    // Contact
-    if (!gotContact && li<=4 && (/@|linkedin|\.com|[\d]{5,}/.test(line)) && line.length<200) {
-      out+='<div'+edAttr('contact')+' style="text-align:'+s.conAlign+';font-size:'+s.conSz+';color:'+s.conColor+';margin-bottom:4px">'+ex(line)+'</div>';
-      // Rule under contact
-      if (s.ruleDouble) {
-        out+='<div style="border-top:1.5px solid '+s.ruleColor+';border-bottom:1.5px solid '+s.ruleColor+';padding:2px 0;margin:4px 0 10px 0"></div>';
-      } else {
-        out+='<div style="border-bottom:1.5px solid '+s.ruleColor+';margin-bottom:10px;margin-top:3px"></div>';
+    // Contact — collect ALL contact lines (email, phone, LinkedIn, location) then join with |
+    if (!gotContact && li<=8) {
+      if ((/@|linkedin|\.com|[\d]{5,}/.test(line)) && line.length<200) {
+        collectingContact = true; contactParts.push(line); li++; continue;
+      } else if (collectingContact && line.length < 100) {
+        contactParts.push(line); li++; continue;
+      } else if (collectingContact) {
+        flushContact(); // flush before rendering current line
       }
-      gotContact=true; li++; continue;
     }
 
     // Section headings
