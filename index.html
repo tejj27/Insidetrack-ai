@@ -5012,12 +5012,12 @@ function initSessionFromStorage() {
     localStorage.removeItem('it_token');
     return;
   }
-  // Restore UI immediately from cache; token is validated by loadUserProfile → /api/profile
+  // Already signed in — restore full UI same as post-sign-in flow.
+  // Skip openApp on ?upgraded=1 since that handler calls it after the interval.
+  var isUpgradeReturn = window.location.search.includes('upgraded=1');
   showUserMenu();
-  loadUserProfile().then(function(result) {
-    // If profile returns null the token is likely expired — sign out silently
-    if (result === null && !_currentUser) return; // already signed out
-  });
+  if (!isUpgradeReturn) openApp('ats');
+  loadUserProfile();
   renderTracker();
 }
 initSessionFromStorage();
