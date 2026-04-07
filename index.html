@@ -5012,13 +5012,14 @@ function initSessionFromStorage() {
     localStorage.removeItem('it_token');
     return;
   }
-  // Already signed in — restore full UI same as post-sign-in flow.
-  // Skip openApp on ?upgraded=1 since that handler calls it after the interval.
-  var isUpgradeReturn = window.location.search.includes('upgraded=1');
-  showUserMenu();
-  if (!isUpgradeReturn) openApp('ats');
-  loadUserProfile();
-  renderTracker();
+  // DOM is guaranteed ready inside DOMContentLoaded so getElementById finds user-menu.
+  // Show the user avatar on the landing page; ?upgraded=1 and normal sign-in both call
+  // openApp() themselves — no forced redirect here so the landing page stays accessible.
+  document.addEventListener('DOMContentLoaded', function() {
+    showUserMenu();
+    loadUserProfile();
+    renderTracker();
+  });
 }
 initSessionFromStorage();
 
