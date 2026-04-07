@@ -4709,26 +4709,27 @@ async function supaGetProfile(userId) {
 }
 // supaUpdateProfile removed — all profile writes go through /api/scan (server-side)
 
-// Check for existing session on load
-// Clear any old session on page load - user must sign in each visit
-localStorage.removeItem('it_user');
-localStorage.removeItem('it_token');
+// Session is now persisted across page loads (needed for Stripe redirect).
+// Actual restore happens in initSessionFromStorage() after all functions are defined.
 localStorage.removeItem('insidetrack_apps'); // clear any old guest/shared data
 _currentUser = null;
 
 async function loadUserProfile() {
-  if (!_currentUser) return;
+  if (!_currentUser) return null;
   try {
     var profile = await supaGetProfile(_currentUser.id);
     if (profile) {
       _userScans = profile.scans_used||0;
       updateUserMenuDisplay(profile);
+      return profile;
     } else {
-      // Profile doesn't exist yet - show defaults
-      updateUserMenuDisplay({plan:'free', scans_used:0});
+      // null = token expired or invalid → sign out silently
+      await signOut();
+      return null;
     }
   } catch(e) {
     updateUserMenuDisplay({plan:'free', scans_used:0});
+    return null;
   }
 }
 function showUserMenu() {
@@ -5000,21 +5001,53 @@ async function manageSubscription(){
   if(btn){ btn.disabled=false; btn.textContent='💳 Manage subscription'; }
 }
 
+// ── Session restore from localStorage (runs after all functions defined) ─────
+// Needed so Stripe redirect back to ?upgraded=1 doesn't lose the logged-in state.
+function initSessionFromStorage() {
+  var storedUser  = localStorage.getItem('it_user');
+  var storedToken = localStorage.getItem('it_token');
+  if (!storedUser || !storedToken) return;
+  try { _currentUser = JSON.parse(storedUser); } catch(e) { _currentUser = null; }
+  if (!_currentUser) {
+    localStorage.removeItem('it_user');
+    localStorage.removeItem('it_token');
+    return;
+  }
+  // Restore UI immediately from cache; token is validated by loadUserProfile → /api/profile
+  showUserMenu();
+  loadUserProfile().then(function(result) {
+    // If profile returns null the token is likely expired — sign out silently
+    if (result === null && !_currentUser) return; // already signed out
+  });
+  renderTracker();
+}
+initSessionFromStorage();
+
 // Handle ?upgraded=1 redirect from Stripe Checkout
 (function(){
   if(window.location.search.includes('upgraded=1')){
     history.replaceState(null,'',window.location.pathname); // clean the URL
-    // Wait for auth to load then flash the success toast
+    // Wait for _currentUser (set by initSessionFromStorage above)
     var _upgradeCheck=setInterval(function(){
       if(_currentUser){
         clearInterval(_upgradeCheck);
-        suGetProfile().then(function(p){
-          updateUserMenuDisplay(p);
-          showDlToast('🎉 Welcome to Pro! Unlimited scans unlocked.');
-        });
+        openApp('ats'); // take user into the app
+        // Give webhook a moment then refresh the profile
+        setTimeout(function(){
+          loadUserProfile().then(function(){
+            showDlToast('🎉 Welcome to Pro! Unlimited scans unlocked.');
+          });
+        }, 1500);
       }
     },300);
-    setTimeout(function(){ clearInterval(_upgradeCheck); },10000);
+    // Fallback: if no session after 10s show a sign-in prompt
+    setTimeout(function(){
+      clearInterval(_upgradeCheck);
+      if(!_currentUser){
+        showDlToast('Payment successful! Please sign in to activate your Pro plan.');
+        setTimeout(function(){ openAuth('signin'); }, 1500);
+      }
+    },10000);
   }
 })();
 </script>
