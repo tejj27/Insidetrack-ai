@@ -22,7 +22,7 @@ export const config = {
   api: { bodyParser: false },
 };
 
-const SUPABASE_URL  = process.env.SUPABASE_URL;
+const SUPABASE_URL  = process.env.SUPABASE_URL || 'https://kknzvaayyihfzkaezhft.supabase.co';
 const SERVICE_KEY   = process.env.SUPABASE_SERVICE_KEY;
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 
