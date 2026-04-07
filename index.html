@@ -4722,11 +4722,10 @@ async function loadUserProfile() {
       _userScans = profile.scans_used||0;
       updateUserMenuDisplay(profile);
       return profile;
-    } else {
-      // null = token expired or invalid → sign out silently
-      await signOut();
-      return null;
     }
+    // null = network/server error — keep session, show safe defaults
+    updateUserMenuDisplay({plan:'free', scans_used:0});
+    return null;
   } catch(e) {
     updateUserMenuDisplay({plan:'free', scans_used:0});
     return null;
