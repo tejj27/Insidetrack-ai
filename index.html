@@ -5032,12 +5032,22 @@ initSessionFromStorage();
       if(_currentUser){
         clearInterval(_upgradeCheck);
         openApp('ats'); // take user into the app
-        // Give webhook a moment then refresh the profile
-        setTimeout(function(){
-          loadUserProfile().then(function(){
-            showDlToast('🎉 Welcome to Pro! Unlimited scans unlocked.');
+        // Poll profile until plan===pro (webhook can take a few seconds to update Supabase)
+        var _proCheck=0;
+        var _proInterval=setInterval(function(){
+          _proCheck++;
+          supaGetProfile().then(function(p){
+            if(p && p.plan==='pro'){
+              clearInterval(_proInterval);
+              updateUserMenuDisplay(p);
+              showDlToast('🎉 Welcome to Pro! Unlimited scans unlocked.');
+            } else if(_proCheck>=10){
+              // Gave up after 20s — still show toast, user can refresh
+              clearInterval(_proInterval);
+              showDlToast('🎉 Payment confirmed! Refresh the page to activate Pro.');
+            }
           });
-        }, 1500);
+        },2000);
       }
     },300);
     // Fallback: if no session after 10s show a sign-in prompt
