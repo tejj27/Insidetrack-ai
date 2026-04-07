@@ -1587,6 +1587,8 @@ function openApp(tool) {
   document.getElementById('screen-app').classList.add('active');
   switchTool(tool);
   window.scrollTo(0,0);
+  // If session was restored silently, wire up the user menu now
+  if (_currentUser) { showUserMenu(); loadUserProfile(); renderTracker(); }
 }
 function backToLanding() {
   document.getElementById('screen-app').style.display = 'none';
@@ -5012,14 +5014,9 @@ function initSessionFromStorage() {
     localStorage.removeItem('it_token');
     return;
   }
-  // DOM is guaranteed ready inside DOMContentLoaded so getElementById finds user-menu.
-  // Show the user avatar on the landing page; ?upgraded=1 and normal sign-in both call
-  // openApp() themselves — no forced redirect here so the landing page stays accessible.
-  document.addEventListener('DOMContentLoaded', function() {
-    showUserMenu();
-    loadUserProfile();
-    renderTracker();
-  });
+  // Session restored silently — landing page stays as a clean marketing page.
+  // showUserMenu() + loadUserProfile() are called by openApp() when entering the app,
+  // and by the ?upgraded=1 handler. No UI changes on the landing page itself.
 }
 initSessionFromStorage();
 
