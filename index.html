@@ -3881,7 +3881,16 @@ function _serializeWYSIWYG() {
         var r2 = re ? (re.innerText||'').trim() : '';
         lines.push(r2 ? l2 + '     ' + r2 : l2); break;
       }
-      case 'bullet': { var bt = text; if(!bt.startsWith('•'))bt='• '+bt; lines.push(bt); break; }
+      case 'bullet': {
+        // Read from the content span (2nd child) only — the 1st span is the bullet symbol (•/▸)
+        // Using el.innerText on the whole flex div returns "symbol\ncontent" which corrupts re-render
+        var bSpans = el.querySelectorAll(':scope > span');
+        var bt = bSpans.length >= 2
+          ? (bSpans[bSpans.length - 1].innerText || '').trim()
+          : (el.innerText || '').replace(/^[•▸\-\*]\s*/,'').trim();
+        if (bt) lines.push('• ' + bt);
+        break;
+      }
       case 'project-title': lines.push(text); break;
       case 'text': lines.push(text); break;
       case 'skill-line': lines.push(text); break;
