@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST')   return res.status(405).json({ error: 'Method not allowed' });
 
   // ── Env vars ──────────────────────────────────────────────────────────────
-  const SUPABASE_URL  = process.env.SUPABASE_URL;
+  const SUPABASE_URL  = process.env.SUPABASE_URL || 'https://kknzvaayyihfzkaezhft.supabase.co';
   const SERVICE_KEY   = process.env.SUPABASE_SERVICE_KEY;
   const STRIPE_KEY    = process.env.STRIPE_SECRET_KEY;
   const PRICE_ID      = process.env.STRIPE_PRICE_ID;

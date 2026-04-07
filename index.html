@@ -4813,6 +4813,7 @@ async function handleAuth(){
       showUserMenu();
       await loadUserProfile();
       await migrateGuestScansToSupabase(); // carry over any guest scans
+      await loadUserProfile(); // refresh count after migration
       renderTracker(); // load this user's apps
       showDlToast('Welcome to InsideTrack.ai! 🎉');
     } else {
@@ -4825,6 +4826,7 @@ async function handleAuth(){
       showUserMenu();
       await loadUserProfile();
       await migrateGuestScansToSupabase(); // carry over any guest scans
+      await loadUserProfile(); // refresh count after migration
       renderTracker(); // load this user's apps
       showDlToast('Welcome back, '+(_currentUser.user_metadata&&_currentUser.user_metadata.full_name||_currentUser.email.split('@')[0])+'! ✓');
     }
