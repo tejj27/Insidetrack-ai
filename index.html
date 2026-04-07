@@ -3986,11 +3986,29 @@ function renderCVPreview() {
   if (s.sidebar) {
     var allLines = text.split('\n');
     var nameLine = allLines[0] || '';
-    var contactLine = ''; var bodyLines = []; var fc = false;
+    // Collect ALL contact lines into sidebar.
+    // Strategy: find first contact-like line, then collect EVERYTHING until a blank line
+    // (catches location/city lines that don't match the contact regex).
+    var contactParts = []; var bodyLines = [];
+    var foundContact = false; var doneContact = false;
     for (var ci=1; ci<allLines.length; ci++) {
       var cl = allLines[ci].trim();
-      if (!fc && cl && (/@|linkedin|\.com|\d{5,}/.test(cl)) && cl.length<200) { contactLine=cl; fc=true; }
-      else bodyLines.push(allLines[ci]);
+      if (!doneContact) {
+        if (!cl) {
+          doneContact = true; // blank line always ends contact zone
+        } else if (!foundContact) {
+          // Not yet in contact zone — test if this line looks like contact info
+          if ((/@|linkedin|\.com|\+?\d[\d\s\(\)\-\.]{5,}/.test(cl)) && cl.length<200) {
+            foundContact = true;
+            if (cl.includes('|')||cl.includes('•')) { cl.split(/[|•]/).forEach(function(p){if(p.trim())contactParts.push(p.trim());}); }
+            else { contactParts.push(cl); }
+          } else { doneContact=true; bodyLines.push(allLines[ci]); } // not contact → body
+        } else {
+          // Already in contact zone — collect ALL lines until blank (e.g. "London, UK")
+          if (cl.includes('|')||cl.includes('•')) { cl.split(/[|•]/).forEach(function(p){if(p.trim())contactParts.push(p.trim());}); }
+          else { contactParts.push(cl); }
+        }
+      } else { bodyLines.push(allLines[ci]); }
     }
     var HEADING_RE = /^(PERSONAL DETAILS?|CONTACT|PROFESSIONAL SUMMARY|SUMMARY|PROFILE|OBJECTIVE|CAREER OBJECTIVE|EXPERIENCE|WORK EXPERIENCE|PROFESSIONAL EXPERIENCE|EMPLOYMENT HISTORY|EMPLOYMENT|EDUCATION|EDUCATIONAL BACKGROUND|ACADEMIC BACKGROUND|SKILLS?|TECHNICAL SKILLS?|KEY SKILLS?|CORE SKILLS?|SOFT SKILLS?|ACHIEVEMENTS?|AWARDS? & ACHIEVEMENTS?|HONOURS? & AWARDS?|CERTIFICATIONS?|LICENSES? & CERTIFICATIONS?|AWARDS?|LANGUAGES?|PROJECTS?|PERSONAL PROJECTS?|SIDE PROJECTS?|REFERENCES?|VOLUNTEERING|VOLUNTEER EXPERIENCE|LEADERSHIP|LEADERSHIP EXPERIENCE|EXTRACURRICULARS?|EXTRACURRICULAR ACTIVITIES?|INTERESTS?|HOBBIES & INTERESTS?|HOBBIES|ACTIVITIES|PUBLICATIONS?|ADDITIONAL|ADDITIONAL INFORMATION|PROFESSIONAL DEVELOPMENT|COMMUNITY INVOLVEMENT|MEMBERSHIPS?|AFFILIATIONS?|TRAINING|COURSES?|RESEARCH|RESEARCH EXPERIENCE|TEACHING EXPERIENCE|INTERNSHIPS?)[\s:]*$/i;
     var out = '<div style="display:flex;min-height:600px;font-family:'+s.font+';font-size:'+s.sz+';line-height:'+s.lh+'">';
@@ -4002,12 +4020,10 @@ function renderCVPreview() {
       out += '<div style="width:60px;height:60px;border-radius:50%;background:#2d2d2d;border:2px dashed #c8a84b;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="uploadCVPhoto()"><span style="font-size:18px">📷</span></div>';
     }
     out += '<div'+edAttr('name')+' style="font-size:'+s.nameSz+';font-weight:800;font-family:'+s.nameFont+';color:'+s.nameColor+';text-transform:'+s.nameTransform+';letter-spacing:'+s.nameSpacing+';line-height:1.2;margin-bottom:10px;word-break:break-word">'+ex(nameLine)+'</div>';
-    if (contactLine) {
-      var cparts = contactLine.split(/[|•]/);
+    if (contactParts.length) {
       out += '<div'+edAttr('contact')+'>';
-      var cpartsMerged = _joinContactParts(cparts);
-      cpartsMerged.forEach(function(p){
-        var pt=p.trim(); if(!pt) return;
+      contactParts.forEach(function(pt){
+        pt=pt.trim(); if(!pt) return;
         var isUrl=/linkedin|http|\.com\//.test(pt);
         var isEmail=/@/.test(pt);
         if(isUrl||isEmail){
