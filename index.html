@@ -4784,12 +4784,8 @@ function updateUserMenuDisplay(p){
     }
     if(upBtn) upBtn.style.display='none';
     if(mgBtn) mgBtn.style.display='block';
-    // Show refund button only within 24h of account creation (proxy for purchase time)
-    if(rfBtn){
-      var _created=_currentUser&&(_currentUser.created_at||_currentUser.user_metadata&&_currentUser.user_metadata.created_at);
-      var _within24h=_created&&((Date.now()-new Date(_created).getTime())<24*60*60*1000);
-      rfBtn.style.display=_within24h?'block':'none';
-    }
+    // Always show refund button for Pro users — server enforces the 24h window
+    if(rfBtn) rfBtn.style.display='block';
   } else {
     if(pl) pl.textContent='🆓 Free Plan';
     if(sc) sc.textContent=((p.scans_used||0)+' / '+FREE_SCAN_LIMIT+' scans used');
