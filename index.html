@@ -4772,6 +4772,7 @@ function updateUserMenuDisplay(p){
   var sc=document.getElementById('user-scans-display');
   var upBtn=document.getElementById('upgrade-btn');
   var mgBtn=document.getElementById('manage-sub-btn');
+  var rfBtn=document.getElementById('refund-btn');
   if(e) e.textContent=(_currentUser&&_currentUser.email)||'';
   if(p.plan==='pro'){
     if(pl) pl.textContent='⭐ Pro Plan';
@@ -4783,11 +4784,18 @@ function updateUserMenuDisplay(p){
     }
     if(upBtn) upBtn.style.display='none';
     if(mgBtn) mgBtn.style.display='block';
+    // Show refund button only within 24h of account creation (proxy for purchase time)
+    if(rfBtn){
+      var _created=_currentUser&&(_currentUser.created_at||_currentUser.user_metadata&&_currentUser.user_metadata.created_at);
+      var _within24h=_created&&((Date.now()-new Date(_created).getTime())<24*60*60*1000);
+      rfBtn.style.display=_within24h?'block':'none';
+    }
   } else {
     if(pl) pl.textContent='🆓 Free Plan';
     if(sc) sc.textContent=((p.scans_used||0)+' / '+FREE_SCAN_LIMIT+' scans used');
     if(upBtn) upBtn.style.display='block';
     if(mgBtn) mgBtn.style.display='none';
+    if(rfBtn) rfBtn.style.display='none';
   }
   // Update nav label too
   var navSc=document.getElementById('nav-scan-count');
@@ -4994,6 +5002,41 @@ async function startUpgrade(){
   if(btn){ btn.disabled=false; btn.textContent='⭐ Upgrade to Pro — £4.99/mo'; }
 }
 
+async function requestRefund(){
+  if(!confirm('Are you sure you want a refund?\n\nYou\'ll lose Pro access immediately and receive £4.99 back within 3–5 business days.')) return;
+  var token=localStorage.getItem('it_token');
+  if(!token) return;
+  var btn=document.getElementById('refund-btn');
+  if(btn){ btn.disabled=true; btn.textContent='Processing…'; }
+  try{
+    var r=await fetch('/api/refund',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    });
+    var d=await r.json();
+    if(d.success){
+      showDlToast('Refund issued. You\'ll receive £4.99 within 3–5 business days.');
+      // Poll until plan flips to free
+      var _check=0;
+      var _iv=setInterval(function(){
+        _check++;
+        supaGetProfile().then(function(p){
+          if(p && p.plan==='free'){
+            clearInterval(_iv);
+            updateUserMenuDisplay(p);
+          } else if(_check>=10){ clearInterval(_iv); }
+        });
+      },2000);
+    } else {
+      showDlToast(d.error||'Refund failed. Please contact support.');
+      if(btn){ btn.disabled=false; btn.innerHTML='↩️ Request refund <span style="font-weight:400;opacity:0.7">(within 24h of purchase)</span>'; }
+    }
+  }catch(err){
+    showDlToast('Something went wrong. Please try again.');
+    if(btn){ btn.disabled=false; btn.innerHTML='↩️ Request refund <span style="font-weight:400;opacity:0.7">(within 24h of purchase)</span>'; }
+  }
+}
+
 async function manageSubscription(){
   var token=localStorage.getItem('it_token');
   if(!token) return;
@@ -5157,6 +5200,10 @@ initSessionFromStorage();
       <!-- Manage subscription (pro users only) -->
       <button id="manage-sub-btn" onclick="manageSubscription()" style="display:none;width:100%;padding:10px 14px;background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;color:#15803d;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left">
         💳 Manage subscription
+      </button>
+      <!-- Refund button (pro users only, shown within 24h window) -->
+      <button id="refund-btn" onclick="requestRefund()" style="display:none;width:100%;padding:10px 14px;background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;color:#c2410c;font-family:'Geist',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:8px;text-align:left">
+        ↩️ Request refund <span style="font-weight:400;opacity:0.7">(within 24h of purchase)</span>
       </button>
       <button onclick="hideCVHistory();toggleUserDropdown();showCVHistory();" style="width:100%;padding:10px 14px;background:#f3f0ff;border:1.5px solid #d8cff8;border-radius:10px;color:#6d28d9;font-family:'Geist',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:left">
         📂 Recent CVs
