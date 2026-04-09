@@ -76,7 +76,7 @@ export default async function handler(req, res) {
 
     // 3. Fetch profile using service-role key (bypasses RLS safely on the server)
     const profileRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=scans_used,plan`,
+      `${SUPABASE_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=scans_used,plan,cancel_at_period_end,current_period_end`,
       {
         headers: {
           'apikey':        SERVICE_KEY,
@@ -97,8 +97,10 @@ export default async function handler(req, res) {
     const profile = (rows && rows[0]) ? rows[0] : { scans_used: 0, plan: 'free' };
 
     return res.status(200).json({
-      scans_used: profile.scans_used ?? 0,
-      plan:       profile.plan ?? 'free',
+      scans_used:           profile.scans_used ?? 0,
+      plan:                 profile.plan ?? 'free',
+      cancel_at_period_end: profile.cancel_at_period_end ?? false,
+      current_period_end:   profile.current_period_end ?? null,
     });
 
   } catch (err) {

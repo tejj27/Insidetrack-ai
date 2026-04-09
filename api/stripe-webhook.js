@@ -150,16 +150,15 @@ export default async function handler(req, res) {
         await updateProfile(userId, {
           plan:                   'free',
           stripe_subscription_id: null,
+          cancel_at_period_end:   false,
+          current_period_end:     null,
         });
         console.log(`stripe-webhook: user ${userId} downgraded to Free`);
         break;
       }
 
       case 'customer.subscription.updated': {
-        const sub = event.data.object;
-        if (sub.status === 'active' || sub.status === 'trialing') break;
-        if (sub.cancel_at_period_end) break;
-
+        const sub        = event.data.object;
         const customerId = sub.customer;
         const userId =
           sub.metadata?.supabase_user_id ||
@@ -167,11 +166,53 @@ export default async function handler(req, res) {
 
         if (!userId) break;
 
+        if (sub.cancel_at_period_end) {
+          // Scheduled cancellation — keep Pro but record the end date
+          await updateProfile(userId, {
+            cancel_at_period_end: true,
+            current_period_end:   new Date(sub.current_period_end * 1000).toISOString(),
+          });
+          console.log(`stripe-webhook: user ${userId} scheduled to cancel at period end`);
+          break;
+        }
+
+        if (sub.status === 'active' || sub.status === 'trialing') {
+          // Reactivated (un-cancelled) — clear the scheduled cancellation
+          await updateProfile(userId, {
+            cancel_at_period_end: false,
+            current_period_end:   null,
+          });
+          console.log(`stripe-webhook: user ${userId} reactivated`);
+          break;
+        }
+
+        // Status went bad (past_due, unpaid, etc.) — downgrade
         await updateProfile(userId, {
           plan:                   'free',
           stripe_subscription_id: null,
+          cancel_at_period_end:   false,
+          current_period_end:     null,
         });
         console.log(`stripe-webhook: user ${userId} set to Free (status: ${sub.status})`);
+        break;
+      }
+
+      case 'charge.refunded': {
+        // Refund issued — remove access immediately regardless of billing period
+        const charge     = event.data.object;
+        const customerId = charge.customer;
+        if (!customerId) break;
+
+        const userId = await getUserIdByCustomerId(customerId);
+        if (!userId) break;
+
+        await updateProfile(userId, {
+          plan:                   'free',
+          stripe_subscription_id: null,
+          cancel_at_period_end:   false,
+          current_period_end:     null,
+        });
+        console.log(`stripe-webhook: user ${userId} refunded → downgraded to Free immediately`);
         break;
       }
 

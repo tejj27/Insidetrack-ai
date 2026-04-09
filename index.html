@@ -4773,10 +4773,22 @@ function updateUserMenuDisplay(p){
   var upBtn=document.getElementById('upgrade-btn');
   var mgBtn=document.getElementById('manage-sub-btn');
   if(e) e.textContent=(_currentUser&&_currentUser.email)||'';
-  if(pl) pl.textContent=p.plan==='pro'?'⭐ Pro Plan':'🆓 Free Plan';
-  if(sc) sc.textContent=p.plan==='pro'?'Unlimited scans':((p.scans_used||0)+' / '+FREE_SCAN_LIMIT+' scans used');
-  if(upBtn) upBtn.style.display=p.plan==='pro'?'none':'block';
-  if(mgBtn) mgBtn.style.display=p.plan==='pro'?'block':'none';
+  if(p.plan==='pro'){
+    if(pl) pl.textContent='⭐ Pro Plan';
+    if(p.cancel_at_period_end && p.current_period_end){
+      var _endFmt=new Date(p.current_period_end).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      if(sc) sc.textContent='Access until '+_endFmt;
+    } else {
+      if(sc) sc.textContent='Unlimited scans';
+    }
+    if(upBtn) upBtn.style.display='none';
+    if(mgBtn) mgBtn.style.display='block';
+  } else {
+    if(pl) pl.textContent='🆓 Free Plan';
+    if(sc) sc.textContent=((p.scans_used||0)+' / '+FREE_SCAN_LIMIT+' scans used');
+    if(upBtn) upBtn.style.display='block';
+    if(mgBtn) mgBtn.style.display='none';
+  }
   // Update nav label too
   var navSc=document.getElementById('nav-scan-count');
   if(navSc&&_currentUser) {
@@ -5031,6 +5043,9 @@ initSessionFromStorage();
         loadUserProfile().then(function(p){
           if(p && p.plan==='free'){
             showDlToast('Your subscription has been cancelled. You\'re now on the Free plan.');
+          } else if(p && p.plan==='pro' && p.cancel_at_period_end && p.current_period_end){
+            var _d=new Date(p.current_period_end).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+            showDlToast('Subscription cancelled. Your Pro access continues until '+_d+'.');
           } else {
             showDlToast('Welcome back!');
           }
