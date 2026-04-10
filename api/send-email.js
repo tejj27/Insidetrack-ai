@@ -11,6 +11,7 @@
 
 const ALLOWED_ORIGINS = [
   'https://insidetrack-ai.vercel.app',
+  'https://insidetrack.site',
   'https://insidetrack.ai',
   'http://localhost:3000',
   'http://localhost:5173',
@@ -108,34 +109,24 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'InsideTrack.ai <onboarding@resend.dev>',
-        to: ['tejal3488@gmail.com'], // internal notification — to field intentionally fixed
-        subject: 'New InsideTrack.ai sign-up 🎉',
+        from: 'InsideTrack <hello@insidetrack.site>',
+        to: [to],
+        subject: 'Welcome to InsideTrack! 🎉',
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px">
             <div style="text-align:center;margin-bottom:32px">
-              <h1 style="font-size:28px;color:#1a1814;margin:0">InsideTrack<span style="color:#7c3aed">.ai</span></h1>
+              <h1 style="font-size:28px;color:#1a1814;margin:0">InsideTrack<span style="color:#7c3aed">.site</span></h1>
               <p style="color:#6a6560;font-size:14px;margin-top:4px">AI Career Copilot</p>
             </div>
 
-            <h2 style="color:#1a1814;font-size:22px">Welcome${safeName ? ', ' + safeName : ''}! 👋</h2>
+            <h2 style="color:#1a1814;font-size:22px">Hi${safeName ? ' ' + safeName : ''}! 👋</h2>
             <p style="color:#4a4640;font-size:15px;line-height:1.7">
-              Thanks for signing up to InsideTrack.ai. You now have access to all our AI tools.
+              Thanks for joining InsideTrack. You have <strong>3 free scans</strong> to get started — upload your CV and land more interviews.
             </p>
 
-            <div style="background:#f5f0eb;border-radius:12px;padding:24px;margin:24px 0">
-              <p style="font-weight:700;color:#1a1814;margin:0 0 12px">Your free account includes:</p>
-              <p style="color:#4a4640;margin:6px 0">✅ 3 ATS scans</p>
-              <p style="color:#4a4640;margin:6px 0">✅ CV Tailor</p>
-              <p style="color:#4a4640;margin:6px 0">✅ Cover Letter AI</p>
-              <p style="color:#4a4640;margin:6px 0">✅ Outreach AI</p>
-              <p style="color:#4a4640;margin:6px 0">✅ CV Builder</p>
-              <p style="color:#4a4640;margin:6px 0">✅ Application Tracker</p>
-            </div>
-
             <div style="text-align:center;margin:32px 0">
-              <a href="https://insidetrack-ai.vercel.app" style="background:#7c3aed;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block">
-                Start using InsideTrack →
+              <a href="https://insidetrack.site" style="background:#7c3aed;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block">
+                Start scanning your CV →
               </a>
             </div>
 
