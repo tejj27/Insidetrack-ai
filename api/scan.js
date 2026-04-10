@@ -24,6 +24,63 @@ const SUPA_URL          = process.env.SUPABASE_URL || 'https://kknzvaayyihfzkaez
 const SUPA_SERVICE_KEY  = process.env.SUPABASE_SERVICE_KEY;
 const FREE_SCAN_LIMIT   = 3;
 
+async function sendUpgradeEmail(userId) {
+  const RESEND_KEY = process.env.RESEND_API_KEY;
+  if (!RESEND_KEY) return;
+  // Fetch email + name from profile
+  const r = await fetch(
+    `${SUPA_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=email,full_name`,
+    { headers: { apikey: SUPA_SERVICE_KEY, Authorization: `Bearer ${SUPA_SERVICE_KEY}` } }
+  );
+  if (!r.ok) return;
+  const rows = await r.json();
+  const profile = rows?.[0];
+  if (!profile?.email) return;
+  const safeName = profile.full_name ? profile.full_name.split(' ')[0] : '';
+
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${RESEND_KEY}` },
+    body: JSON.stringify({
+      from:    'InsideTrack <hello@insidetrack.site>',
+      to:      [profile.email],
+      subject: "You've used all 3 free scans 🚀",
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px">
+          <div style="text-align:center;margin-bottom:32px">
+            <h1 style="font-size:28px;color:#1a1814;margin:0">InsideTrack<span style="color:#7c3aed">.site</span></h1>
+            <p style="color:#6a6560;font-size:14px;margin-top:4px">AI Career Copilot</p>
+          </div>
+          <h2 style="color:#1a1814;font-size:22px">You've used all your free scans${safeName ? ', ' + safeName : ''} 👋</h2>
+          <p style="color:#4a4640;font-size:15px;line-height:1.7">
+            You've used all 3 free ATS scans. Upgrade to Pro to get <strong>unlimited scans</strong> and unlock the full CV Builder.
+          </p>
+          <div style="background:#f5f0eb;border-radius:12px;padding:24px;margin:24px 0">
+            <p style="font-weight:700;color:#1a1814;margin:0 0 12px">InsideTrack Pro — £4.99/month</p>
+            <p style="color:#4a4640;margin:6px 0">⚡ Unlimited ATS scans</p>
+            <p style="color:#4a4640;margin:6px 0">✅ Full CV Builder</p>
+            <p style="color:#4a4640;margin:6px 0">✅ CV Tailor</p>
+            <p style="color:#4a4640;margin:6px 0">✅ Cover Letter AI</p>
+            <p style="color:#4a4640;margin:6px 0">✅ Outreach AI</p>
+            <p style="color:#4a4640;margin:6px 0">✅ Application Tracker</p>
+          </div>
+          <div style="text-align:center;margin:32px 0">
+            <a href="https://insidetrack.site" style="background:#7c3aed;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block">
+              Upgrade to Pro — £4.99/mo →
+            </a>
+          </div>
+          <p style="color:#9a9590;font-size:12px;text-align:center;margin-top:32px">
+            Cancel anytime. Refunds available within 24 hours of purchase.<br><br>
+            Good luck with your applications 🚀<br>
+            The InsideTrack team
+          </p>
+        </div>
+      `,
+    }),
+  });
+  console.log(`scan: upgrade email sent to ${profile.email}`);
+}
+
 // ── Allowed origins (same list as chat.js) ───────────────────────────────────
 const ALLOWED_ORIGINS = [
   'https://insidetrack-ai.vercel.app',
@@ -175,6 +232,12 @@ export default async function handler(req, res) {
             plan:       result.plan,
           });
         } else {
+          // Send upgrade nudge email the first time they hit the limit (exactly at limit)
+          if (result.scans_used >= FREE_SCAN_LIMIT) {
+            sendUpgradeEmail(userId).catch(err =>
+              console.error('scan: upgrade email failed:', err.message)
+            );
+          }
           return res.status(200).json({
             allowed: false,
             reason:  'limit_reached',
