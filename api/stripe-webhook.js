@@ -60,6 +60,70 @@ async function getUserIdByCustomerId(customerId) {
   return rows?.[0]?.id ?? null;
 }
 
+async function getProfile(userId) {
+  const r = await fetch(
+    `${SUPABASE_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=email,full_name`,
+    { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
+  );
+  if (!r.ok) return null;
+  const rows = await r.json();
+  return rows?.[0] ?? null;
+}
+
+async function sendProEmail(email, name) {
+  const RESEND_KEY = process.env.RESEND_API_KEY;
+  if (!RESEND_KEY || !email) return;
+  const safeName = name ? name.split(' ')[0] : '';
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${RESEND_KEY}`,
+      },
+      body: JSON.stringify({
+        from:    'InsideTrack <hello@insidetrack.site>',
+        to:      [email],
+        subject: "You're now on InsideTrack Pro ⭐",
+        html: `
+          <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px">
+            <div style="text-align:center;margin-bottom:32px">
+              <h1 style="font-size:28px;color:#1a1814;margin:0">InsideTrack<span style="color:#7c3aed">.site</span></h1>
+              <p style="color:#6a6560;font-size:14px;margin-top:4px">AI Career Copilot</p>
+            </div>
+            <h2 style="color:#1a1814;font-size:22px">You're on Pro${safeName ? ', ' + safeName : ''}! ⭐</h2>
+            <p style="color:#4a4640;font-size:15px;line-height:1.7">
+              Your InsideTrack Pro subscription is now active. You have <strong>unlimited CV scans</strong> and full access to all tools.
+            </p>
+            <div style="background:#f5f0eb;border-radius:12px;padding:24px;margin:24px 0">
+              <p style="font-weight:700;color:#1a1814;margin:0 0 12px">Your Pro plan includes:</p>
+              <p style="color:#4a4640;margin:6px 0">⚡ Unlimited ATS scans</p>
+              <p style="color:#4a4640;margin:6px 0">✅ CV Builder</p>
+              <p style="color:#4a4640;margin:6px 0">✅ CV Tailor</p>
+              <p style="color:#4a4640;margin:6px 0">✅ Cover Letter AI</p>
+              <p style="color:#4a4640;margin:6px 0">✅ Outreach AI</p>
+              <p style="color:#4a4640;margin:6px 0">✅ Application Tracker</p>
+            </div>
+            <div style="text-align:center;margin:32px 0">
+              <a href="https://insidetrack.site" style="background:#7c3aed;color:white;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block">
+                Start using InsideTrack Pro →
+              </a>
+            </div>
+            <p style="color:#9a9590;font-size:12px;text-align:center;margin-top:32px">
+              You can manage or cancel your subscription anytime from your account menu.<br><br>
+              Good luck with your applications 🚀<br>
+              The InsideTrack team
+            </p>
+          </div>
+        `,
+      }),
+    });
+    console.log(`stripe-webhook: pro email sent to ${email}`);
+  } catch (err) {
+    console.error('stripe-webhook: failed to send pro email:', err.message);
+  }
+}
+
 // ── Read raw body as Buffer (required by Stripe SDK) ──────────────────────────
 function getRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -132,6 +196,12 @@ export default async function handler(req, res) {
           stripe_subscription_id: subscriptionId,
         });
         console.log(`stripe-webhook: user ${userId} upgraded to Pro`);
+
+        // Send Pro upgrade confirmation email
+        const profile = await getProfile(userId);
+        if (profile?.email) {
+          await sendProEmail(profile.email, profile.full_name);
+        }
         break;
       }
 
