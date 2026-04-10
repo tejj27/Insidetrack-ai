@@ -19,6 +19,7 @@
 
 const ALLOWED_ORIGINS = [
   'https://insidetrack-ai.vercel.app',
+  'https://insidetrack.site',
   'https://insidetrack.ai',
   'http://localhost:3000',
   'http://localhost:5173',

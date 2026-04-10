@@ -14,6 +14,7 @@
 
 const ALLOWED_ORIGINS = [
   'https://insidetrack-ai.vercel.app',
+  'https://insidetrack.site',
   'https://insidetrack.ai',
   'http://localhost:3000',
   'http://localhost:5173',
@@ -79,7 +80,7 @@ export default async function handler(req, res) {
       },
       body: new URLSearchParams({
         customer:   customerId,
-        return_url: returnUrl || 'https://insidetrack-ai.vercel.app',
+        return_url: returnUrl || 'https://insidetrack.site',
       }).toString(),
     });
 

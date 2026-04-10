@@ -27,6 +27,7 @@ const FREE_SCAN_LIMIT   = 3;
 // ── Allowed origins (same list as chat.js) ───────────────────────────────────
 const ALLOWED_ORIGINS = [
   'https://insidetrack-ai.vercel.app',
+  'https://insidetrack.site',
   'https://insidetrack.ai',
   'http://localhost:3000',
   'http://localhost:5173',
