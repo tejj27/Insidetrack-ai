@@ -4971,8 +4971,20 @@ async function migrateGuestScansToSupabase() {
 }
 
 function showUpgradeModal(){
-  showDlToast('You have used all ' + FREE_SCAN_LIMIT + ' free scans. Sign up for more!');
-  setTimeout(function(){ openAuth('signup'); }, 1500);
+  if (_currentUser) {
+    // Logged-in free user — show the upgrade modal
+    var overlay = document.getElementById('upgrade-modal-overlay');
+    if (overlay) overlay.style.display = 'flex';
+  } else {
+    // Guest user — prompt to sign up first
+    showDlToast('You\'ve used all ' + FREE_SCAN_LIMIT + ' free scans!');
+    setTimeout(function(){ openAuth('signup'); }, 1000);
+  }
+}
+
+function closeUpgradeModal(){
+  var overlay = document.getElementById('upgrade-modal-overlay');
+  if (overlay) overlay.style.display = 'none';
 }
 
 async function startUpgrade(){
@@ -5209,6 +5221,51 @@ initSessionFromStorage();
       </button>
     </div>
   </div>
+
+<!-- UPGRADE MODAL -->
+<div id="upgrade-modal-overlay" onclick="if(event.target===this)closeUpgradeModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3500;justify-content:center;align-items:center;padding:20px">
+  <div onclick="event.stopPropagation()" style="background:white;border-radius:24px;max-width:420px;width:100%;position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.3);overflow:hidden">
+    <!-- Purple header -->
+    <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);padding:32px 32px 28px;text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">🚀</div>
+      <div id="upgrade-modal-title" style="font-family:'Instrument Serif',serif;font-size:22px;font-weight:700;color:white;margin-bottom:6px">You've used all 3 free scans</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5">Upgrade to Pro and keep landing more interviews</div>
+    </div>
+    <!-- Body -->
+    <div style="padding:28px 32px">
+      <!-- Price -->
+      <div style="text-align:center;margin-bottom:24px">
+        <span style="font-size:36px;font-weight:800;color:#1a1814;font-family:'Geist',sans-serif">£4.99</span>
+        <span style="font-size:14px;color:#6a6560">/month</span>
+        <div style="font-size:12px;color:#7c3aed;font-weight:600;margin-top:2px">Cancel anytime · Refund within 24h</div>
+      </div>
+      <!-- Features comparison -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;font-size:13px">
+        <div style="background:#fef2f2;border-radius:10px;padding:12px">
+          <div style="font-weight:700;color:#dc2626;margin-bottom:8px">Free</div>
+          <div style="color:#6a6560;margin:4px 0">✗ 3 scans only</div>
+          <div style="color:#6a6560;margin:4px 0">✗ No CV Builder</div>
+          <div style="color:#6a6560;margin:4px 0">✓ Cover Letter AI</div>
+          <div style="color:#6a6560;margin:4px 0">✓ Outreach AI</div>
+        </div>
+        <div style="background:#f5f0ff;border-radius:10px;padding:12px;border:1.5px solid #7c3aed">
+          <div style="font-weight:700;color:#7c3aed;margin-bottom:8px">Pro ⭐</div>
+          <div style="color:#1a1814;margin:4px 0;font-weight:600">⚡ Unlimited scans</div>
+          <div style="color:#1a1814;margin:4px 0;font-weight:600">✓ CV Builder</div>
+          <div style="color:#1a1814;margin:4px 0;font-weight:600">✓ Cover Letter AI</div>
+          <div style="color:#1a1814;margin:4px 0;font-weight:600">✓ Outreach AI</div>
+        </div>
+      </div>
+      <!-- CTA -->
+      <button onclick="closeUpgradeModal();startUpgrade();" style="width:100%;padding:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:12px;font-family:'Geist',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;box-shadow:0 4px 16px rgba(124,58,237,0.35)">
+        Upgrade to Pro — £4.99/mo →
+      </button>
+      <button onclick="closeUpgradeModal()" style="width:100%;padding:10px;background:none;color:#9a9590;border:none;font-family:'Geist',sans-serif;font-size:13px;cursor:pointer">
+        No thanks, I'll stick with 3 scans
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- CV HISTORY MODAL -->
 <div id="cv-history-modal" onclick="hideCVHistory()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:4000;align-items:center;justify-content:center">
