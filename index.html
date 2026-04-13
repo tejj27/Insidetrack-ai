@@ -6,7 +6,15 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>InsideTrack.ai — AI Career Copilot</title>
+<title>InsideTrack — AI Career Copilot</title>
+<meta name="description" content="Land more interviews with every application. InsideTrack gives you AI tools to scan your CV, tailor it to any job, write cover letters, and track applications. Free to start.">
+<meta property="og:title" content="InsideTrack — AI Career Copilot">
+<meta property="og:description" content="Land more interviews with every application. AI-powered CV scanner, tailor, cover letter writer and job tracker. Free to start.">
+<meta property="og:url" content="https://insidetrack.site">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="InsideTrack — AI Career Copilot">
+<meta name="twitter:description" content="Land more interviews with every application. AI-powered CV scanner, tailor, cover letter writer and job tracker. Free to start.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -456,23 +464,24 @@ select:focus{border-color:var(--green)}
       <div class="price-name">Free</div>
       <div class="price-amount">£0<span class="price-period"> /mo</span></div>
       <ul class="price-features">
-        <li><span class="chk">✓</span> 3 ATS scans</li>
+        <li><span class="chk">✓</span> 2 ATS scans</li>
         <li><span class="chk">✓</span> 1 CV tailor</li>
-        <li><span class="chk">✓</span> 1 job search kit</li>
-        <li><span class="chk">✓</span> All 5 tools incl. CV Builder</li>
+        <li><span class="chk">✓</span> Cover Letter AI</li>
+        <li><span class="chk">✓</span> Outreach AI</li>
+        <li><span class="chk">✗</span> CV Builder</li>
       </ul>
       <button class="btn btn-ghost btn-md" style="width:100%" onclick="openApp('ats')">Get started</button>
     </div>
     <div class="price-card featured">
       <div class="price-name">Pro</div>
-      <div class="price-amount">£7<span class="price-period"> /mo</span></div>
+      <div class="price-amount">£4.99<span class="price-period"> /mo</span></div>
       <ul class="price-features">
-        <li><span style="color:#4ade80">✓</span> Unlimited scans</li>
-        <li><span style="color:#4ade80">✓</span> Unlimited tailoring</li>
-        <li><span style="color:#4ade80">✓</span> Re-tailor up to 80%</li>
-        <li><span style="color:#4ade80">✓</span> Priority AI</li>
+        <li><span style="color:#4ade80">✓</span> Unlimited ATS scans</li>
+        <li><span style="color:#4ade80">✓</span> Unlimited CV tailoring</li>
+        <li><span style="color:#4ade80">✓</span> CV Builder</li>
+        <li><span style="color:#4ade80">✓</span> Cancel anytime</li>
       </ul>
-      <button class="btn btn-md" style="width:100%;background:white;color:var(--ink);font-weight:600" onclick="openApp('ats')">Start free trial</button>
+      <button class="btn btn-md" style="width:100%;background:white;color:var(--ink);font-weight:600" onclick="startUpgrade()">Upgrade to Pro</button>
     </div>
   </div>
 
@@ -522,7 +531,7 @@ select:focus{border-color:var(--green)}
         <span style="font-size:14px;font-weight:600;color:var(--ink)">Is InsideTrack free to use?</span>
         <span id="faq-icon-5" style="font-size:18px;color:var(--ink4);flex-shrink:0">+</span>
       </button>
-      <div id="faq-body-5" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI.</div>
+      <div id="faq-body-5" style="display:none;padding:0 20px 16px;font-size:13px;color:var(--ink3);line-height:1.7">Yes — free users get 2 ATS scans, 1 CV tailor, and access to most tools. Pro is £4.99/month for unlimited scans, unlimited tailoring and the full CV Builder.</div>
     </div>
     <div style="background:rgba(255,255,255,0.8);border:1px solid rgba(228,223,212,0.6);border-radius:14px;margin-bottom:8px;padding:0;overflow:hidden;transition:all 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.03)">
       <button onclick="toggleFAQ(6)" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'Geist',sans-serif;padding:16px 20px">
@@ -564,7 +573,7 @@ select:focus{border-color:var(--green)}
       </div>
     </div>
     <div style="max-width:1100px;margin:28px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      <div style="font-size:12px">© 2025 InsideTrack.ai — All rights reserved</div>
+      <div style="font-size:12px">© 2026 InsideTrack — All rights reserved</div>
       <div style="font-size:12px">Made for job seekers, by people who've been there</div>
     </div>
   </footer>
@@ -4302,10 +4311,10 @@ function toggleFAQ(i) {
 }
 
 const modalContent = {
-  privacy:  {title:"Privacy Policy",     body:"InsideTrack.ai does not store your CV or personal data. All processing happens in your browser. We never sell or train AI on your data. Questions: privacy@insidetrack.ai"},
-  terms:    {title:"Terms & Conditions", body:"By using InsideTrack.ai you agree to use it for lawful job search only. You own your CV data. We provide AI suggestions — final decisions are yours. No outcome guarantees. Contact: hello@insidetrack.ai"},
-  refund:   {title:"Refund Policy",      body:"Pro subscriptions cancel anytime. Access continues until billing period ends. Full refund within 7 days of first purchase if not satisfied. Refunds: hello@insidetrack.ai"},
-  pricing:  {title:"Pricing",            body:"Free: 3 ATS scans, 1 CV tailor, 3 re-tailor passes, all tools.\n\nPro (7/month): unlimited scans, unlimited tailoring, unlimited re-tailor, priority AI. Cancel anytime."}
+  privacy:  {title:"Privacy Policy",     body:"InsideTrack does not store your CV or personal data. All processing happens in your browser. We never sell or train AI on your data. Questions: privacy@insidetrack.site"},
+  terms:    {title:"Terms & Conditions", body:"By using InsideTrack you agree to use it for lawful job search only. You own your CV data. We provide AI suggestions — final decisions are yours. No outcome guarantees. Contact: hello@insidetrack.site"},
+  refund:   {title:"Refund Policy",      body:"Pro subscriptions cancel anytime. Access continues until billing period ends. Refunds are available within 24 hours of purchase via the account menu. Refunds: hello@insidetrack.site"},
+  pricing:  {title:"Pricing",            body:"Free: 2 ATS scans, 1 CV tailor, access to Cover Letter AI and Outreach AI.\n\nPro (£4.99/month): unlimited scans, unlimited tailoring, CV Builder. Cancel anytime."}
 };
 
 function showModal(type) {
@@ -4965,8 +4974,14 @@ async function serverCheckAndIncrementScan() {
 
     if (!data.allowed) {
       // Limit reached
-      showDlToast('You have used all ' + FREE_SCAN_LIMIT + ' free scans. Sign up to continue!');
-      setTimeout(function () { openAuth('signup'); }, 1200);
+      if (jwt) {
+        // Logged-in free user — show the upgrade modal
+        showUpgradeModal();
+      } else {
+        // Guest — prompt to sign up
+        showDlToast('You\'ve used all ' + FREE_SCAN_LIMIT + ' free scans. Create a free account to keep going!');
+        setTimeout(function () { openAuth('signup'); }, 1200);
+      }
       return false;
     }
 
@@ -5422,7 +5437,7 @@ document.addEventListener('click', function(e) {
 
 <script>
 var _chatHistory = [];
-var _chatBotSystem = "You are Iris, InsideTrack's friendly AI assistant. InsideTrack is an AI job search copilot with these tools:\n\n1. ATS Scanner: Upload CV + job description. AI scores match 0-100%, finds missing keywords, gives improvement suggestions.\n2. CV Tailor: After scanning, click Tailor to get a fully rewritten CV for the role. Download as DOCX or PDF.\n3. Cover Letter AI: Auto-fills from your CV. Writes 4-paragraph cover letter in Le Careers style. Download as DOCX or PDF.\n4. LinkedIn Outreach AI: Generates 5 personalised messages: connection note, recruiter message, 3 follow-ups.\n5. Application Tracker: Log applications, track status, get AI insights.\n\nGetting started: Click Start free, upload your CV (PDF or Word), paste a job description, click Scan now.\n\nFree plan: 3 ATS scans, 1 CV tailor, 3 re-tailor passes, all tools. Pro: 7/month, unlimited.\n\nBe concise, warm and helpful. Max 3 sentences per reply. Use simple language. If they ask about something outside InsideTrack, gently redirect to the tools.";
+var _chatBotSystem = "You are Iris, InsideTrack's friendly AI assistant. InsideTrack is an AI job search copilot with these tools:\n\n1. ATS Scanner: Upload CV + job description. AI scores match 0-100%, finds missing keywords, gives improvement suggestions.\n2. CV Tailor: After scanning, click Tailor to get a fully rewritten CV for the role. Download as DOCX or PDF.\n3. Cover Letter AI: Auto-fills from your CV. Writes 4-paragraph cover letter in Le Careers style. Download as DOCX or PDF.\n4. LinkedIn Outreach AI: Generates 5 personalised messages: connection note, recruiter message, 3 follow-ups.\n5. Application Tracker: Log applications, track status, get AI insights.\n\nGetting started: Click Start free, upload your CV (PDF or Word), paste a job description, click Scan now.\n\nFree plan: 2 ATS scans to get started. Pro: £4.99/month, unlimited scans, CV Builder and all tools with no limits.\n\nBe concise, warm and helpful. Max 3 sentences per reply. Use simple language. If they ask about something outside InsideTrack, gently redirect to the tools.";
 
 var _chatOpen = false;
 
