@@ -449,7 +449,7 @@ select:focus{border-color:var(--green)}
       <div class="tool-desc">Log applications in one tap. Track status from Applied > Interview > Offer. Get AI insights on your job search pattern and nudges to follow up at exactly the right time.</div>
       <div class="tool-cta"><span class="tool-cta-label">Log and track your hunt</span><button class="btn btn-sm" style="background:#7c3aed;color:white">Open tracker →</button></div>
     </div>
-    <div class="tool-card" onclick="openApp('cvbuilder')" style="grid-column:1/-1;background:linear-gradient(135deg,#faf8f4 60%,#f3f0ff)">
+    <div class="tool-card" onclick="handleCVBuilderClick()" style="grid-column:1/-1;background:linear-gradient(135deg,#faf8f4 60%,#f3f0ff)">
       <div class="tool-num">05  CV BUILDER</div>
       <div class="tool-icon">📄</div>
       <div class="tool-title">Build Your CV from Scratch</div>
@@ -559,7 +559,7 @@ select:focus{border-color:var(--green)}
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('ats')">ATS Scanner</span>
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('outreach')">Outreach AI</span>
           <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('tracker')">Application Tracker</span>
-          <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="openApp('cvbuilder')">CV Builder</span>
+          <span style="cursor:pointer;transition:color 0.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color=''" onclick="handleCVBuilderClick()">CV Builder</span>
         </div>
       </div>
       <div>
@@ -5128,7 +5128,12 @@ function handleCVBuilderClick(){
     history.replaceState({ page: 'app', tool: 'cvbuilder' }, '', '/cv-builder');
     return;
   }
-  // Otherwise show upgrade modal with CV Builder specific message
+  // Not logged in — prompt to sign up
+  if (!_currentUser) {
+    openAuth('signup');
+    return;
+  }
+  // Logged-in free user — show upgrade modal with CV Builder specific message
   var titleEl = document.getElementById('upgrade-modal-title');
   if (titleEl) titleEl.textContent = 'CV Builder is a Pro feature';
   var overlay = document.getElementById('upgrade-modal-overlay');
