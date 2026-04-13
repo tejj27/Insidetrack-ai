@@ -1460,14 +1460,6 @@ function switchAuthTab(tab) {
   if (err) err.style.display = 'none';
   if (suc) suc.style.display = 'none';
 }
-function openApp(tool) {
-  var landing = document.getElementById('screen-landing');
-  var app = document.getElementById('screen-app');
-  if (landing) landing.style.display = 'none';
-  if (app) app.style.display = 'flex';
-  if (typeof switchTool === 'function') switchTool(tool || 'ats');
-  else setTimeout(function(){ if(typeof switchTool==='function') switchTool(tool||'ats'); }, 200);
-}
 function checkAuthReady() {
   var email = document.getElementById('auth-email');
   var password = document.getElementById('auth-password');
@@ -1608,22 +1600,69 @@ function _demoCallClaude(system) {
   });
 }
 
-// ── Navigation ──
-function openApp(tool) {
+// ── Navigation with browser history ──
+var _toolSlugs = {
+  ats:         'ats-scanner',
+  outreach:    'outreach',
+  tracker:     'applications',
+  coverletter: 'cover-letter',
+  cvbuilder:   'cv-builder',
+};
+var _slugToTool = {};
+Object.keys(_toolSlugs).forEach(function(k){ _slugToTool[_toolSlugs[k]] = k; });
+
+function openApp(tool, skipHistory) {
   document.getElementById('screen-landing').style.display = 'none';
   document.getElementById('screen-app').style.display = 'flex';
   document.getElementById('screen-app').classList.add('active');
-  switchTool(tool);
+  switchTool(tool, true); // pass true so switchTool doesn't also push state
   window.scrollTo(0,0);
+  if (!skipHistory) {
+    var slug = _toolSlugs[tool] || tool;
+    history.pushState({ page: 'app', tool: tool }, '', '/' + slug);
+  }
   // If session was restored silently, wire up the user menu now
   if (_currentUser) { showUserMenu(); loadUserProfile(); renderTracker(); }
 }
-function backToLanding() {
+function backToLanding(skipHistory) {
   document.getElementById('screen-app').style.display = 'none';
   document.getElementById('screen-landing').style.display = 'flex';
   window.scrollTo(0,0);
+  if (!skipHistory) {
+    history.pushState({ page: 'landing' }, '', '/');
+  }
 }
-function switchTool(tool) {
+
+// Handle browser back/forward buttons
+window.addEventListener('popstate', function(e) {
+  var state = e.state;
+  if (!state || state.page === 'landing') {
+    // Going back to landing
+    document.getElementById('screen-app').style.display = 'none';
+    document.getElementById('screen-landing').style.display = 'flex';
+    window.scrollTo(0,0);
+  } else if (state.page === 'app' && state.tool) {
+    document.getElementById('screen-landing').style.display = 'none';
+    document.getElementById('screen-app').style.display = 'flex';
+    document.getElementById('screen-app').classList.add('active');
+    switchTool(state.tool, true); // true = don't push another history entry
+    window.scrollTo(0,0);
+    if (_currentUser) { showUserMenu(); loadUserProfile(); renderTracker(); }
+  }
+});
+
+// On first load, check if URL matches a tool path (e.g. user bookmarked /ats-scanner)
+(function _handleInitialURL() {
+  var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+  var tool = _slugToTool[path];
+  if (tool) {
+    // Replace current state so back goes to landing
+    history.replaceState({ page: 'app', tool: tool }, '', '/' + path);
+  } else {
+    history.replaceState({ page: 'landing' }, '', '/');
+  }
+})();
+function switchTool(tool, skipHistory) {
   if (tool === 'tracker') setTimeout(renderTracker, 0);
   if (tool === 'coverletter') setTimeout(_autoFillCV, 0);
   if (tool === 'outreach') setTimeout(_autoFillOutreachCV, 0);
@@ -1644,6 +1683,11 @@ function switchTool(tool) {
   if (sb) sb.classList.add('active');
   const mt = document.getElementById('mtab-'+tool);
   if (mt) mt.classList.add('active');
+  // Update URL when switching tools inside the app (unless called internally)
+  if (!skipHistory && document.getElementById('screen-app').style.display !== 'none') {
+    var slug = (_toolSlugs && _toolSlugs[tool]) ? _toolSlugs[tool] : tool;
+    history.pushState({ page: 'app', tool: tool }, '', '/' + slug);
+  }
 }
 
 function _autoFillCV() {
@@ -5081,6 +5125,7 @@ function handleCVBuilderClick(){
   // If user is Pro, open normally
   if (_currentUser && _userProfile && _userProfile.plan === 'pro') {
     switchTool('cvbuilder');
+    history.replaceState({ page: 'app', tool: 'cvbuilder' }, '', '/cv-builder');
     return;
   }
   // Otherwise show upgrade modal with CV Builder specific message
