@@ -870,6 +870,12 @@ select:focus{border-color:var(--green)}
             <div id="cv-preview-pane" style="background:#f0ede8;min-height:400px;display:flex;justify-content:center;align-items:flex-start">
               <div id="cv-preview-doc" style="background:white;width:100%;max-width:680px;margin:20px auto;padding:40px 48px;box-shadow:0 4px 24px rgba(0,0,0,0.12);font-size:11pt;line-height:1.4;color:#000;min-height:500px"></div>
             </div>
+            <!-- Edit pane toolbar -->
+            <div id="tailor-edit-toolbar" style="display:none;padding:8px 12px;background:#f5f0eb;border-bottom:1px solid var(--cream3);display:none;gap:6px;flex-wrap:wrap;align-items:center">
+              <span style="font-size:11px;font-weight:600;color:var(--ink4);font-family:'Geist',sans-serif">Insert:</span>
+              <button onclick="insertIntoTailorCV('• ')" style="font-size:12px;font-weight:600;color:#1a1814;background:white;border:1.5px solid var(--cream3);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'Geist',sans-serif" title="Insert bullet point at cursor">• Bullet</button>
+              <button onclick="insertIntoTailorCV('\n')" style="font-size:12px;font-weight:600;color:#1a1814;background:white;border:1.5px solid var(--cream3);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'Geist',sans-serif" title="Insert blank line">↵ New line</button>
+            </div>
             <!-- Edit pane -->
             <textarea id="tailor-cv-output" style="display:none;width:100%;min-height:480px;background:var(--cream);border:none;padding:20px;font-family:'Geist Mono',monospace;font-size:12.5px;line-height:1.8;color:var(--ink);resize:vertical;outline:none" oninput="renderCVPreview()"></textarea>
           </div>
@@ -3950,9 +3956,11 @@ function switchCVView(mode) {
   var previewBtn = document.getElementById('view-preview-btn');
   var editBtn = document.getElementById('wysiwyg-btn');
   if (!preview) return;
+  var toolbar = document.getElementById('tailor-edit-toolbar');
   if (mode === 'preview') {
     preview.style.display = 'flex';
     editor.style.display = 'none';
+    if (toolbar) toolbar.style.display = 'none';
     // Deactivate WYSIWYG if it was on
     if (_wysiwygMode) { _wysiwygMode = false; var doc2 = document.getElementById('cv-preview-doc'); if (doc2) doc2.removeEventListener('input', _onWYSIWYGInput); }
     if (previewBtn) { previewBtn.style.background = 'white'; previewBtn.style.color = 'var(--ink)'; previewBtn.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
@@ -3963,6 +3971,7 @@ function switchCVView(mode) {
   } else {
     preview.style.display = 'none';
     editor.style.display = 'block';
+    if (toolbar) toolbar.style.display = 'flex';
     if (previewBtn) { previewBtn.style.background = 'transparent'; previewBtn.style.color = 'var(--ink3)'; previewBtn.style.boxShadow = 'none'; }
   }
 }
@@ -5016,6 +5025,18 @@ function showUpgradeModal(){
     showDlToast('You\'ve used all ' + FREE_SCAN_LIMIT + ' free scans!');
     setTimeout(function(){ openAuth('signup'); }, 1000);
   }
+}
+
+function insertIntoTailorCV(text) {
+  var ta = document.getElementById('tailor-cv-output');
+  if (!ta) return;
+  var start = ta.selectionStart;
+  var end = ta.selectionEnd;
+  var val = ta.value;
+  ta.value = val.slice(0, start) + text + val.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + text.length;
+  ta.focus();
+  renderCVPreview();
 }
 
 function copySuggestion(btn, text) {
