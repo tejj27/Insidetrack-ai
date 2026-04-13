@@ -392,7 +392,7 @@ select:focus{border-color:var(--green)}
       <a onclick="document.getElementById('faq-list')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">FAQ</a>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-      <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">3 free scans</span>
+      <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">2 free scans</span>
       <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
       <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
     </div>
@@ -603,7 +603,7 @@ select:focus{border-color:var(--green)}
     <div class="mobile-tab" id="mtab-outreach" onclick="switchTool('outreach')">✉️ Outreach</div>
     <div class="mobile-tab" id="mtab-tracker" onclick="switchTool('tracker')">📋 Tracker</div>
     <div class="mobile-tab" id="mtab-coverletter" onclick="switchTool('coverletter')">📝 Cover Letter</div>
-    <div class="mobile-tab" id="mtab-cvbuilder" onclick="switchTool('cvbuilder')">📄 CV Builder</div>
+    <div class="mobile-tab" id="mtab-cvbuilder" onclick="handleCVBuilderClick()">📄 CV Builder <span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;padding:1px 5px;border-radius:20px;vertical-align:middle">PRO</span></div>
   </div>
 
   <div class="app-body">
@@ -626,9 +626,10 @@ select:focus{border-color:var(--green)}
         <span class="sbtn-label">Cover Letter</span>
       </button>
       <div style="height:1px;background:var(--cream3);margin:6px 4px"></div>
-      <button class="sidebar-btn" id="sbtn-cvbuilder" onclick="switchTool('cvbuilder')">
+      <button class="sidebar-btn" id="sbtn-cvbuilder" onclick="handleCVBuilderClick()">
         <span class="sb-icon">📄</span>
-        <div><span class="sb-name">CV Builder</span><span class="sb-sub">Build from scratch</span></div>
+        <div style="flex:1"><span class="sb-name">CV Builder</span><span class="sb-sub">Build from scratch</span></div>
+        <span id="cvbuilder-pro-badge" style="font-size:10px;font-weight:700;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;padding:2px 7px;border-radius:20px;letter-spacing:0.04em">PRO</span>
       </button>
     </div>
 
@@ -4644,7 +4645,8 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 let _supa = null;
 let _currentUser = null;
 let _userScans = 0;
-const FREE_SCAN_LIMIT = 3;
+let _userProfile = null;
+const FREE_SCAN_LIMIT = 2;
 
 // Direct REST API calls to Supabase — no SDK needed
 async function supaSignUp(email, password, name) {
@@ -4723,7 +4725,11 @@ async function loadUserProfile() {
     var profile = await supaGetProfile(_currentUser.id);
     if (profile) {
       _userScans = profile.scans_used||0;
+      _userProfile = profile;
       updateUserMenuDisplay(profile);
+      // Hide PRO badge on CV Builder for Pro users
+      var badge = document.getElementById('cvbuilder-pro-badge');
+      if (badge) badge.style.display = profile.plan === 'pro' ? 'none' : '';
       return profile;
     }
     // null = network/server error — keep session, show safe defaults
@@ -4764,7 +4770,7 @@ function hideUserMenu() {
   var si = document.getElementById('nav-signin-btn'); if (si) si.style.display = '';
   var su = document.getElementById('nav-signup-btn'); if (su) su.style.display = '';
   var hi = document.getElementById('hero-signin-btn'); if (hi) hi.style.display = '';
-  var sc = document.getElementById('nav-scan-label'); if (sc) sc.textContent = '3 free scans';
+  var sc = document.getElementById('nav-scan-label'); if (sc) sc.textContent = '2 free scans';
 }
 
 function updateUserMenuDisplay(p){
@@ -4876,7 +4882,7 @@ async function signOut(){
   var d=document.getElementById('user-dropdown'); if(d)d.style.display='none';
   hideUserMenu();
   var sc=document.getElementById('nav-scan-label');
-  if(sc) sc.textContent='3 free scans';
+  if(sc) sc.textContent='2 free scans';
   // Go back to landing page
   var landing=document.getElementById('screen-landing');
   var app=document.getElementById('screen-app');
@@ -4986,6 +4992,19 @@ function showUpgradeModal(){
 function closeUpgradeModal(){
   var overlay = document.getElementById('upgrade-modal-overlay');
   if (overlay) overlay.style.display = 'none';
+}
+
+function handleCVBuilderClick(){
+  // If user is Pro, open normally
+  if (_currentUser && _userProfile && _userProfile.plan === 'pro') {
+    switchTool('cvbuilder');
+    return;
+  }
+  // Otherwise show upgrade modal with CV Builder specific message
+  var titleEl = document.getElementById('upgrade-modal-title');
+  if (titleEl) titleEl.textContent = 'CV Builder is a Pro feature';
+  var overlay = document.getElementById('upgrade-modal-overlay');
+  if (overlay) overlay.style.display = 'flex';
 }
 
 async function startUpgrade(){
@@ -5229,7 +5248,7 @@ initSessionFromStorage();
     <!-- Purple header -->
     <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);padding:32px 32px 28px;text-align:center">
       <div style="font-size:40px;margin-bottom:10px">🚀</div>
-      <div id="upgrade-modal-title" style="font-family:'Instrument Serif',serif;font-size:22px;font-weight:700;color:white;margin-bottom:6px">You've used all 3 free scans</div>
+      <div id="upgrade-modal-title" style="font-family:'Instrument Serif',serif;font-size:22px;font-weight:700;color:white;margin-bottom:6px">You've used all 2 free scans</div>
       <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.5">Upgrade to Pro and keep landing more interviews</div>
     </div>
     <!-- Body -->

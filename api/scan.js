@@ -22,7 +22,7 @@
 
 const SUPA_URL          = process.env.SUPABASE_URL || 'https://kknzvaayyihfzkaezhft.supabase.co';
 const SUPA_SERVICE_KEY  = process.env.SUPABASE_SERVICE_KEY;
-const FREE_SCAN_LIMIT   = 3;
+const FREE_SCAN_LIMIT   = 2;
 
 async function sendUpgradeEmail(userId) {
   const RESEND_KEY = process.env.RESEND_API_KEY;
@@ -44,7 +44,7 @@ async function sendUpgradeEmail(userId) {
     body: JSON.stringify({
       from:    'InsideTrack <hello@insidetrack.site>',
       to:      [profile.email],
-      subject: "You've used all 3 free scans 🚀",
+      subject: "You've used all 2 free scans 🚀",
       html: `
         <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:40px 20px">
           <div style="text-align:center;margin-bottom:32px">
@@ -53,7 +53,7 @@ async function sendUpgradeEmail(userId) {
           </div>
           <h2 style="color:#1a1814;font-size:22px">You've used all your free scans${safeName ? ', ' + safeName : ''} 👋</h2>
           <p style="color:#4a4640;font-size:15px;line-height:1.7">
-            You've used all 3 free ATS scans. Upgrade to Pro to get <strong>unlimited scans</strong> and unlock the full CV Builder.
+            You've used all 2 free ATS scans. Upgrade to Pro to get <strong>unlimited scans</strong> and unlock the full CV Builder.
           </p>
           <div style="background:#f5f0eb;border-radius:12px;padding:24px;margin:24px 0">
             <p style="font-weight:700;color:#1a1814;margin:0 0 12px">InsideTrack Pro — £4.99/month</p>

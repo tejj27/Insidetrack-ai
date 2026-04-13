@@ -121,7 +121,7 @@ export default async function handler(req, res) {
 
             <h2 style="color:#1a1814;font-size:22px">Hi${safeName ? ' ' + safeName : ''}! 👋</h2>
             <p style="color:#4a4640;font-size:15px;line-height:1.7">
-              Thanks for joining InsideTrack. You have <strong>3 free scans</strong> to get started — upload your CV and land more interviews.
+              Thanks for joining InsideTrack. You have <strong>2 free scans</strong> to get started — upload your CV and land more interviews.
             </p>
 
             <div style="text-align:center;margin:32px 0">
