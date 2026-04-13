@@ -686,6 +686,17 @@ select:focus{border-color:var(--green)}
               </div>
             </div>
           </div>
+          <!-- #1 Priority callout -->
+          <div id="priority-callout" style="display:none;background:linear-gradient(135deg,#fdf4ff,#f5f0ff);border:1.5px solid #a855f7;border-radius:12px;padding:16px 18px;margin-bottom:20px">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <span style="font-size:22px;flex-shrink:0">🎯</span>
+              <div>
+                <div style="font-size:12px;font-weight:700;color:#7c3aed;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px">Your #1 Priority</div>
+                <div id="priority-action-text" style="font-size:14px;color:#1a1814;line-height:1.6;font-weight:500"></div>
+              </div>
+            </div>
+          </div>
+
           <div style="margin-bottom:20px">
             <div class="result-section-title">💡 How to improve</div>
             <div id="ats-suggestions"></div>
@@ -1958,7 +1969,7 @@ Your job is to identify which keywords from the job description appear in the CV
 Be thorough and precise — include skills, tools, methodologies, role titles, and domain terms.
 Do NOT assign a score — the score will be calculated from your keyword lists.
 Respond ONLY with valid JSON (no markdown):
-{"verdict":"<10 words max describing the match quality>","company":"<hiring company name from JD>","role":"<exact job title from JD>","found_keywords":["kw1","kw2",...],"missing_keywords":["kw1","kw2",...],"suggestions":[{"label":"<short label>","before":"<original CV text>","after":"<improved text>","reason":"<why this helps ATS>"},{"label":"...","before":"...","after":"...","reason":"..."},{"label":"...","before":"...","after":"...","reason":"..."}],"tips":["tip1","tip2","tip3","tip4"]}`,
+{"verdict":"<10 words max describing the match quality>","company":"<hiring company name from JD>","role":"<exact job title from JD>","priority_action":"<1 specific sentence: the single most impactful change the candidate should make — be concrete, mention the exact keyword or section>","found_keywords":["kw1","kw2",...],"missing_keywords":["kw1","kw2",...],"suggestions":[{"label":"<short label>","before":"<original CV text, quote directly from CV>","after":"<improved text using JD keywords where candidate already has those skills>","reason":"<why this helps ATS>"},{"label":"...","before":"...","after":"...","reason":"..."},{"label":"...","before":"...","after":"...","reason":"..."}],"tips":["tip1","tip2","tip3","tip4"]}`,
       `CV:\n${resumeText.slice(0,5000)}\n\nJOB DESCRIPTION:\n${jd.slice(0,2500)}`,1800
     );
     _atsResult = data;
@@ -2002,13 +2013,31 @@ function renderATS(data) {
   document.getElementById('score-verdict').textContent = data.verdict || '';
   document.getElementById('kw-found').innerHTML = (data.found_keywords||[]).map(k=>`<span class="kw-found">${esc(k)}</span>`).join('');
   document.getElementById('kw-missing').innerHTML = (data.missing_keywords||[]).map(k=>`<span class="kw-missing">${esc(k)}</span>`).join('');
+
+  // #1 Priority callout
+  var priorityCallout = document.getElementById('priority-callout');
+  var priorityText = document.getElementById('priority-action-text');
+  if (data.priority_action) {
+    priorityText.textContent = data.priority_action;
+    priorityCallout.style.display = 'block';
+  } else {
+    priorityCallout.style.display = 'none';
+  }
+
+  // Suggestion cards with copy buttons
   document.getElementById('ats-suggestions').innerHTML = (data.suggestions||[]).map((s,i)=>`
     <div class="sug-item">
-      <div class="sug-header"><span style="font-weight:600;font-size:13px">${esc(s.label)}</span><span class="sug-badge" style="background:var(--green-bg);color:var(--green)">Suggestion ${i+1}</span></div>
+      <div class="sug-header">
+        <span style="font-weight:600;font-size:13px">${esc(s.label)}</span>
+        <span class="sug-badge" style="background:var(--green-bg);color:var(--green)">Suggestion ${i+1}</span>
+      </div>
       <div class="sug-body">
         <div class="sug-before">Before: ${esc(s.before)}</div>
         <div class="sug-after">After: ${esc(s.after)}</div>
-        <div style="font-size:11px;color:var(--ink4)">💡 ${esc(s.reason)}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;flex-wrap:wrap;gap:8px">
+          <div style="font-size:11px;color:var(--ink4)">💡 ${esc(s.reason)}</div>
+          <button onclick="copySuggestion(this,'${esc(s.after).replace(/'/g,"&#39;")}')" style="font-size:11px;font-weight:600;color:#7c3aed;background:#f5f0ff;border:1px solid #d8cff8;border-radius:6px;padding:4px 10px;cursor:pointer;white-space:nowrap;font-family:'Geist',sans-serif">📋 Copy improved text</button>
+        </div>
       </div>
     </div>`).join('');
   document.getElementById('ats-tips').innerHTML = (data.tips||[]).map(t=>`<div class="tip-item"><span>→</span><span>${esc(t)}</span></div>`).join('');
@@ -4987,6 +5016,24 @@ function showUpgradeModal(){
     showDlToast('You\'ve used all ' + FREE_SCAN_LIMIT + ' free scans!');
     setTimeout(function(){ openAuth('signup'); }, 1000);
   }
+}
+
+function copySuggestion(btn, text) {
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.style.background = '#f0fdf4';
+    btn.style.color = '#15803d';
+    btn.style.borderColor = '#bbf7d0';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = '#f5f0ff';
+      btn.style.color = '#7c3aed';
+      btn.style.borderColor = '#d8cff8';
+    }, 2000);
+  }).catch(function() {
+    showDlToast('Could not copy. Please copy manually.');
+  });
 }
 
 function closeUpgradeModal(){
