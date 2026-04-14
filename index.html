@@ -205,8 +205,8 @@ select:focus{border-color:var(--green)}
 .retailor-toast-btn{background:#faf8f4;color:#1a1814;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer}
 .retailor-toast-btn:hover{background:#e0ded8}
 @media(max-width:600px){
-  /* Prevent horizontal overflow on the whole page */
-  html, body { overflow-x:hidden; max-width:100vw; }
+  /* Prevent horizontal overflow — on body only, not html (html:hidden clips fixed elements like chatbot) */
+  body { overflow-x:hidden; max-width:100vw; }
   /* Nav — hide middle links and scan label, keep logo + 2 buttons */
   .nav{padding:10px 16px}
   .nav-links{display:none}
@@ -5470,9 +5470,9 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- ── IRIS CHATBOT ── -->
-<button onclick="toggleChatbot()" id="chatbot-fab" title="Ask Iris" style="position:fixed;bottom:24px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border:none;cursor:pointer;box-shadow:0 4px 24px rgba(124,58,237,0.45);z-index:3500;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">💬</button>
+<button onclick="toggleChatbot()" id="chatbot-fab" title="Ask Iris" style="position:fixed;bottom:24px;right:20px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#8b5cf6);border:none;cursor:pointer;box-shadow:0 4px 24px rgba(124,58,237,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">💬</button>
 
-<div id="chatbot-panel" style="display:none;position:fixed;bottom:90px;right:24px;width:360px;height:500px;background:white;border-radius:20px;box-shadow:0 8px 48px rgba(0,0,0,0.18);z-index:3500;flex-direction:column;overflow:hidden;border:1px solid #e4dfd4;animation:fadeUp 0.2s ease">
+<div id="chatbot-panel" style="display:none;position:fixed;bottom:90px;right:12px;left:12px;width:auto;max-width:380px;margin-left:auto;height:500px;background:white;border-radius:20px;box-shadow:0 8px 48px rgba(0,0,0,0.18);z-index:9999;flex-direction:column;overflow:hidden;border:1px solid #e4dfd4;animation:fadeUp 0.2s ease">
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#6d28d9,#8b5cf6);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
     <div style="display:flex;align-items:center;gap:10px">
