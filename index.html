@@ -5594,7 +5594,7 @@ async function sendChatMessage() {
     if (res.status === 429) {
       var ra = res.headers.get('Retry-After') || '60';
       var el2 = document.getElementById(typingId); if (el2) el2.remove();
-      _appendBotMsg('⏳ You're sending messages too quickly. Please wait ' + ra + ' seconds and try again.');
+      _appendBotMsg('⏳ You\'re sending messages too quickly. Please wait ' + ra + ' seconds and try again.');
       return;
     }
     var data = await res.json();
