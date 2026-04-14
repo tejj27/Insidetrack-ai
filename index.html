@@ -864,6 +864,7 @@ select:focus{border-color:var(--green)}
               <div style="display:inline-flex;background:#dbd7d0;border-radius:10px;padding:3px;gap:2px">
                 <button onclick="switchCVView('preview')" id="view-preview-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:white;color:var(--ink);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.13);transition:all 0.15s">👁 Preview</button>
                 <button onclick="toggleWYSIWYG()" id="wysiwyg-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:transparent;color:var(--ink3);cursor:pointer;box-shadow:none;transition:all 0.15s">🖊 Edit</button>
+                <button onclick="switchCVView('edit')" id="view-edit-btn" style="padding:6px 16px;font-size:12px;font-weight:600;font-family:'Geist',sans-serif;border:none;border-radius:8px;background:transparent;color:var(--ink3);cursor:pointer;box-shadow:none;transition:all 0.15s" title="Edit raw text and insert bullets">• Bullets</button>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
                 <span id="wysiwyg-hint-text" style="display:none;font-size:11px;color:var(--ink3);font-family:'Geist',sans-serif">✏️ Click any text to edit</span>
@@ -906,7 +907,7 @@ select:focus{border-color:var(--green)}
               <div id="cv-preview-doc" style="background:white;width:100%;max-width:680px;margin:20px auto;padding:40px 48px;box-shadow:0 4px 24px rgba(0,0,0,0.12);font-size:11pt;line-height:1.4;color:#000;min-height:500px"></div>
             </div>
             <!-- Edit pane toolbar -->
-            <div id="tailor-edit-toolbar" style="display:none;padding:8px 12px;background:#f5f0eb;border-bottom:1px solid var(--cream3);display:none;gap:6px;flex-wrap:wrap;align-items:center">
+            <div id="tailor-edit-toolbar" style="display:none;padding:8px 12px;background:#f5f0eb;border-bottom:1px solid var(--cream3);gap:6px;flex-wrap:wrap;align-items:center">
               <span style="font-size:11px;font-weight:600;color:var(--ink4);font-family:'Geist',sans-serif">Insert:</span>
               <button onclick="insertIntoTailorCV('• ')" style="font-size:12px;font-weight:600;color:#1a1814;background:white;border:1.5px solid var(--cream3);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'Geist',sans-serif" title="Insert bullet point at cursor">• Bullet</button>
               <button onclick="insertIntoTailorCV('\n')" style="font-size:12px;font-weight:600;color:#1a1814;background:white;border:1.5px solid var(--cream3);border-radius:6px;padding:3px 10px;cursor:pointer;font-family:'Geist',sans-serif" title="Insert blank line">↵ New line</button>
@@ -4033,9 +4034,14 @@ function switchCVView(mode) {
   var preview = document.getElementById('cv-preview-pane');
   var editor = document.getElementById('tailor-cv-output');
   var previewBtn = document.getElementById('view-preview-btn');
-  var editBtn = document.getElementById('wysiwyg-btn');
+  var wysiwygBtn = document.getElementById('wysiwyg-btn');
+  var bulletsBtn = document.getElementById('view-edit-btn');
   if (!preview) return;
   var toolbar = document.getElementById('tailor-edit-toolbar');
+  // Reset all buttons to inactive
+  [previewBtn, wysiwygBtn, bulletsBtn].forEach(function(b) {
+    if (b) { b.style.background = 'transparent'; b.style.color = 'var(--ink3)'; b.style.boxShadow = 'none'; }
+  });
   if (mode === 'preview') {
     preview.style.display = 'flex';
     editor.style.display = 'none';
@@ -4043,15 +4049,18 @@ function switchCVView(mode) {
     // Deactivate WYSIWYG if it was on
     if (_wysiwygMode) { _wysiwygMode = false; var doc2 = document.getElementById('cv-preview-doc'); if (doc2) doc2.removeEventListener('input', _onWYSIWYGInput); }
     if (previewBtn) { previewBtn.style.background = 'white'; previewBtn.style.color = 'var(--ink)'; previewBtn.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
-    if (editBtn) { editBtn.style.background = 'transparent'; editBtn.style.color = 'var(--ink3)'; editBtn.style.boxShadow = 'none'; }
     var ht = document.getElementById('wysiwyg-hint-text'); if (ht) ht.style.display = 'none';
     var ab = document.getElementById('add-section-btn'); if (ab) ab.style.display = 'none';
     renderCVPreview();
   } else {
+    // Raw text / bullets mode
     preview.style.display = 'none';
     editor.style.display = 'block';
     if (toolbar) toolbar.style.display = 'flex';
-    if (previewBtn) { previewBtn.style.background = 'transparent'; previewBtn.style.color = 'var(--ink3)'; previewBtn.style.boxShadow = 'none'; }
+    if (_wysiwygMode) { _wysiwygMode = false; }
+    if (bulletsBtn) { bulletsBtn.style.background = 'white'; bulletsBtn.style.color = 'var(--ink)'; bulletsBtn.style.boxShadow = '0 1px 4px rgba(0,0,0,0.13)'; }
+    var ht2 = document.getElementById('wysiwyg-hint-text'); if (ht2) ht2.style.display = 'none';
+    var ab2 = document.getElementById('add-section-btn'); if (ab2) ab2.style.display = 'none';
   }
 }
 
