@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="https://insidetrack.site">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237c3aed'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='18' font-family='sans-serif' fill='white'>↑</text></svg>">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -4328,7 +4330,7 @@ const faqs = [
   {q:"What file formats are supported?", a:"We support PDF and DOCX (Microsoft Word) files. Most CVs are in one of these formats. If yours isn't, copy-paste the text directly into the editor."},
   {q:"How does the ATS score work?", a:"Our AI analyses your CV against the job description and scores keyword match, relevance and structure — the same way a real ATS (Applicant Tracking System) would. A score of 75%+ significantly improves your chances of getting through."},
   {q:"How many times can I re-tailor my CV?", a:"Free users get 1 tailor and up to 3 re-tailor passes. Pro users get unlimited tailoring. Each re-tailor pass refines the presentation further without adding new content."},
-  {q:"Is InsideTrack free to use?", a:"Yes — free users get 3 ATS scans, 1 CV tailor, and access to all tools. Pro is £7/month for unlimited scans, unlimited tailoring and priority AI."},
+  {q:"Is InsideTrack free to use?", a:"Yes — free users get 2 ATS scans and access to all tools. Pro is £4.99/month for unlimited scans, unlimited tailoring and the full CV Builder."},
   {q:"Can I use InsideTrack on mobile?", a:"Yes. InsideTrack is fully responsive and works on any device. The mobile tab bar gives you access to all tools. Uploading a CV works best on desktop."}
 ];
 
@@ -4931,7 +4933,7 @@ async function handleAuth(){
       await migrateGuestScansToSupabase(); // carry over any guest scans
       await loadUserProfile(); // refresh count after migration
       renderTracker(); // load this user's apps
-      showDlToast('Welcome to InsideTrack.ai! 🎉');
+      showDlToast('Welcome to InsideTrack! 🎉');
     } else {
       var r3=await supaSignIn(email,password);
       if(r3.error) throw new Error(r3.error.message||'Invalid email or password.');
@@ -5304,7 +5306,7 @@ initSessionFromStorage();
     <div onclick="event.stopPropagation()" style="background:white;border-radius:20px;max-width:400px;width:100%;padding:36px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
       <button onclick="closeAuth()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1">✕</button>
       <div style="text-align:center;margin-bottom:24px">
-        <div style="font-family:'Instrument Serif',serif;font-size:24px;font-weight:700;color:#1a1814;margin-bottom:6px">Welcome to InsideTrack.ai</div>
+        <div style="font-family:'Instrument Serif',serif;font-size:24px;font-weight:700;color:#1a1814;margin-bottom:6px">Welcome to InsideTrack</div>
         <div style="font-size:13px;color:#6a6560">Sign in to save your progress</div>
       </div>
       <div style="display:flex;background:#f5f0eb;border-radius:10px;padding:4px;margin-bottom:22px">
@@ -5396,7 +5398,7 @@ initSessionFromStorage();
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px;font-size:13px">
         <div style="background:#fef2f2;border-radius:10px;padding:12px">
           <div style="font-weight:700;color:#dc2626;margin-bottom:8px">Free</div>
-          <div style="color:#6a6560;margin:4px 0">✗ 3 scans only</div>
+          <div style="color:#6a6560;margin:4px 0">✗ 2 scans only</div>
           <div style="color:#6a6560;margin:4px 0">✗ No CV Builder</div>
           <div style="color:#6a6560;margin:4px 0">✓ Cover Letter AI</div>
           <div style="color:#6a6560;margin:4px 0">✓ Outreach AI</div>
@@ -5414,7 +5416,7 @@ initSessionFromStorage();
         Upgrade to Pro — £4.99/mo →
       </button>
       <button onclick="closeUpgradeModal()" style="width:100%;padding:10px;background:none;color:#9a9590;border:none;font-family:'Geist',sans-serif;font-size:13px;cursor:pointer">
-        No thanks, I'll stick with 3 scans
+        Maybe later
       </button>
     </div>
   </div>
