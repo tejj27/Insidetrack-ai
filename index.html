@@ -34,6 +34,7 @@ body{font-family:'Geist',sans-serif;background:var(--cream);color:var(--ink);lin
 /* Nav */
 .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;border-bottom:1px solid rgba(228,223,212,0.5);background:rgba(250,249,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:1000;box-shadow:0 1px 12px rgba(0,0,0,0.04)}
 .nav-brand{display:flex;align-items:center;gap:12px;cursor:pointer}
+.nav-links{display:flex;align-items:center;gap:6px}
 .brand-mark{width:42px;height:42px;background:linear-gradient(135deg,#1a1814 60%,#7c3aed);border-radius:11px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.18);flex-shrink:0}
 .brand-mark svg{width:22px;height:22px;fill:none;stroke:#faf8f4;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .brand-name{font-family:'Geist',sans-serif;font-size:21px;font-weight:800;letter-spacing:-0.5px;line-height:1}
@@ -204,16 +205,26 @@ select:focus{border-color:var(--green)}
 .retailor-toast-btn{background:#faf8f4;color:#1a1814;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer}
 .retailor-toast-btn:hover{background:#e0ded8}
 @media(max-width:600px){
-  .pricing{grid-template-columns:1fr}
-  .hero-stats{gap:20px}
-  .hero{padding:48px 20px 40px}
+  /* Prevent horizontal overflow on the whole page */
+  html, body { overflow-x:hidden; max-width:100vw; }
+  /* Nav — hide middle links and scan label, keep logo + 2 buttons */
+  .nav{padding:10px 16px}
+  .nav-links{display:none}
+  .nav-scan-label{display:none !important}
+  /* Hero */
+  .hero{padding:40px 20px 36px}
   .hero-sub{font-size:14px}
+  /* Tools grid */
   .tools-grid{padding:0 16px 40px;gap:14px}
   .tools-grid .tool-card{padding:20px 18px}
-  .main-content{padding:16px}
-  .nav{padding:10px 16px}
-  .app-nav{padding:10px 14px}
+  /* Pricing */
+  .pricing{grid-template-columns:1fr}
+  .hero-stats{gap:20px}
+  /* Footer */
   .footer-grid{grid-template-columns:1fr !important}
+  /* App shell */
+  .main-content{padding:16px}
+  .app-nav{padding:10px 14px}
   .panel-title{font-size:20px}
   .panel-sub{font-size:12px}
 }
@@ -409,13 +420,13 @@ select:focus{border-color:var(--green)}
         <div class="brand-tag">AI Career Copilot</div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px">
+    <div class="nav-links">
       <a onclick="document.getElementById('section-tools')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">Tools</a>
       <a onclick="document.getElementById('section-pricing')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">Pricing</a>
       <a onclick="document.getElementById('faq-list')?.scrollIntoView({behavior:'smooth'})" style="font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;padding:6px 12px;border-radius:8px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">FAQ</a>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <span id="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">2 free scans</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="nav-scan-label" class="nav-scan-label" style="font-size:12px;color:var(--ink4);font-family:'Geist Mono',monospace">2 free scans</span>
       <button id="nav-signin-btn" class="btn btn-ghost btn-sm" onclick="openAuth('signin')">Sign in</button>
       <button id="nav-signup-btn" class="btn btn-primary btn-sm" onclick="openAuth('signup')">Sign up</button>
     </div>
