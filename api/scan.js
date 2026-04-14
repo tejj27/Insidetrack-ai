@@ -27,15 +27,17 @@ const FREE_SCAN_LIMIT   = 2;
 async function sendUpgradeEmail(userId) {
   const RESEND_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_KEY) return;
-  // Fetch email + name from profile
+  // Fetch email + name from profile — also check nudge_email_sent flag
   const r = await fetch(
-    `${SUPA_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=email,full_name`,
+    `${SUPA_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=email,full_name,nudge_email_sent`,
     { headers: { apikey: SUPA_SERVICE_KEY, Authorization: `Bearer ${SUPA_SERVICE_KEY}` } }
   );
   if (!r.ok) return;
   const rows = await r.json();
   const profile = rows?.[0];
   if (!profile?.email) return;
+  // Only send once — skip if already sent
+  if (profile.nudge_email_sent) return;
   const safeName = profile.full_name ? profile.full_name.split(' ')[0] : '';
 
   await fetch('https://api.resend.com/emails', {
@@ -79,6 +81,15 @@ async function sendUpgradeEmail(userId) {
     }),
   });
   console.log(`scan: upgrade email sent to ${profile.email}`);
+  // Mark as sent so we never send it again
+  await fetch(
+    `${SUPA_URL}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}`,
+    {
+      method:  'PATCH',
+      headers: { ...SERVICE_HEADERS(), Prefer: 'return=minimal' },
+      body:    JSON.stringify({ nudge_email_sent: true }),
+    }
+  );
 }
 
 // ── Allowed origins (same list as chat.js) ───────────────────────────────────
