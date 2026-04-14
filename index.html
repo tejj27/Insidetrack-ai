@@ -203,7 +203,20 @@ select:focus{border-color:var(--green)}
 .retailor-toast-score{font-size:18px;font-family:'Instrument Serif',serif;color:#4ade80;font-weight:700}
 .retailor-toast-btn{background:#faf8f4;color:#1a1814;border:none;border-radius:8px;padding:6px 13px;font-size:12px;font-weight:700;font-family:'Geist',sans-serif;cursor:pointer}
 .retailor-toast-btn:hover{background:#e0ded8}
-@media(max-width:600px){.pricing{grid-template-columns:1fr}.hero-stats{gap:20px}}
+@media(max-width:600px){
+  .pricing{grid-template-columns:1fr}
+  .hero-stats{gap:20px}
+  .hero{padding:48px 20px 40px}
+  .hero-sub{font-size:14px}
+  .tools-grid{padding:0 16px 40px;gap:14px}
+  .tools-grid .tool-card{padding:20px 18px}
+  .main-content{padding:16px}
+  .nav{padding:10px 16px}
+  .app-nav{padding:10px 14px}
+  .footer-grid{grid-template-columns:1fr !important}
+  .panel-title{font-size:20px}
+  .panel-sub{font-size:12px}
+}
 
 /* Tracker */
 .tracker-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:all 0.2s;position:relative;overflow:hidden}
@@ -547,7 +560,7 @@ select:focus{border-color:var(--green)}
 
   <!-- Footer -->
   <footer style="background:var(--ink);color:rgba(255,255,255,0.7);padding:40px 28px 28px;margin-top:auto">
-    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;flex-wrap:wrap">
+    <div class="footer-grid" style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;flex-wrap:wrap">
       <div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <div class="brand-mark"><svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><polyline points="2,13 6,8 10,10 16,4"/><polyline points="12,4 16,4 16,8"/></svg></div>
