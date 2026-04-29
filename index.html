@@ -4682,6 +4682,12 @@ function _buildCLHtml(forPrint) {
     .letter-body p:last-child { margin-bottom: 0; }
     .sign-off { margin-top: 24px; }
     .sign-space { height: ${forPrint ? '48px' : '40px'}; }
+    .back-bar { position: fixed; top: 0; left: 0; right: 0; background: #1a1814; padding: 10px 20px; display: flex; align-items: center; gap: 16px; z-index: 999; }
+    .back-btn { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 7px; font-family: Arial, sans-serif; font-size: 13px; cursor: pointer; }
+    .back-btn:hover { background: rgba(255,255,255,0.1); }
+    .back-label { color: rgba(255,255,255,0.6); font-family: Arial, sans-serif; font-size: 12px; }
+    .letter-wrap { padding-top: 52px; }
+    @media print { .back-bar { display: none; } .letter-wrap { padding-top: 0; } }
   `;
 
   // Format body paragraphs — split on double newline or "Dear" salutation
@@ -4696,6 +4702,8 @@ function _buildCLHtml(forPrint) {
   }).join('');
 
   var html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style></head><body>`;
+  html += `<div class="back-bar"><button class="back-btn" onclick="window.close()">← Back to InsideTrack</button><span class="back-label">Save as PDF: File > Print > Save as PDF (or use Ctrl+P)</span></div>`;
+  html += `<div class="letter-wrap" style="max-width:680px;margin:0 auto;padding-left:24px;padding-right:24px;padding-bottom:40px">`;
   html += `<div class="sender-name">${m.name || 'Your Name'}</div>`;
   if (contactLine) html += `<div class="sender-contact">${contactLine}</div>`;
   html += `<div class="date-line">${today}</div>`;
@@ -4707,7 +4715,7 @@ function _buildCLHtml(forPrint) {
     html += '</div>';
   }
   html += `<div class="letter-body">${bodyHtml}</div>`;
-  html += '</body></html>';
+  html += '</div></body></html>';
   return html;
 }
 
