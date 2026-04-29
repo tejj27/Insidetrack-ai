@@ -4962,9 +4962,10 @@ async function handleAuth(){
       _appsLoaded=false; // force reload from Supabase
       closeAuth();
       showUserMenu();
+      // New accounts always start fresh — clear any guest scan count so they
+      // get their full 2 free scans regardless of what they did as a guest
+      localStorage.removeItem('it_guest_scans');
       await loadUserProfile();
-      await migrateGuestScansToSupabase(); // carry over any guest scans
-      await loadUserProfile(); // refresh count after migration
       renderTracker(); // load this user's apps
       showDlToast('Welcome to InsideTrack! 🎉');
     } else {
