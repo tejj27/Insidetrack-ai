@@ -235,11 +235,22 @@ export default async function handler(req, res) {
       try {
         const result = await dbIncrementIfAllowed(userId);
 
+        // Pro users always bypass the scan limit — the DB function only checks
+        // scans_used < limit without knowing about the plan, so we override here.
+        if (result.plan === 'pro') {
+          return res.status(200).json({
+            allowed:   true,
+            used:      result.scans_used,
+            remaining: 999,
+            plan:      'pro',
+          });
+        }
+
         if (result.allowed) {
           return res.status(200).json({
             allowed:    true,
             used:       result.scans_used,
-            remaining:  result.plan === 'pro' ? 999 : Math.max(0, FREE_SCAN_LIMIT - result.scans_used),
+            remaining:  Math.max(0, FREE_SCAN_LIMIT - result.scans_used),
             plan:       result.plan,
           });
         } else {
