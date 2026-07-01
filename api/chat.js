@@ -146,7 +146,9 @@ export default async function handler(req, res) {
     ...(system ? { system: system.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') } : {}),
   };
 
-  // 9. Call Anthropic
+  // 9. Call Anthropic — bounded by an explicit timeout so a slow/stalled
+  // upstream call fails cleanly instead of hanging until Vercel kills the
+  // function (which can leave the browser waiting with no response at all).
   try {
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -156,6 +158,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify(cleanBody),
+      signal: AbortSignal.timeout(45000),
     });
 
     const data = await upstream.json();
@@ -173,6 +176,10 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
 
   } catch (err) {
+    if (err.name === 'TimeoutError' || err.name === 'AbortError') {
+      console.error('Chat proxy timeout after 45s');
+      return res.status(504).json({ error: 'The AI took too long to respond. Please try again.' });
+    }
     console.error('Chat proxy error:', err.message);
     return res.status(500).json({ error: 'Service temporarily unavailable. Please try again.' });
   }
