@@ -2056,7 +2056,7 @@ Be thorough and precise — include skills, tools, methodologies, role titles, a
 Do NOT assign a score — the score will be calculated from your keyword lists.
 Respond ONLY with valid JSON (no markdown):
 {"verdict":"<10 words max describing the match quality>","company":"<hiring company name from JD>","role":"<exact job title from JD>","priority_action":"<1 specific sentence: the single most impactful change the candidate should make — be concrete, mention the exact keyword or section>","found_keywords":["kw1","kw2",...],"missing_keywords":["kw1","kw2",...],"suggestions":[{"label":"<short label>","before":"<original CV text, quote directly from CV>","after":"<improved text using JD keywords where candidate already has those skills>","reason":"<why this helps ATS>"},{"label":"...","before":"...","after":"...","reason":"..."},{"label":"...","before":"...","after":"...","reason":"..."}],"tips":["tip1","tip2","tip3","tip4"]}`,
-      `CV:\n${resumeText.slice(0,5000)}\n\nJOB DESCRIPTION:\n${jd.slice(0,2500)}`,1800
+      `CV:\n${resumeText.slice(0,5000)}\n\nJOB DESCRIPTION:\n${jd.slice(0,2500)}`,3000
     );
     _atsResult = data;
 
@@ -2173,8 +2173,8 @@ JD: ${jd.slice(0,800)}`, 300
     _detectedCareerField = {field:'Business', confidence:70, tone:'formal', cv_length:'1-2 page', suggested_template:'modern'};
   }
   try {
-    const missing = (_atsResult.missing_keywords||[]).join(', ');
-    const found = (_atsResult.found_keywords||[]).join(', ');
+    const missing = (_atsResult.missing_keywords||[]).slice(0,20).join(', ').slice(0,600);
+    const found = (_atsResult.found_keywords||[]).slice(0,20).join(', ').slice(0,600);
     const currentScore = _atsResult.score || 0;
     const _careerField = _detectedCareerField ? _detectedCareerField.field : 'Professional';
     const _careerTone = _detectedCareerField ? (_detectedCareerField.tone || 'formal') : 'formal';
@@ -2206,7 +2206,7 @@ JD: ${jd.slice(0,800)}`, 300
       '  - Invents a new achievement or metric',
       '  - Adds a keyword that cannot be honestly supported by the candidate\'s real experience',
       'The following edits were identified by the ATS scanner. Apply only the safe ones:',
-      ...( (_atsResult.suggestions||[]).map((s,i)=>`  Change ${i+1} — ${s.label}:\n    BEFORE: ${s.before}\n    AFTER:  ${s.after}\n    WHY: ${s.reason}`) ),
+      ...( (_atsResult.suggestions||[]).slice(0,5).map((s,i)=>`  Change ${i+1} — ${(s.label||'').slice(0,80)}:\n    BEFORE: ${(s.before||'').slice(0,250)}\n    AFTER:  ${(s.after||'').slice(0,250)}\n    WHY: ${(s.reason||'').slice(0,200)}`) ),
       '',
       '━━━ PROFESSIONAL SUMMARY ━━━',
       'ONLY include a summary if one already exists in the original CV.',

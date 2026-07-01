@@ -23,10 +23,10 @@ const ALLOWED_MODELS = [
   'claude-haiku-3-5-20241022',
 ];
 
-const MAX_TOKENS_CAP    = 2500;
+const MAX_TOKENS_CAP    = 4096; // CV tailor requests 10000 for a full rewritten CV in JSON — needs headroom above the old 2500 cap, which was truncating tailored_cv output
 const MAX_MESSAGES      = 20;
 const MAX_TOTAL_CHARS   = 40000;
-const MAX_SYSTEM_CHARS  = 25000; // CV tailor prompt is ~20k chars + dynamic ATS suggestions
+const MAX_SYSTEM_CHARS  = 28000; // CV tailor prompt is ~20k chars + dynamic ATS suggestions (now length-capped client-side, but keep buffer)
 const RATE_LIMIT_MAX    = 20;
 const RATE_LIMIT_WINDOW = 60000; // 1 minute
 
