@@ -19,8 +19,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 const ALLOWED_MODELS = [
-  'claude-sonnet-4-20250514',
-  'claude-haiku-3-5-20241022',
+  'claude-sonnet-4-6',
 ];
 
 const MAX_TOKENS_CAP    = 4096; // CV tailor requests 10000 for a full rewritten CV in JSON — needs headroom above the old 2500 cap, which was truncating tailored_cv output

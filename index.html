@@ -1979,7 +1979,7 @@ async function callClaude(system, user, maxTokens) {
     res = await fetch('/api/chat', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens||2000,system,messages:[{role:'user',content:user}]}),
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens||2000,system,messages:[{role:'user',content:user}]}),
       signal: AbortSignal.timeout(55000)
     });
   } catch (e) {
@@ -5615,7 +5615,7 @@ async function sendChatMessage() {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'claude-sonnet-4-6',
         max_tokens:300,
         system:_chatBotSystem,
         messages:recentMsgs
@@ -6067,7 +6067,7 @@ async function cvbAIBullets(si, ei, evt) {
   var existing = (entry.bullets||[]).filter(function(b){return b.trim();});
   var prompt = 'Write 3 strong CV bullet points for this role.\n\nRole: '+role+(company?'\nCompany: '+company:'')+'\n'+(existing.length ? 'Context: '+existing.join('; ')+'\n' : '')+'\nRules:\n- Start each with a strong action verb (Led, Built, Designed, Managed, Delivered, etc.)\n- Include at least one quantified result (%, £, time, headcount)\n- Keep each under 100 characters\n- No first-person pronouns\n- Return exactly 3 lines, no bullets, no numbering, no extra text';
   try {
-    var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400, system:'You are an expert CV writer. Output only the 3 bullet lines, one per line, no formatting.', messages:[{role:'user',content:prompt}] }) });
+    var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:400, system:'You are an expert CV writer. Output only the 3 bullet lines, one per line, no formatting.', messages:[{role:'user',content:prompt}] }) });
     if (resp.status === 429) { var ra=resp.headers.get('Retry-After')||'60'; alert('Too many requests. Please wait '+ra+' seconds.'); return; }
     var data = await resp.json();
     var text = (data.content && data.content[0] ? data.content[0].text : '').trim();
@@ -6093,7 +6093,7 @@ async function cvbAISummary(si, evt) {
   var skillsSec = _cvbSections.find(function(s){ return s.type==='skills'; });
   var prompt = 'Write a 2–3 sentence professional CV summary.\n\n'+(name?'Name: '+name+'\n':'')+(expLines.length?'Experience: '+expLines.join(', ')+'\n':'')+(skillsSec && skillsSec.text ? 'Skills: '+skillsSec.text.slice(0,200)+'\n':'')+'\nRules:\n- 2–3 sentences only\n- Third-person style (no "I")\n- Confident, professional tone\n- Mention the type of role they are suited for\n- Return ONLY the summary, no labels or headings';
   try {
-    var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200, system:'You are an expert CV writer. Output only the summary text.', messages:[{role:'user',content:prompt}] }) });
+    var resp = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:200, system:'You are an expert CV writer. Output only the summary text.', messages:[{role:'user',content:prompt}] }) });
     if (resp.status === 429) { var ra=resp.headers.get('Retry-After')||'60'; alert('Too many requests. Please wait '+ra+' seconds.'); return; }
     var data = await resp.json();
     var summary = (data.content && data.content[0] ? data.content[0].text : '').trim();
